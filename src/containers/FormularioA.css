@@ -1,0 +1,34 @@
+.formularioa-table {
+    border: solid 1px black;
+    margin-bottom: 2%;
+}
+
+th {
+    border-right: solid 1px black;
+    border-bottom: solid 1px black;
+    text-align: center;
+}
+
+td {
+    border-right: solid 1px black;
+    border-bottom: solid 1px black;
+}
+
+.cabecera-codigo {
+    width: 2%;
+}
+
+.cabecera-pregunta {
+    width: 60%;
+}
+
+.cabecera-select {
+    width: 7%;
+}
+.cabecera-fecha {
+    width: 6%
+}
+
+.cabecera-comentario {
+    width: 40%;
+}

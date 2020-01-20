@@ -1,0 +1,24 @@
+@import "../Estilos/interSistemas-theme.css";
+
+.App {
+  text-align: center;  
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+input[type="select"],
+input[type="checkbox"] {
+    margin: 1px;
+}
+
+.container-select {
+  width: 30%;
+  
+}
+
+.container {
+  width: 95%;
+}

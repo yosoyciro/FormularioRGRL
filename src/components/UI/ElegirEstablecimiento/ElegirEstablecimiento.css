@@ -1,0 +1,31 @@
+.table-establecimiento {
+    width: 70%;
+    text-align: center;
+    margin-bottom: 1%;
+    margin-top: 1%;
+}
+
+.elegirestablecimiento-th {
+    width: 13%;
+    margin-right: 2px;
+}
+
+.selectestablecimiento-th {
+    border: 0px transparent;
+}
+
+.elegirestablecimiento-td {
+    border: 0px transparent;
+}
+
+.elegirestablecimiento-thead {
+    border: 0px transparent
+}
+
+.elegirestablecimiento-tbody {
+    border: 0px transparent
+}
+
+.elegirestablecimiento-th {
+    border: 0px transparent
+}

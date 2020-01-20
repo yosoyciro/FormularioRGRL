@@ -1,0 +1,14 @@
+@import "./Estilos/interSistemas-theme.css";
+
+body {
+  background-image: url("./bgs/fondo-art.jpg");
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-position: center center;
+  color: #000080;
+}
+
+.code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

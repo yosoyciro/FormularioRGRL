@@ -1,0 +1,43 @@
+/*.pregunta-container {
+    
+}*/
+
+.pregunta-lbl {
+    margin-right: 0px;     
+}
+
+.pregunta-lbl-error {
+    margin-right: 0px;  
+    color: red;  
+}
+
+.pregunta-comentario {
+    font-size: smaller;
+    text-align: left;
+}
+
+.pregunta-comentario-label {
+    margin-left: 1%;
+}
+
+.celda {
+    text-align: left;
+}
+
+.Select {
+    align-items: left;
+}
+
+.datepicker-formato {
+    width: 90%;
+    text-align: center;
+}
+
+.respuesta-select {
+    text-align: center;
+}
+
+.respuesta-select-error {
+    text-align: center;
+    color: red;
+}

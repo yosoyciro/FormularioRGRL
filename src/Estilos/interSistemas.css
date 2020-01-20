@@ -1,0 +1,196 @@
+@import "interSistemas-theme.css";
+
+#ClarionFormPanel,
+#ClarionMenu {
+  border: none;
+  margin: 0;
+}
+body {
+  background-image: url("../bgs/fondo-art.jpg");
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-position: center center;
+  color: #000080;
+}
+table {
+  width: 100%;
+  margin: 0px;
+}
+th,
+td {
+  height: 0px; /* de esta forma puedo obligar a ocupar todo el contenido */
+  vertical-align: top;
+}
+td.disabled {
+  cursor: not-allowed;
+}
+table.table {
+  margin-bottom: 5px;
+}
+table.table,
+table.table tr th,
+table.table tr td {
+  border: 1px solid;
+}
+select.form-control {
+  padding: 0px;
+}
+input[type="radio"],
+input[type="checkbox"] {
+    margin: 1px;
+}
+.glyphicon {
+  top: 0px;
+}
+.container {
+  margin: 0;
+  width: 100%;
+}
+.row-centered {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.sstring {
+  font-weight: bold;
+}
+.panel {
+  height: calc(100% - 10px); /* padre.alto - (mi.padding-top + mi.padding-bottom) */
+  margin: 5px;
+  border-color: green;
+}
+.panel-default {
+  background: transparent;
+}
+.panel-heading {
+  font-weight: bold;
+}
+.panel-body {
+  white-space: nowrap;
+}
+.borde-verde {
+  border: 1px solid green;
+  border-radius: 4px;
+}
+.oculto {
+  display: none;
+}
+.borde-firma {
+  background: white;
+  border: 1px dashed green;
+}
+.form-horizontal .radio,
+.form-horizontal .checkbox,
+.form-horizontal .radio-inline,
+.form-horizontal .checkbox-inline {
+  padding-top: 0px;
+}
+.form-horizontal .radio,
+.form-horizontal .checkbox {
+    min-height: 18px;
+}
+.input-group-addon,
+.input-group-btn .btn {
+    padding: 1px 8px 0px 8px;
+}
+.btn {
+  margin: 5px;
+  min-width: 170px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.btn-group .btn,
+.nav .btn {
+  min-width: unset;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.btn.btn-xs {
+  min-width: unset;
+  margin: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.pagination {
+  margin: -2px 0 0 0;
+  /* float: left; */
+}
+.pagination > li > a {
+  margin-left: 0px;
+  /* border-width: 0px; */
+}
+.pagination > li > a,
+.pagination > li > span {
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  /* border-width: 1px 0px 1px 0px; */
+}
+.pagination > li:first-child > a,
+.pagination > li:first-child > span {
+  padding-left: 2px;
+  /* border-width: 1px 0px 1px 1px; */
+}
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
+  padding-right: 2px;
+  /* border-width: 1px 1px 1px 0px; */
+}
+.paginate_button > a {
+  padding: 7px 2px !important;
+}
+.navbar-default .navbar-text {
+  color: maroon;
+}
+.nav,
+.dropdown-menu,
+.dropdown-menu > li > a {
+  font-size: 16px;
+  font-weight: bold;
+}
+.nav-tabs {
+  font-size: 12px;
+  font-weight: normal;
+}
+.dropdown-menu > li > a,
+.navbar-default .navbar-nav > li > a,
+.navbar-default .navbar-nav > .open > a {
+  color: navy;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+  color: maroon;
+  font-style: italic;
+  background-color: initial;
+}
+.navbar-text,
+.navbar-brand {
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+.navbar-nav > li {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+.sidebar {
+  margin: initial;
+  border: initial;
+  border-radius: 0 0 4px 4px;
+}
+.modal-dialog {
+  margin: 2px auto;
+}
+.loader-modal-backdrop {
+  background: transparent;
+}

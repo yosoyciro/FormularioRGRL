@@ -1,0 +1,13 @@
+.titulo-lbl {
+    font-size: large;
+}
+
+.pregunta-lbl {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.renglon {
+    margin-bottom: 4px;
+    text-align: center;
+}
