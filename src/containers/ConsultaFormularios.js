@@ -27,7 +27,6 @@ export class ConsultaFormularios extends Component{
     }
 
     seleccionaRegistro = (cuit) => {
-        console.log('[ConsultaFormulario] cuit: ' + cuit)
         this.setState({cuit})
     }
  

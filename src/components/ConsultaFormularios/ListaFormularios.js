@@ -113,7 +113,7 @@ export class ListaFormularios extends Component{
             hidePageListOnlyOnePage: true,
             totalSize: this.state.formulariosCargados.length,
             onClick: (e) => {
-                console.log('click en pagina')
+                //console.log('click en pagina')
             },
             onPageChange: () => this.handlePagChange()
         };   
