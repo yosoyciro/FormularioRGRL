@@ -22,7 +22,7 @@ class Pregunta extends Component{
 
     handleChangeFecha = date => {        
         const fecha = moment(date).format('YYYY-MM-DDTHH:mm:ss')
-        //console.log('fecha: ' + fecha)
+        console.log('fecha--: ' + fecha)
         this.props.cambioFechaRegularizacion(fecha, this.props.internoRespuestaCuestionario);            
     }
 

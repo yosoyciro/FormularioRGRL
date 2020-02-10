@@ -116,8 +116,7 @@ export class ListaFormularios extends Component{
                 //console.log('click en pagina')
             },
             onPageChange: () => this.handlePagChange()
-        };   
-        console.log('size: ' + options.totalSize)       
+        };             
 
         const rowEvents = {
             onClick: (e, row, rowIndex) => {
