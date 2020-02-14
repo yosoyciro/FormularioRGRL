@@ -10,3 +10,7 @@
 .renglon {
     margin-bottom: 4px;
 }
+
+.contratistas-cuit {
+    width: -webkit-fill-available;
+}

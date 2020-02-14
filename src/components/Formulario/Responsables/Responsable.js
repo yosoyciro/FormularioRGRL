@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import Button from 'react-bootstrap/Button'
 import './Responsable.css'
 import BuscarPersona from '../../../Api/BuscarPersona'
@@ -80,39 +80,61 @@ class Responsable extends Component{
         const matricula = this.props.responsable.Matricula
         const entidadOtorganteTitulo = this.props.responsable.EntidadOtorganteTitulo
 
-        return <div className="container">
-            <div className="renglon">
-                <label>CUIT:</label>
-                <input type="text" name="cuit" onChange={this.handleChange} value={cuit}></input>
-                <Button 
-                    onClick={this.handleBuscarPersona}
-                    variant="primary" 
-                    size="sm"
-                >
-                    Verifica
-                </Button>
-                <label>Responsable:</label>
-                <input type="text" name="responsable" disabled={true} onChange={this.handleChange} value={responsable}></input>
-                <label>Cargo:</label>
-                <select className="Select" name="cargo" disabled={isDisable} onChange={this.handleChange} value={cargo}>
-                    <option value="R">Responsable de los datos del formulario</option>
-                    <option value="H">Profesional de Higiene y Seguridad en trabajo</option>
-                    <option value="M">Profesional de Medicina Laboral</option>
-                </select>
-            </div>
-            <div className="renglon">
-                <label>Representacion:</label>
-                <input type="text" name="representacion" disabled={isDisable} onChange={this.handleChange} value={representacion}></input>
-                <label>Es Contratado:</label>
-                <input type="checkbox" name="escontratado" disabled={isDisable} onChange={this.handleChange} value={esContratado}></input>
-                <label>Título Habilitante:</label>
-                <input type="text" name="titulohabilitante" disabled={isDisable} onChange={this.handleChange} value={tituloHabilitante}></input>
-                <label>Matrícula:</label>
-                <input type="text" name="matricula" disabled={isDisable} onChange={this.handleChange} value={matricula}></input>
-                <label>Entidad Otorgante Título:</label>
-                <input type="text" name="entidadotorgantetitulo" disabled={isDisable} onChange={this.handleChange} value={entidadOtorganteTitulo}></input>
-            </div>
-        </div>
+        return <Fragment>
+            <tr>
+                <td className="td-responsable-cuit">
+                    <input               
+                        type="text" 
+                        name="cuit" 
+                        onChange={this.handleChange} 
+                        value={cuit}>                        
+                    </input>
+                    <Button 
+                        onClick={this.handleBuscarPersona}
+                        variant="primary" 
+                        size="sm"
+                    >
+                        Verifica
+                    </Button>
+                </td>
+                <td>
+                    <input type="text" name="responsable" disabled={true} onChange={this.handleChange} value={responsable}></input>
+                </td>                    
+                <td>
+                    <select className="Select" name="cargo" disabled={isDisable} onChange={this.handleChange} value={cargo}>
+                        <option value="R">Responsable de los datos del formulario</option>
+                        <option value="H">Profesional de Higiene y Seguridad en trabajo</option>
+                        <option value="M">Profesional de Medicina Laboral</option>
+                    </select>
+                </td>
+                <td>
+                    <select className="Select" name="representacion" disabled={isDisable} onChange={this.handleChange} value={representacion}>
+                        <option value="Representante Legal">Representante Legal</option>
+                        <option value="Presidente">Presidente</option>
+                        <option value="Vicepresidente">Vicepresidente</option>
+                        <option value="Gerente General">Gerente General</option>
+                        <option value="Director General">Director General</option>
+                        <option value="Administrador General">Administrador General</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </td>
+                <td>
+                    <select className="Select" name="escontratado" disabled={isDisable} onChange={this.handleChange} value={esContratado}>
+                        <option value="Propio">Propio</option>
+                        <option value="Contratado">Contratado</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="titulohabilitante" disabled={isDisable} onChange={this.handleChange} value={tituloHabilitante}></input>
+                </td>
+                <td>
+                    <input type="text" name="matricula" disabled={isDisable} onChange={this.handleChange} value={matricula}></input>
+                </td>
+                <td>
+                    <input type="text" name="entidadotorgantetitulo" disabled={isDisable} onChange={this.handleChange} value={entidadOtorganteTitulo}></input>
+                </td>                   
+            </tr>
+        </Fragment>
     }
 }
 

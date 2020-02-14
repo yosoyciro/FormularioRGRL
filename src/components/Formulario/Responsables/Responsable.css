@@ -11,3 +11,11 @@
     margin-bottom: 4px;
     text-align: center;
 }
+
+.td-responsable-cuit {
+    display: inline-flex;
+}
+
+.cell-responsable-cuit {
+    width: 50%;
+}

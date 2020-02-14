@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import Button from 'react-bootstrap/Button'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar'
+import './BotonesFormulario.css'
 
 class BotonesPagina extends Component {
     constructor(props) {
@@ -27,7 +28,7 @@ class BotonesPagina extends Component {
 
     render() {               
         return <ButtonToolbar aria-label="Toolbar with button groups">
-            <ButtonGroup className="mr-2" aria-label="Paginas">
+            <ButtonGroup className="botonesformulario" aria-label="Paginas">
                 {this.props.confirmado === true ?
                 <>
                     {this.props.pagina === 1?
@@ -169,20 +170,54 @@ class BotonesPagina extends Component {
                     {this.errorPagina(9) === 'ok' ?
                     <>
                         {this.props.pagina === 9 ?                        
-                            <Button value="9" variant="success" size="lg" onClick={this.handleCambioPagina}>9</Button>
+                            <Button value="9" variant="success" size="lg" onClick={this.handleCambioPagina}>Planilla A</Button>
                         :
-                            <Button value="9" variant="success" onClick={this.handleCambioPagina}>9</Button>
+                            <Button value="9" variant="success" onClick={this.handleCambioPagina}>Planilla A</Button>
                         }
                     </>
                     :
                     <>
                         {this.props.pagina === 9 ?                        
-                            <Button value="9" variant="danger" size="lg" onClick={this.handleCambioPagina}>9</Button>
+                            <Button value="9" variant="danger" size="lg" onClick={this.handleCambioPagina}>Planilla A</Button>
                         :
-                            <Button value="9" variant="danger" onClick={this.handleCambioPagina}>9</Button>
+                            <Button value="9" variant="danger" onClick={this.handleCambioPagina}>Planilla A</Button>
                         }
                     </>
-                    }                      
+                    }   
+                    {this.errorPagina(10) === 'ok' ?
+                    <>
+                        {this.props.pagina === 10 ?                        
+                            <Button value="10" variant="success" size="lg" onClick={this.handleCambioPagina}>Planilla B</Button>
+                        :
+                            <Button value="10" variant="success" onClick={this.handleCambioPagina}>Planilla B</Button>
+                        }
+                    </>
+                    :
+                    <>
+                        {this.props.pagina === 10 ?                        
+                            <Button value="10" variant="danger" size="lg" onClick={this.handleCambioPagina}>Planilla B</Button>
+                        :
+                            <Button value="10" variant="danger" onClick={this.handleCambioPagina}>Planilla B</Button>
+                        }
+                    </>
+                    }    
+                    {this.errorPagina(11) === 'ok' ?
+                    <>
+                        {this.props.pagina === 11 ?                        
+                            <Button value="11" variant="success" size="lg" onClick={this.handleCambioPagina}>Planilla C</Button>
+                        :
+                            <Button value="11" variant="success" onClick={this.handleCambioPagina}>Planilla C</Button>
+                        }
+                    </>
+                    :
+                    <>
+                        {this.props.pagina === 11 ?                        
+                            <Button value="11" variant="danger" size="lg" onClick={this.handleCambioPagina}>Planilla C</Button>
+                        :
+                            <Button value="11" variant="danger" onClick={this.handleCambioPagina}>Planilla C</Button>
+                        }
+                    </>
+                    }                       
                 </>
                 :
                 <>
@@ -227,9 +262,19 @@ class BotonesPagina extends Component {
                         <Button value="8" variant="info" onClick={this.handleCambioPagina}>8</Button>
                     }
                     {this.props.pagina === 9 ?
-                        <Button value="9" variant="info" size="lg" onClick={this.handleCambioPagina}>9</Button>
+                        <Button value="9" variant="info" size="lg" onClick={this.handleCambioPagina}>Planilla A</Button>
                     :
-                        <Button value="9" variant="info" onClick={this.handleCambioPagina}>9</Button>
+                        <Button value="9" variant="info" onClick={this.handleCambioPagina}>Planilla A</Button>
+                    }
+                    {this.props.pagina === 10 ?
+                        <Button value="10" variant="info" size="lg" onClick={this.handleCambioPagina}>Planilla B</Button>
+                    :
+                        <Button value="10" variant="info" onClick={this.handleCambioPagina}>Planilla B</Button>
+                    }
+                    {this.props.pagina === 11 ?
+                        <Button value="11" variant="info" size="lg" onClick={this.handleCambioPagina}>Planilla C</Button>
+                    :
+                        <Button value="11" variant="info" onClick={this.handleCambioPagina}>Planilla C</Button>
                     }
                 </>
                 }

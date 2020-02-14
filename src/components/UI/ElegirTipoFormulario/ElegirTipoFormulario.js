@@ -13,6 +13,7 @@ class ElegirTipoFormulario extends Component{
     }
 
     componentDidMount = async event => {
+        this.props.seleccionFormulario(0, 0, 0, 0, '');                     
         const formularios = await CargarFormularios(this.props.establecimientoSeleccionado) 
         this.setState({ formularios })
     }
@@ -32,7 +33,7 @@ class ElegirTipoFormulario extends Component{
     }
 
 render() {     
-    //console.log('establecimiento: ' + this.state.establecimiento)
+    console.log('establecimiento: ' + this.props.establecimientoSeleccionado)
     const tiposForm = this.state.formularios
     
         

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import './Contratista.css'
 import BuscarPersona from '../../../Api/BuscarPersona'
 import Button from 'react-bootstrap/Button'
@@ -37,19 +37,36 @@ render() {
     const cuit = this.props.contratista.CUIT          
     const contratista = this.props.contratista.Contratista
 
-    return <fieldset>  
-        <label className="pregunta-lbl">CUIT:</label>
-        <input type="number" name="cuit" onChange={this.handleChange} value={cuit}></input>        
-        <label className="pregunta-lbl">Contratista:</label>
-        <input type="text" name="contratista" disabled={isDisable} onChange={this.handleChange} value={contratista}></input>     
-        <Button 
-            onClick={this.handleAFIP}
-            variant="primary" 
-            size="sm"
-        >
-            Verifica
-        </Button>
-    </fieldset>
+    return <Fragment>
+        <tr>
+            <td>
+                <input 
+                    className="contratistas-cuit"
+                    type="number" 
+                    name="cuit" 
+                    onChange={this.handleChange} 
+                    value={cuit}></input>   
+            </td>
+            <td>
+                <input 
+                    className="contratistas-cuit"
+                    type="text" 
+                    name="contratista" 
+                    disabled={isDisable} 
+                    onChange={this.handleChange} 
+                    value={contratista}></input> 
+            </td>
+            <td>
+                <Button 
+                    onClick={this.handleAFIP}
+                    variant="primary" 
+                    size="sm"
+                >
+                    Verifica
+                </Button>
+            </td>
+        </tr>
+    </Fragment>
     }
 }
 

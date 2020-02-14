@@ -23,12 +23,31 @@ td {
 }
 
 .cabecera-select {
-    width: 7%;
+    width: 15%;
 }
 .cabecera-fecha {
     width: 6%
 }
 
 .cabecera-comentario {
+    width: 25%;
+}
+
+.gremios-table {
+    border: solid 1px black;
+    margin-bottom: 2%;
+    width:50%;
+    display: inline-table;
+}
+
+.cabecera-gremioslegajo {
+    width: 10%;
+}
+
+.cabecera-gremiosgremio {
     width: 40%;
+}
+
+.cabecera-verificar {
+    width: 10%;
 }

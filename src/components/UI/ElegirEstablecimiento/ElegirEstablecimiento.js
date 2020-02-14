@@ -12,7 +12,7 @@ class ElegirEstablecimiento extends Component{
         establecimientos: []      
     }
         
-    componentDidMount() {
+    componentDidMount() {        
         this.cargarEstablecimientos()
     }
 

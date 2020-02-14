@@ -9,7 +9,7 @@ class Formulario extends Component{
     }  
     render() {
         const { handle } = this.props.match.params
-        console.log('[Formularios] cuit: ' + handle)
+        //console.log('[Formularios] cuit: ' + handle)
 
         return <Fragment>
             <h2>Formulario RGRL</h2>

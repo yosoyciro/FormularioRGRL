@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Button from 'react-bootstrap/Button'
+import './BotonesFormulario.css'
 
 class BotonesFormulario extends Component {    
     constructor(props){
@@ -24,6 +25,7 @@ class BotonesFormulario extends Component {
             return <div>
             {this.props.disabledGenerar === false ?
                 <Button 
+                    className="botonesformulario"
                     variant="primary" 
                     size="sm"
                     onClick={this.handleGenerar}>
@@ -32,6 +34,7 @@ class BotonesFormulario extends Component {
             }                  
             {this.props.disabledConfirmar === false ?
                 <Button
+                    className="botonesformulario"
                     variant="primary" 
                     size="sm"
                     onClick={this.handleConfirmar} 
@@ -41,6 +44,7 @@ class BotonesFormulario extends Component {
             }
             {this.props.disabledCancelar === false ? 
                 <Button
+                    className="botonesformulario"
                     variant="primary" 
                     size="sm"
                     onClick={this.handleCancelar}

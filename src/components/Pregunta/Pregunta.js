@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import './Pregunta.css'
 import * as moment from 'moment';
+import { RadioGroup, Radio } from '@material-ui/core';
 
 
 //Componente que se conecta al web api y trae todas las preguntas
@@ -13,6 +14,7 @@ class Pregunta extends Component{
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeFecha = this.handleChangeFecha.bind(this);
+        this.handleChangeRespuesta = this.handleChangeRespuesta.bind(this);
     }    
 
     handleChange = (event) => {
@@ -27,8 +29,8 @@ class Pregunta extends Component{
     }
 
     cambioCheck = (event) => {
-        /*console.log('event.target: ' + event.target.value + ' - event.target.checked: ' + event.target.checked);
-        const target = event.target;
+        //console.log('event.target: ' + event.target.value + ' - event.target.checked: ' + event.target.checked);
+        /*const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({opcion: value});*/
         switch(event.target.checked) {
@@ -39,13 +41,18 @@ class Pregunta extends Component{
             
             case false:
                 //this.setState({respuesta: "N"}); 
-                this.props.cambioRespuesta("N", this.props.internoRespuestaCuestionario);
+                this.props.cambioRespuesta("", this.props.internoRespuestaCuestionario);
                 break;
 
             default:
                 //this.setState({respuesta: ""}); 
                 this.props.cambioRespuesta("", this.props.internoRespuestaCuestionario);
         }   
+    }
+
+    handleChangeRespuesta = (event) => {
+        console.log('Event: ' + event.target.value + ' interno: ' + this.props.internoRespuestaCuestionario)
+        this.props.cambioRespuesta(event.target.value, this.props.internoRespuestaCuestionario);
     }
 
     mostrarPregunta = () => {  
@@ -55,7 +62,7 @@ class Pregunta extends Component{
         //console.log('this.props.fechaRegularizacion: ' + this.props.fechaRegularizacion)
         var fecha = new Date(this.props.fechaRegularizacion)
         var anio = moment(fecha).format('YYYY')
-        //console.log('respuesta: ' + respuesta + ' anio: ' + anio)
+        console.log('respuesta: ' + respuesta + ' anio: ' + anio)
         switch (respuesta) {
             case 'N':
                 //console.log('No')
@@ -100,12 +107,37 @@ class Pregunta extends Component{
                         }
                     </td>
                     <td>
-                    <select name="respuesta-select" className="respuesta-select" onChange={this.handleChange} value={respuesta}>
-                        <option value="">Elegir...</option>
-                        <option value="S">Sí</option>
-                        <option value="N">No</option>
-                        <option value="A">No aplica</option>
-                    </select> 
+                    <div>
+                        <Radio
+                            checked={respuesta === 'S'}
+                            onChange={this.handleChangeRespuesta}
+                            value="S"
+                            name="radio-button-demo"
+                            color="default"
+                            size="small"
+                        />
+                        <label>Sí</label>
+                        
+                        <Radio
+                            checked={respuesta === 'N'}
+                            onChange={this.handleChangeRespuesta}
+                            value="N"
+                            name="radio-button-demo"
+                            color="default"
+                            size="small"
+                        />
+                        <label>No</label>
+
+                        <Radio
+                            checked={respuesta === 'A'}
+                            onChange={this.handleChangeRespuesta}
+                            value="A"
+                            name="radio-button-demo"
+                            color="default"
+                            size="small"
+                        />
+                        <label>No Aplica</label>
+                    </div>	
                     </td>
                     <td>                    
                     {respuesta === 'N' ?
@@ -143,9 +175,13 @@ class Pregunta extends Component{
                         <td>
                             <input type="checkbox" checked={respuesta} onChange={this.cambioCheck}></input>                                            
                         </td>
-                        <td className="pregunta-comentario">
-                            <label className="pregunta-comentario-label">{this.props.pregunta.Comentario}</label>             
-                        </td>
+                        {parseInt(this.props.pregunta.InternoSeccion) === 37 || parseInt(this.props.pregunta.InternoSeccion) === 101 || parseInt(this.props.pregunta.InternoSeccion) === 120 ?
+                            <td className="pregunta-comentario">
+                                <label className="pregunta-comentario-label">{this.props.pregunta.Comentario}</label>             
+                            </td>
+                        :
+                            null
+                        }
                         </tr>
                 </Fragment>  
             }                                             
@@ -158,10 +194,16 @@ class Pregunta extends Component{
     }    
 }
 
+const mapStateToProps = state => {
+    return {
+        formSel: state.form.formSeleccionado,          
+    };
+}
+
 const mapDispatchToProps = dispatch => {
     return {        
         actualizaRespuesta: (intCuestionario, resp, fecha) => dispatch({type: tiposAcciones.ACTUALIZAR_RESPUESTA, intCuestionario: intCuestionario, resp: resp, fecha: fecha})
     };
 }
 
-export default connect(null, mapDispatchToProps)(Pregunta);
+export default connect(mapStateToProps, mapDispatchToProps)(Pregunta);

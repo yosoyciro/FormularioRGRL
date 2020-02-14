@@ -14,7 +14,6 @@ import './FormularioA.css'
 import BotonesFormulario from '../components/BotonesFormulario/BotonesFormulario';
 import BotonesPagina from '../components/BotonesFormulario/BotonesPaginas';
 import ConfirmarFormulario from '../Api/ConfirmarFormulario';
-import { history } from '../components/Utiles/history'
 import { Redirect } from 'react-router-dom';
 
 class FormularioA extends Component{     
@@ -61,7 +60,7 @@ class FormularioA extends Component{
     }
 
     componentDidMount() {
-        //Vengan las preguntontas        
+        //Vengan las preguntontas
         this.cargarDatos()        
     }
 
@@ -364,6 +363,8 @@ class FormularioA extends Component{
                 //Gremios
                 return <div>
                     <h2>Gremios</h2>
+                    <h3 style={{textAlign: "initial"}}>EN CASO DE CONTAR CON DELEGADOS GREMIALES INDIQUE EL N° DE LEGAJO CONFORME A LA INSCRIPCION EN EL MINISTERIO DE TRABAJO, EMPLEO Y SEGURIDAD SOCIAL</h3>
+                    <a style={{display: "table-cell", fontSize: "initial"}} href="http://www.trabajo.gov.ar/left/sindicales/dnas2/Entidades/entidades.asp" target="_blank">(http://www.trabajo.gov.ar/left/sindicales/dnas2/Entidades/entidades.asp)</a>
                     {this.renderGremios()}
                 </div>
 
@@ -385,7 +386,7 @@ class FormularioA extends Component{
             default: return <div>
                     {copiaSecciones.map(seccion => 
                         <div>
-                        <label key={seccion.Interno}>{seccion.Descripcion}</label>                        
+                        {/*<label key={seccion.Interno}>{seccion.Descripcion}</label>*/}
                         {seccion.Comentario !== '' ?
                             <label>Comentario: {seccion.Comentario}</label>
                         :
@@ -401,13 +402,33 @@ class FormularioA extends Component{
     renderGremios = () => {
         const GremiosList = this.state.respuestasGremio
 
-        let gremiosRender = (
+        /*let gremiosRender = (        
             GremiosList.map(gremio =>
                 <Gremio 
                     key={gremio.Interno} 
                     gremio={gremio}
                     cambioGremio={this.handleCambioGremio}
                 />)
+        )*/
+
+        let gremiosRender = null
+        gremiosRender = (
+            <table className="gremios-table">
+                <thead className="cabecera">
+                    <tr>
+                        <th className="cabecera-gremioslegajo">Legajo</th>
+                        <th className="cabecera-gremiosgremio">Gremio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {GremiosList.map(gremio =>
+                    <Gremio 
+                        key={gremio.Interno} 
+                        gremio={gremio}
+                        cambioGremio={this.handleCambioGremio}
+                    />)}
+                </tbody>
+            </table>
         )
         return gremiosRender
     }
@@ -415,13 +436,34 @@ class FormularioA extends Component{
     renderContratistas = () => {
         const contratistasList = this.state.respuestasContratista
 
-        let contratistasRender = (
+        /*let contratistasRender = (
             contratistasList.map(contratista =>
                 <Contratista 
                     key={contratista.Interno}                     
                     contratista={contratista}
                     cambioContratista={this.handleCambioContratista}
                 />)
+        )*/
+
+        let contratistasRender = null
+        contratistasRender = (
+            <table className="gremios-table">
+                <thead className="cabecera">
+                    <tr>
+                        <th className="cabecera-gremioslegajo">CUIT</th>
+                        <th className="cabecera-gremiosgremio">Contratista</th>
+                        <th className="cabecera-verificar"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {contratistasList.map(contratista =>
+                    <Contratista 
+                        key={contratista.Interno}                     
+                        contratista={contratista}
+                        cambioContratista={this.handleCambioContratista}
+                    />)}
+                </tbody>
+            </table>
         )
         return contratistasRender
     }
@@ -429,7 +471,7 @@ class FormularioA extends Component{
     renderResponsables = () => {
         const responsablesList = this.state.respuestasResponsable
 
-        let responsablesRender = (
+        /*let responsablesRender = (
             responsablesList.map(responsable =>
                 <Responsable 
                     key={responsable.Interno} 
@@ -438,6 +480,34 @@ class FormularioA extends Component{
                     entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
                     cambioResponsablesTodo={this.handleCambioResponsablesTodo}
                 />)
+        )*/
+
+        let responsablesRender = null
+        responsablesRender = (
+            <table className="gremios-table">
+                <thead className="cabecera">
+                    <tr>
+                        <th>CUIT/CUIL/CUIP</th>
+                        <th>Nombre y apellido</th>
+                        <th>Cargo</th>
+                        <th>Representación</th>
+                        <th>Propio/contratado</th>
+                        <th>Título habilitante</th>
+                        <th>N° matrícula</th>
+                        <th>Entidad que otorgó el título habilitante</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {responsablesList.map(responsable =>
+                    <Responsable 
+                        key={responsable.Interno} 
+                        id={responsable.Interno}
+                        responsable={responsable}
+                        entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
+                        cambioResponsablesTodo={this.handleCambioResponsablesTodo}
+                    />)}
+                </tbody>
+            </table>
         )
         return responsablesRender
     }
@@ -452,8 +522,8 @@ class FormularioA extends Component{
                     <table className="formularioa-table">
                         <thead className="cabecera">
                             <tr>
-                                <th className="cabecera-codigo">Codigo</th>
-                                <th className="cabecera-pregunta">Pregunta</th>
+                                <th className="cabecera-codigo">Nro</th>
+                                <th className="cabecera-pregunta">{seccion.Descripcion}</th>
                                 <th className="cabecera-select">Respuesta</th>
                                 <th className="cabecera-fecha">Fecha Est. Realización</th>
                                 <th className="cabecera-comentario">Observaciones</th>                                                
@@ -483,16 +553,23 @@ class FormularioA extends Component{
                 preguntasRender = (
                     <table className="formularioa-table">
                         <thead className="cabecera">
+                        {parseInt(seccion.Interno) === 37 || parseInt(seccion.Interno) === 101 || parseInt(seccion.Interno) === 120 ?
                             <tr>
-                                <th className="cabecera-codigo">Codigo</th>
-                                <th className="cabecera-pregunta">Pregunta</th>
-                                <th className="cabecera-select">Respuesta</th>
-                                <th className="cabecera-comentario">Observaciones</th>                                                
+                                <th className="cabecera-codigo">Cod</th>
+                                <th className="cabecera-pregunta">{seccion.Descripcion}</th>
+                                <th className="cabecera-select">Sí</th>
+                                <th className="cabecera-comentario">Norma Vigente</th>                                                
                             </tr>
+                        :
+                            <tr>
+                                <th className="cabecera-codigo">Cod</th>
+                                <th className="cabecera-pregunta">{seccion.Descripcion}</th>
+                                <th className="cabecera-select">Sí</th>                                         
+                            </tr>
+                        }
                         </thead>
                         <tbody>
-                            {preguntasSeccion.map(pregunta => (
-                                //console.log(pregunta.Pregunta)                
+                            {preguntasSeccion.map(pregunta => (       
                                 <Pregunta 
                                     key={pregunta.Interno} 
                                     pregunta={pregunta}

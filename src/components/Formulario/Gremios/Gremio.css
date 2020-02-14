@@ -10,3 +10,7 @@
 .renglon {
     margin-bottom: 4px;
 }
+
+.gremios-legajo {
+    width: -webkit-fill-available;
+}

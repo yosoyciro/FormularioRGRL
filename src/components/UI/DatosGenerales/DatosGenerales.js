@@ -23,6 +23,10 @@ class DatosGenerales extends Component{
     } 
     
     componentDidMount() {
+        //Limpio siempre todo del Redux
+        this.props.datosGenerales(0, 0, '') 
+        this.props.seleccionEstablecimiento(0, '');
+        
         console.log('[DatosGenerales] this.props.cuit: ' + this.props.cuit)
         this.setState({cuit: parseInt(this.props.cuit)})
     }
@@ -124,7 +128,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        datosGenerales: (cuit, interno, razonsocial) => dispatch({type: tiposAcciones.DATOSGENERALES_CUIT, cuit: cuit, interno: interno, razonsocial: razonsocial})        
+        datosGenerales: (cuit, interno, razonsocial) => dispatch({type: tiposAcciones.DATOSGENERALES_CUIT, cuit: cuit, interno: interno, razonsocial: razonsocial}),
+        seleccionEstablecimiento: (internoEstablecimiento, descripcion) => dispatch({type: tiposAcciones.ESTABLECIMIENTO_SELECCION, internoEstablecimiento: internoEstablecimiento, descripcion: descripcion})
     };
 }
 
