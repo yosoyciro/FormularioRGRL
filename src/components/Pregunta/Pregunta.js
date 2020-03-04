@@ -106,38 +106,36 @@ class Pregunta extends Component{
                             <label className="pregunta-lbl-error">{this.props.pregunta.Pregunta}</label>
                         }
                     </td>
-                    <td>
-                    <div>
-                        <Radio
-                            checked={respuesta === 'S'}
-                            onChange={this.handleChangeRespuesta}
-                            value="S"
-                            name="radio-button-demo"
-                            color="default"
-                            size="small"
-                        />
-                        <label>Sí</label>
-                        
-                        <Radio
-                            checked={respuesta === 'N'}
-                            onChange={this.handleChangeRespuesta}
-                            value="N"
-                            name="radio-button-demo"
-                            color="default"
-                            size="small"
-                        />
-                        <label>No</label>
-
-                        <Radio
-                            checked={respuesta === 'A'}
-                            onChange={this.handleChangeRespuesta}
-                            value="A"
-                            name="radio-button-demo"
-                            color="default"
-                            size="small"
-                        />
-                        <label>No Aplica</label>
-                    </div>	
+                    <td colSpan={3}>
+                        <div style={{display: 'inline'}}>
+                            <Radio
+                                style={{float: 'left'}}
+                                checked={respuesta === 'S'}
+                                onChange={this.handleChangeRespuesta}
+                                value="S"
+                                name="radio-button-demo"
+                                color="default"
+                                size="small"
+                            />
+                            <Radio
+                                /*style={{margin: '0% 10%'}}*/
+                                checked={respuesta === 'N'}
+                                onChange={this.handleChangeRespuesta}
+                                value="N"
+                                name="radio-button-demo"
+                                color="default"
+                                size="small"
+                            />
+                            <Radio           
+                                style={{float: 'right'}}                     
+                                checked={respuesta === 'A'}
+                                onChange={this.handleChangeRespuesta}
+                                value="A"
+                                name="radio-button-demo"
+                                color="default"
+                                size="small"
+                            />
+                        </div>	
                     </td>
                     <td>                    
                     {respuesta === 'N' ?

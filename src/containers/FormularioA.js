@@ -363,7 +363,7 @@ class FormularioA extends Component{
                 //Gremios
                 return <div>
                     <h2>Gremios</h2>
-                    <h3 style={{textAlign: "initial"}}>EN CASO DE CONTAR CON DELEGADOS GREMIALES INDIQUE EL N° DE LEGAJO CONFORME A LA INSCRIPCION EN EL MINISTERIO DE TRABAJO, EMPLEO Y SEGURIDAD SOCIAL</h3>
+                    <h4 style={{textAlign: "initial"}}>EN CASO DE CONTAR CON DELEGADOS GREMIALES INDIQUE EL N° DE LEGAJO CONFORME A LA INSCRIPCION EN EL MINISTERIO DE TRABAJO, EMPLEO Y SEGURIDAD SOCIAL</h4>
                     <a style={{display: "table-cell", fontSize: "initial"}} href="http://www.trabajo.gov.ar/left/sindicales/dnas2/Entidades/entidades.asp" target="_blank">(http://www.trabajo.gov.ar/left/sindicales/dnas2/Entidades/entidades.asp)</a>
                     {this.renderGremios()}
                 </div>
@@ -524,9 +524,11 @@ class FormularioA extends Component{
                             <tr>
                                 <th className="cabecera-codigo">Nro</th>
                                 <th className="cabecera-pregunta">{seccion.Descripcion}</th>
-                                <th className="cabecera-select">Respuesta</th>
-                                <th className="cabecera-fecha">Fecha Est. Realización</th>
-                                <th className="cabecera-comentario">Observaciones</th>                                                
+                                <th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>Sí</th>
+                                <th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>No</th>
+                                <th className="cabecera-select">No Aplica</th>
+                                <th className="cabecera-fecha">Fecha de Regularización</th>
+                                <th className="cabecera-comentario">Norma Vigente</th>                                                
                             </tr>
                         </thead>
                         <tbody>
@@ -785,7 +787,7 @@ class FormularioA extends Component{
                         onDisabledCancelar={this.handleCancelar}
                         disabledConfirmar={disabledConfirmar}
                         onDisabledConfirmar={this.handleConfirmar}
-                    />                           
+                    />                                               
                     {(this.state.generado) === true ?
                         <>
                             <BotonesPagina 
@@ -794,6 +796,11 @@ class FormularioA extends Component{
                                 pagina={this.state.pagina}
                                 cambioPagina={this.handleCambioPagina}
                             />
+                            {this.state.pagina >= 1 && this.state.pagina <= 8 ?
+                                <h3>CONDICIONES A CUMPLIR</h3>
+                            :
+                                null
+                            }
                             {this.paginaMostrar(this.props.cantGremios, this.props.cantResponsables, this.props.cantContratistas)}
                         </>
                     :
