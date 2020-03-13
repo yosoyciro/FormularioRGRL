@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import ListaFormularios from '../components/ConsultaFormularios/ListaFormularios';
 import { Button } from 'react-bootstrap';
 import './ConsultaFormularios.css';
+import ListaFormulariosRAR from '../components/FormulariosRAR/ListaFormulariosRAR';
 
-export class ConsultaFormularios extends Component{
+export class FormulariosRAR extends Component{
     constructor(props) {
         super(props)
         this.state = {
@@ -14,7 +14,7 @@ export class ConsultaFormularios extends Component{
     }
 
     handleClick = () => {
-        this.props.history.push('/NuevoFormulario/');
+        this.props.history.push('/NuevoFormularioRAR/');
     }
 
     handleClickCerrar() {       
@@ -23,7 +23,7 @@ export class ConsultaFormularios extends Component{
     }
 
     handleEdita = () => {
-        this.props.history.push('/NuevoFormulario/' + this.state.cuit);
+        this.props.history.push('/NuevoFormularioRAR/' + this.state.cuit);
     }
 
     seleccionaRegistro = (cuit) => {
@@ -33,7 +33,7 @@ export class ConsultaFormularios extends Component{
     render(){
         return <div>
             <div>
-                <h1>Consulta de Formularios RGRL</h1>
+                <h1>Consulta de Formularios RAR</h1>
                 {this.state.cuit !== 0 ?
                     <Button 
                         onClick={this.handleEdita}
@@ -56,12 +56,12 @@ export class ConsultaFormularios extends Component{
                 >
                     Finaliza
                 </Button>
-            </div>            
-            <ListaFormularios 
-                seleccionaRegistro={this.seleccionaRegistro}
-            />            
+                <ListaFormulariosRAR
+                    seleccionaRegistro={this.seleccionaRegistro}
+                />
+            </div>                      
         </div>
     }
 }
 
-export default ConsultaFormularios;
+export default FormulariosRAR;

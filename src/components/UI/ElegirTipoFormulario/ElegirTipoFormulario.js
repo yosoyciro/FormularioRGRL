@@ -19,7 +19,7 @@ class ElegirTipoFormulario extends Component{
     }
 
     handleChange = (selectedOption) => {
-        console.log('estado: ' + selectedOption.estado)
+        //console.log('estado: ' + selectedOption.estado)
         this.setState({ selectedOption: selectedOption.value })       
         this.props.seleccionFormulario(selectedOption.value, selectedOption.gremios, selectedOption.contratistas, selectedOption.responsables, selectedOption.estado);                     
     }
@@ -28,12 +28,12 @@ class ElegirTipoFormulario extends Component{
         event.preventDefault();                
     }       
 
-    cargarFormularios = async establecimiento => {
+    /*cargarFormularios = async establecimiento => {
         return CargarFormularios(establecimiento)
-    }
+    }*/
 
 render() {     
-    console.log('establecimiento: ' + this.props.establecimientoSeleccionado)
+    //console.log('establecimiento: ' + this.props.establecimientoSeleccionado)
     const tiposForm = this.state.formularios
     
         

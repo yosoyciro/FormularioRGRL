@@ -15,6 +15,8 @@ import BotonesFormulario from '../components/BotonesFormulario/BotonesFormulario
 import BotonesPagina from '../components/BotonesFormulario/BotonesPaginas';
 import ConfirmarFormulario from '../Api/ConfirmarFormulario';
 import { Redirect } from 'react-router-dom';
+import ReplicarFormulario from '../Api/ReplicarFormulario';
+import CargarRespuestas from '../Api/CargarRespuestas';
 
 class FormularioA extends Component{     
     constructor(props) {
@@ -60,52 +62,45 @@ class FormularioA extends Component{
     }
 
     componentDidMount() {
-        //Vengan las preguntontas
+        //Vengan las preguntontas        
         this.cargarDatos()        
     }
 
     //#region CargaDatos
     cargarDatos = async event => {
+        this.setState({saving: true})
         try {                                 
             const secc = await Api.get(`Secciones/ListarSeccionesFormulario?pInternoFormulario=${this.props.formSel}`)
             this.setState({ secciones: secc.data });
 
             const preg = await Api.get(`Cuestionarios/ListarPorFormulario?pInternoFormulario=${this.props.formSel}`)
             this.setState({ preguntas: preg.data });      
-            console.log('(this.props.formEstado: ' + (this.props.estadoForm))
+
+            //console.log('(this.props.formEstado: ' + (this.props.estadoForm))
             if (this.props.estadoForm === '(En proceso de carga)')
-                this.cargarRespuestas()            
+                this.cargarRespuestas()   
         }
         catch (error) {
             console.log('cargarDatos: ' + error);
-        }
+        }     
 
         finally {
-            this.setState({ saving: !this.state.saving })                        
-        }        
+            this.setState({saving: false})
+        }
     }
-    
-    cargarRespuestas = async event => {
-        try{
-            const respForm = await Api.get(`RespuestasFormulario/TraerRespuestas?pInternoFormulario=${this.props.formSel}&pInternoEstablecimiento=${this.props.establecimientoSeleccionado}`)
-            
-            if (respForm.data.Interno)
-            {               
-                this.setState({ respuestasFormulario: respForm.data }); 
-                this.setState({respuestasCuestionario: respForm.data.RespuestasCuestionario})
-                this.setState({respuestasGremio: respForm.data.RespuestasGremio})
-                this.setState({respuestasContratista: respForm.data.RespuestasContratista})
-                this.setState({respuestasResponsable: respForm.data.RespuestasResponsable})
 
-                this.setState({generado: !this.state.generado})
-
-            }
-        }
-
-        catch(error)
-        {
-            console.log('cargarRespuestas: ' + error)
-        }
+    cargarRespuestas = async() => {
+        const respuestasCuestionario = await CargarRespuestas({
+            internoFormulario: this.props.formSel, 
+            internoEstablecimiento: this.props.establecimientoSeleccionado
+        })
+        this.setState({ respuestasFormulario: respuestasCuestionario, 
+            respuestasCuestionario: respuestasCuestionario.RespuestasCuestionario,
+            respuestasGremio: respuestasCuestionario.RespuestasGremio,
+            respuestasContratista: respuestasCuestionario.RespuestasContratista,
+            respuestasResponsable: respuestasCuestionario.RespuestasResponsable,
+            generado: !this.state.generado
+        })                    
     }
             
     //#endregion
@@ -129,15 +124,17 @@ class FormularioA extends Component{
             RespuestasContratista,
             RespuestasResponsable
         }
+        //console.log('Responsables ' + JSON.stringify(RespuestasResponsable))
 
         //console.log('JSON: ' + JSON.stringify(RespuestaFormulario))
         try {
-            const resp = await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
+            //const resp = await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
+            await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
                 headers: {
                     'Content-Type': 'application/json',
                 }            
             })     
-            console.log(resp);   
+            //console.log(resp);   
             this.setState(
                 {
                     showSnackBar: !this.state.showSnackBar,
@@ -168,7 +165,25 @@ class FormularioA extends Component{
     handleGenerar(event) {
         this.setState({saving: !this.state.saving})        
         
-        this.generarFormulario();
+        switch (this.props.estadoForm)
+        {
+            case '(No generado)':
+                this.generarFormulario();
+                break;
+
+            case '(Nueva instancia)':
+                ReplicarFormulario({internoFormulario: this.props.formSel, internoEstablecimiento: this.props.establecimientoSeleccionado})
+                .then(res => {                        
+                    this.cargarRespuestas();
+                    this.setState({
+                        saving: false                        
+                    });
+                })
+                break;
+
+            default:
+                break;
+        }                
     }
 
     generarFormulario() {
@@ -266,35 +281,19 @@ class FormularioA extends Component{
             RespuestasResponsable
         }     
 
-        //console.log('JSON: ' + JSON.stringify(RespuestaFormulario))
-        /*try {
-            const resp = await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }            
-            })     
-            console.log(resp);       
-            alert('Formulario creado con éxito!');            
-
-            this.cargarRespuestas()
-            //window.location.reload();            
-        }
-        catch (error) {
-            alert('Error creando formulario! ' + error)
-        }
-
-        finally {
-            this.setState({saving: false})
-        }*/
-
         Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
             headers: {
                 'Content-Type': 'application/json',
             }            
         })     
-        .then(res => {
-            this.setState({saving: !this.state.saving});
+        .then(res => {            
             this.cargarRespuestas()
+            .then(res => {
+                this.setState({
+                    saving: !this.state.saving
+                });
+            })
+            
         })
         
     }
@@ -436,15 +435,6 @@ class FormularioA extends Component{
     renderContratistas = () => {
         const contratistasList = this.state.respuestasContratista
 
-        /*let contratistasRender = (
-            contratistasList.map(contratista =>
-                <Contratista 
-                    key={contratista.Interno}                     
-                    contratista={contratista}
-                    cambioContratista={this.handleCambioContratista}
-                />)
-        )*/
-
         let contratistasRender = null
         contratistasRender = (
             <table className="gremios-table">
@@ -470,17 +460,6 @@ class FormularioA extends Component{
 
     renderResponsables = () => {
         const responsablesList = this.state.respuestasResponsable
-
-        /*let responsablesRender = (
-            responsablesList.map(responsable =>
-                <Responsable 
-                    key={responsable.Interno} 
-                    id={responsable.Interno}
-                    responsable={responsable}
-                    entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
-                    cambioResponsablesTodo={this.handleCambioResponsablesTodo}
-                />)
-        )*/
 
         let responsablesRender = null
         responsablesRender = (
@@ -750,7 +729,10 @@ class FormularioA extends Component{
     //#region Handle cambio paginas
     handleCambioPagina = (pagina) => {
         console.log('[cambioPagina] pagina: ' + pagina)
-        this.setState({pagina: parseInt(pagina)})
+        this.setState({
+            pagina: parseInt(pagina),
+            saving: true
+        })
 
         //Guardo los resultados
         this.grabarFormulario()

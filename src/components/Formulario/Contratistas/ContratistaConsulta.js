@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import './Contratista.css'
 
 //Componente que se conecta al web api y trae todas las preguntas
@@ -10,12 +10,28 @@ render() {
     const cuit = this.props.contratista.CUIT          
     const contratista = this.props.contratista.Contratista
 
-    return <fieldset>  
-        <label className="pregunta-lbl">CUIT:</label>
-        <input type="number" name="cuit" disabled={isDisable} value={cuit}></input>        
-        <label className="pregunta-lbl">Contratista:</label>
-        <input type="text" name="contratista" disabled={isDisable} value={contratista}></input>     
-    </fieldset>
+    return <Fragment>
+    <tr>
+        <td>
+            <input 
+                className="contratistas-cuit"
+                type="number" 
+                name="cuit" 
+                value={cuit}
+                disabled={true}
+            >                    
+            </input>   
+        </td>
+        <td>
+            <input 
+                className="contratistas-cuit"
+                type="text" 
+                name="contratista" 
+                disabled={isDisable} 
+                value={contratista}></input> 
+        </td>
+    </tr>
+    </Fragment>
     }
 }
 

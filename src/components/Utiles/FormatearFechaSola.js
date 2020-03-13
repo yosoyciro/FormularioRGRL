@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-function FormatearFechaCelda(cell, row) {   
+function FormatearFechaSola(cell) {   
     switch (cell)
     {
         case null:
@@ -8,11 +8,11 @@ function FormatearFechaCelda(cell, row) {
 
         default:
             if (new Date(cell).getFullYear() !== 1800) 
-                return `${moment(cell).format("DD-MM-YYYY HH:mm")? moment(cell).format("DD-MM-YYYY HH:mm"):moment(cell).format("DD-MM-YYYY HH:mm") }`;
+                return `${moment(cell).format("DD/MM/YYYY")? moment(cell).format("DD/MM/YYYY"):moment(cell).format("DD/MM/YYYY") }`;
             else
                 return ''
     }
     
 }
 
-export default FormatearFechaCelda;
+export default FormatearFechaSola;

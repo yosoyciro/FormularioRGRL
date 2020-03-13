@@ -63,6 +63,7 @@ async function ValidarRespuestas(secciones, preguntas, respuestasCuestionario, r
 
     //Recorro respuestasResponsable
     respuestasResponsable.map(respRes => {
+        console.log('error responsables: ' + JSON.stringify(respRes))
         if (respRes.CUIT === 0 || respRes.Responsable === '' ||respRes.Representacion === '' || respRes.TituloHabilitante === '' || respRes.Matricula === '' || respRes.EntidadOtorganteTitulo === '')
             erroresRespuestas.push({InternoRespuestaCuestionario: respRes.Interno, InternoCuestionario: 0, Pagina: 60})
             

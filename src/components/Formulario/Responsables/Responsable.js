@@ -17,38 +17,38 @@ class Responsable extends Component{
             case 'responsable':
                 //this.setState({ responsable: event.target.value });
                 //this.props.actualizarResponsable(this.props.responsable.Interno, this.props.cuit, event.target.value, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
-                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.cuit, event.target.value, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
+                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.CUIT, event.target.value, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
                 break;
 
             case 'cargo':
                 //console.log('event.target.value: ' + event.target.value)
                 //this.setState({ cargo: event.target.value });
-                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.cuit, this.props.responsable.Responsable, event.target.value, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
+                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.CUIT, this.props.responsable.Responsable, event.target.value, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
                 break;
 
             case 'representacion':
                 //this.setState({ representacion: event.target.value });
-                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.cuit, this.props.responsable.Responsable, this.props.responsable.Cargo, event.target.value, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo)
+                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.CUIT, this.props.responsable.Responsable, this.props.responsable.Cargo, event.target.value, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo)
                 break;
                 
             case 'escontratado':
                 //this.setState({ escontratado: event.target.value });
-                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.cuit, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, event.target.value, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
+                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.CUIT, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, event.target.value, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
                 break;
 
             case 'titulohabilitante':
                 //this.setState({ titulohabilitante: event.target.value });
-                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.cuit, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, event.target.value, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
+                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.CUIT, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, event.target.value, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
                 break;
 
             case 'matricula':
                 //this.setState({ matricula: event.target.value });
-                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.cuit, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, event.target.value, this.props.responsable.EntidadOtorganteTitulo);
+                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.CUIT, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, event.target.value, this.props.responsable.EntidadOtorganteTitulo);
                 break;
 
             case 'entidadotorgantetitulo':
                 //this.setState({ entidadotorgantetitulo: event.target.value });
-                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.cuit, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, event.target.value);
+                this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.CUIT, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, event.target.value);
                 break;    
 
             default:
@@ -65,7 +65,7 @@ class Responsable extends Component{
 
         const respuesta = await BuscarPersona(param);               
         //console.log('respuesta: ' + respuesta[0].razonSocial);
-        this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.cuit, respuesta[0].razonSocial, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
+        this.props.cambioResponsablesTodo(this.props.responsable.Interno, this.props.responsable.CUIT, respuesta[0].razonSocial, this.props.responsable.Cargo, "Representante Legal", this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
     }
 
     render() {      
@@ -120,8 +120,8 @@ class Responsable extends Component{
                 </td>
                 <td>
                     <select className="Select" name="escontratado" disabled={isDisable} onChange={this.handleChange} value={esContratado}>
-                        <option value="Propio">Propio</option>
-                        <option value="Contratado">Contratado</option>
+                        <option value="0">Propio</option>
+                        <option value="1">Contratado</option>
                     </select>
                 </td>
                 <td>

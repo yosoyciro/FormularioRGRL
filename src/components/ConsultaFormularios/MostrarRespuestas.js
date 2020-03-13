@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import RenderizarPreguntas from './RenderizarPreguntas';
 import RenderizarContratistas from '../../components/Formulario/Contratistas/RenderizarContratistas'
 import RenderizarResponsables from '../../components/Formulario/Responsables/RenderizarResponsables'
-import GremioConsulta from '../Formulario/Gremios/GremioConsulta';
+import RenderizarGremios from '../Formulario/Gremios/RenderizarGremios';
 
 export class MostrarRespuestas extends Component{  
     renderizarPagina(pagina) {
@@ -10,12 +10,7 @@ export class MostrarRespuestas extends Component{
             case 40:
                 return <div>
                     <h2>Gremios</h2>
-                    {this.props.gremios.map((gremio) => {
-                        return <GremioConsulta 
-                            key={gremio.Interno} 
-                            gremio={gremio}
-                        />
-                    })}
+                    {RenderizarGremios(this.props.gremios)}
                 </div>
 
             case 50: 
@@ -35,7 +30,7 @@ export class MostrarRespuestas extends Component{
             default:
                 const seccionesPagina = this.props.secciones.filter(seccion => seccion.Pagina === this.props.pagina)      
                 return <div>
-                    <h2>Respuestas</h2>
+                    <h2>CONDICIONES A CUMPLIR</h2>
                     {seccionesPagina.map(seccion => 
                         <div>
                             <label>{seccion.Descripcion}</label>                                   

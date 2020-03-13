@@ -19,11 +19,11 @@ function RenderizarPreguntas(props) {
                 <table className="formularioa-table">
                     <thead className="cabecera">
                         <tr>
-                            <th className="cabecera-codigo">Codigo</th>
-                            <th className="cabecera-pregunta">Pregunta</th>
+                            <th className="cabecera-codigo">Nro</th>
+                            <th className="cabecera-pregunta">{props.seccion.Descripcion}</th>
                             <th className="cabecera-select">Respuesta</th>
-                            <th className="cabecera-fecha">Fecha Est. Realización</th>
-                            <th className="cabecera-comentario">Observaciones</th>                                                
+                            <th className="cabecera-fecha">Fecha de Regularización</th>
+                            <th className="cabecera-comentario">Norma Vigente</th>                                                
                         </tr>
                     </thead>
                     <tbody>
@@ -45,12 +45,20 @@ function RenderizarPreguntas(props) {
             preguntasRender = (
                 <table className="formularioa-table">
                     <thead className="cabecera">
-                        <tr>
-                            <th className="cabecera-codigo">Codigo</th>
-                            <th className="cabecera-pregunta">Pregunta</th>
-                            <th className="cabecera-select">Respuesta</th>
-                            <th className="cabecera-comentario">Observaciones</th>                                                
-                        </tr>
+                        {parseInt(props.seccion.Interno) === 37 || parseInt(props.seccion.Interno) === 101 || parseInt(props.seccion.Interno) === 120 ?
+                            <tr>
+                                <th className="cabecera-codigo">Cod</th>
+                                <th className="cabecera-pregunta">{props.seccion.Descripcion}</th>
+                                <th className="cabecera-select">Sí</th>
+                                <th className="cabecera-comentario">Norma Vigente</th>                                                
+                            </tr>
+                        :
+                            <tr>
+                                <th className="cabecera-codigo">Cod</th>
+                                <th className="cabecera-pregunta">{props.seccion.Descripcion}</th>
+                                <th className="cabecera-select">Sí</th>                                         
+                            </tr>
+                        }
                     </thead>
                     <tbody>
                         {preguntasSeccion.map(pregunta => (

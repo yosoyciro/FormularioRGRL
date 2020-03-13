@@ -1,46 +1,43 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import {Spinner} from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
 import filterFactory, { textFilter ,selectFilter } from 'react-bootstrap-table2-filter';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
-import CargarConsultaFormularios from '../../Api/CargarConsultaFormularios';
-import MostrarRespuestas from './MostrarRespuestas';
-import CargarSeccionesFormulario from '../../Api/CargarSeccionesFormulario';
-import CargarRespuestas from '../../Api/CargarRespuestas';
-import CargarPreguntas from '../../Api/CargarPreguntas';
-import BotonesPagina from '../BotonesFormulario/BotonesPaginas';
 import FormatearFechaCelda from '../Utiles/FormatearFechaCelda'
-import './ListarFormularios.css'
+import './ListarFormulariosRAR.css'
+import CargarConsultaFormulariosRAR from '../../Api/FormulariosRAR/CargarConsultaFormulariosRAR';
 
-export class ListaFormularios extends Component{
+export class ListaFormulariosRAR extends Component{
     constructor(props) {
         super(props)
         this.state = {
-            loading: true,
-            pagina: 1,
-            formulariosCargados: [],
-            internoFormulario: 0,
-            internoEstablecimiento: 0,
-            secciones: [],
-            preguntas: [],
-            respuestasCuestionario: [],
-            respuestasGremio: [],
-            respuestasContratista: [],
-            respuestasResponsable: []
+            loading: null,
+            formulariosRAR: [],
+            formulariosRARDetalle: [],
+            internoFormulariosRAR: 0,
+            internoEstablecimiento: 0
         }
     }
 
     componentDidMount() {        
         //this.setState({formulariosCargados: await CargarConsultaFormularios()})
         this.setState({ loading: true })
-        CargarConsultaFormularios()
+
+        CargarConsultaFormulariosRAR()
         .then(response => {
-            console.log('traigo los datos')
-            this.setState({
-                loading: !this.state.loading,
-                formulariosCargados: response
-            })
+            switch (response)
+            {
+                case undefined:
+                    break;
+
+                default:
+                    console.log('response: ' + response)
+                    this.setState({
+                        loading: !this.state.loading,
+                        formulariosRAR: response
+                    })
+            }        
         })
         //console.log('JSON: ' + JSON.stringify(response))        
     }
@@ -48,43 +45,25 @@ export class ListaFormularios extends Component{
     handleClick (e, row, rowIndex) {
         console.log(`Interno: ${row.Interno}`);
         this.setState({
-            internoFormulario: row.InternoFormulario,
+            internoFormulariosRAR: row.InternoFormulariosRAR,
             internoEstablecimiento: row.internoEstablecimiento,
-            pagina: 1,
-            //loading: !this.state.loading
         })
-        this.cargarDatos(row.InternoFormulario, row.InternoEstablecimiento)
+        //this.cargarDatos(row.Interno)
         this.props.seleccionaRegistro(row.CUIT)
     }
 
     cargarDatos = async (internoFormulario, internoEstablecimiento) => {
-        const secciones = await CargarSeccionesFormulario(internoFormulario)
-        const preguntas = await CargarPreguntas(internoFormulario)
-        const respuestasCuestionario = await CargarRespuestas({internoFormulario, internoEstablecimiento})
-
-        this.setState({
-            secciones,
-            preguntas,
-            respuestasCuestionario: respuestasCuestionario.RespuestasCuestionario,
-            respuestasGremio: respuestasCuestionario.RespuestasGremio,
-            respuestasContratista: respuestasCuestionario.RespuestasContratista,
-            respuestasResponsable: respuestasCuestionario.RespuestasResponsable
-            //loading: !this.state.loading
-        })
-        //console.log('respuestasGremio: ' + JSON.stringify(this.state.respuestasGremio))
+        //Aqui traigo los detalles del formulario
     }
 
     handleCambioPagina = (pagina) => {
-        console.log('pagina: ' + pagina)
         this.setState({pagina: parseInt(pagina)})
         this.props.seleccionaRegistro(0)
     }
 
     handleDataChange = ({ dataSize }) => {
-        //this.setState({ rowCount: dataSize });
-        console.log('cambia la tabla')
         this.setState({
-            internoFormulario: 0,
+            internoFormulariosRAR: 0,
             internoEstablecimiento: 0
         })
         this.props.seleccionaRegistro(0)
@@ -92,9 +71,8 @@ export class ListaFormularios extends Component{
 
     handlePagChange = () => {
         //this.setState({ rowCount: dataSize });
-        console.log('cambia la pagina')
         this.setState({
-            internoFormulario: 0,
+            internoFormulariosRAR: 0,
             internoEstablecimiento: 0
         })
         this.props.seleccionaRegistro(0)
@@ -102,7 +80,6 @@ export class ListaFormularios extends Component{
     
 
     render(){
-        console.log('render-loading: ' + this.state.loading) 
         const { SearchBar } = Search;
 
         const selectOptions = {
@@ -115,7 +92,7 @@ export class ListaFormularios extends Component{
             sizePerPage: 5,
             hideSizePerPage: true,
             hidePageListOnlyOnePage: true,
-            totalSize: this.state.formulariosCargados.length,
+            totalSize: this.state.formulariosRAR.length,
             onClick: (e) => {
                 //console.log('click en pagina')
             },
@@ -164,41 +141,33 @@ export class ListaFormularios extends Component{
                 text: 'Establecimiento'
             },
             {
-                dataField: 'Descripcion',
-                text: 'Formulario'
+                dataField: 'CantTrabajadoresExpuestos',
+                text: 'Cant. Trabajadores Expuestos',
+            },
+            {
+                dataField: 'CantTrabajadoresNoExpuestos',
+                text: 'Cant. Trabajadores NO Expuestos',
             },
             {
                 dataField: 'Estado',
-                text: 'Estado   ',
-                sort: true,
-                formatter: cell => selectOptions[cell],
-                filter: selectFilter({
-                    options: selectOptions,
-                    placeholder: 'Todos',
-                    className: 'test1',
-                })
-            },
+                text: 'Estado'
+            },            
             {
-                dataField: 'CreacionFechaHora',
+                dataField: 'FechaCreacion',
                 text: 'Fecha Hora Creacion',
                 formatter: FormatearFechaCelda,
                 sort: true           
             },
             {
-                dataField: 'CompletadoFechaHora',
+                dataField: 'FechaPresentacion',
                 text: 'Fecha Hora Confirmado',
                 formatter: FormatearFechaCelda
-            },
-            {
-                dataField: 'InternoFormulario',
-                text: 'InternoFormulario',
-                hidden: true
-            },
+            },            
             {
                 dataField: 'InternoEstablecimiento',
                 text: 'InternoEstablecimiento',
                 hidden: true
-            }
+            }            
         ];
 
         const contentTable = ({ paginationProps, paginationTableProps }) => (
@@ -209,7 +178,7 @@ export class ListaFormularios extends Component{
               <ToolkitProvider
                 keyField="Interno"
                 columns={ columns }
-                data={ this.state.formulariosCargados }
+                data={ this.state.formulariosRAR }
                 search
               >
                 {
@@ -253,20 +222,7 @@ export class ListaFormularios extends Component{
                     </PaginationProvider>
                     {this.state.internoFormulario !== 0 && this.state.internoEstablecimiento !== 0 ?
                         <>
-                            <BotonesPagina 
-                                confirmado={false}                            
-                                pagina={this.state.pagina}
-                                cambioPagina={this.handleCambioPagina}
-                            />                      
-                            <MostrarRespuestas
-                                secciones={this.state.secciones}
-                                preguntas={this.state.preguntas}
-                                respuestasCuestionario={this.state.respuestasCuestionario}
-                                gremios={this.state.respuestasGremio}
-                                contratistas={this.state.respuestasContratista}
-                                responsables={this.state.respuestasResponsable}
-                                pagina={this.state.pagina}
-                            />
+                            
                         </>
                     :
                         null                    
@@ -278,4 +234,4 @@ export class ListaFormularios extends Component{
 }
 
 
-export default ListaFormularios;
+export default ListaFormulariosRAR;

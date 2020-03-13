@@ -20,6 +20,17 @@ class Pregunta extends Component{
     handleChange = (event) => {
         console.log(event.target.name)
         this.props.cambioRespuesta(event.target.value, this.props.internoRespuestaCuestionario);
+
+        //por defecto cuando pongo No, también actualizo la fecha
+        switch (event.target.value) {
+            case 'N':                
+                const fecha = fecha.setDate(new Date().getDate() + 90);
+                this.handleChangeFecha(fecha)
+                break;
+                
+            default:
+                break;
+        }
     }
 
     handleChangeFecha = date => {        
@@ -29,10 +40,6 @@ class Pregunta extends Component{
     }
 
     cambioCheck = (event) => {
-        //console.log('event.target: ' + event.target.value + ' - event.target.checked: ' + event.target.checked);
-        /*const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        this.setState({opcion: value});*/
         switch(event.target.checked) {
             case true:
                 //this.setState({respuesta: "S"}); 
