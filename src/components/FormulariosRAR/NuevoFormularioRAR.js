@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import DatosGeneralesRAR from '../UI/DatosGenerales/DatosGeneralesRAR';
 import CargarFormularioRAR from './CargarFormularioRAR';
 import GenerarFormularioRAR from './GenerarFormularioRAR';
+import { Button } from 'react-bootstrap';
 
 class NuevoFormularioRAR extends Component{   
     constructor(props) {
         super(props)
         this.handleFormularioGenerado = this.handleFormularioGenerado.bind(this);
+        this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
         this.state = {
             formularioRARGenerado: []
         }
@@ -18,16 +20,22 @@ class NuevoFormularioRAR extends Component{
             formularioRARGenerado            
         })        
     }
+
+    handleFinalizaCarga() {
+        this.props.finalizaCarga()
+    }
     
-    render() {
-        const { handle } = this.props.match.params
+    render() {        
+        //const { match: { params } } = this.props;
+        //console.log('params: ' + params)
         const disabled = this.state.formularioRARGenerado.length === 0 ? false : true
-        //console.log('[Formularios] cuit: ' + handle)
+        //console.log('[NuevoFormularioRAR] cuit: ' + params.cuitSeleccionado)
 
         return <Fragment>
             <h2>Formulario RAR</h2>
             <DatosGeneralesRAR 
-                cuit={handle}
+                cuit={this.props.cuit}
+                finalizaCarga={this.handleFinalizaCarga}
             />
             {this.props.establecimientoSeleccionado !== 0 ?
                 <GenerarFormularioRAR 

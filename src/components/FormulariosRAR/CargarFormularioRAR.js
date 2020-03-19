@@ -79,7 +79,7 @@ export class CargarFormularioRAR extends Component{
 
         const props = {
             Interno: row.Interno,
-            InternoFormulariosRAR: row.InternoFormulariosRAR,
+            InternoFormulariosRAR: this.state.internoFormulariosRAR, //row.InternoFormulariosRAR,
             CUIL: row.CUIL,
             Nombre: row.Nombre,
             SectorTarea: row.SectorTarea,
@@ -205,7 +205,7 @@ export class CargarFormularioRAR extends Component{
     handleLimpiar(){
         this.setState({
             internoFormulariosRARDetalle: null,
-            internoFormulariosRAR: null,
+            //internoFormulariosRAR: null,
             cuil: null,
             nombre: null,
             sectorTarea: null,
@@ -221,7 +221,7 @@ export class CargarFormularioRAR extends Component{
         console.log('row.FechaIngreso: ' + row.FechaIngreso)
         this.setState({             
             internoFormulariosRARDetalle: row.Interno,
-            internoFormulariosRAR: row.InternoFormulariosRAR,
+            //internoFormulariosRAR: row.InternoFormulariosRAR,
             cuil: row.CUIL,
             nombre: row.Nombre,
             sectorTarea: row.SectorTarea,

@@ -25,7 +25,7 @@ class App extends React.Component {
                 <Route path='/ConsultaFormularios' component={ConsultaFormularios}/>
                 <Route path='/ConsultaFormulariosRAR' component={FormulariosRAR}/>
                 <Route path='/NuevoFormularioRAR' component={NuevoFormularioRAR}/>
-                <Route path='/NuevoFormularioRAR/:handle' component={NuevoFormularioRAR}/>
+                <Route path='/NuevoFormularioRAR/:cuitSeleccionado' component={NuevoFormularioRAR}/>
               </Switch>   
           </div>
         </BrowserRouter>

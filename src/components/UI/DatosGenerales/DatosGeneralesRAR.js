@@ -12,6 +12,7 @@ import CustomizedSnackbars from '../Snackbar/Snackbar'
 class DatosGeneralesRAR extends Component{
     constructor(props) {
         super(props)
+        this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
         this.state = {
             cuit: 0,
             cuitValido: false,
@@ -65,6 +66,10 @@ class DatosGeneralesRAR extends Component{
         this.setState({showModal: !this.state.showModal})
     }
 
+    handleFinalizaCarga() {
+        this.props.finalizaCarga()
+    }
+
 render() {       
     //console.log('this.state.cuitValido: ' + this.state.cuitValido) 
     
@@ -84,6 +89,7 @@ render() {
                 disabled={disable}
             ></input> 
             <Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> 
+            <Button onClick={this.handleFinalizaCarga} variant="primary" disabled={disable}>Finaliza</Button> 
         </fieldset>
     </form>  
     {this.state.cuitValido === true ?
