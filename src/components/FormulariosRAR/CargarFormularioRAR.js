@@ -2,7 +2,6 @@ import React, {Component, Fragment} from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
 import Button from 'react-bootstrap/Button';
-import DatePicker from "react-datepicker";
 import GuardarFormularioRARDetalle from '../../Api/FormulariosRAR/GuardarFormularioRARDetalle';
 import CargarFormulariosRARDetalle from '../../Api/FormulariosRAR/CargarFormulariosRARDetalle';
 import BorrarFormularioRARDetalle from '../../Api/FormulariosRAR/BorrarFormularioRARDetalle';
@@ -12,10 +11,9 @@ import FormatearFechaSola from '../Utiles/FormatearFechaSola'
 import BuscarPersona from '../../Api/BuscarPersona';
 import ConsultarRefAgenteCausante from '../../Api/FormulariosRAR/RefAgenteCausante';
 import {ConsultarFormularioRARDetalleAgentes} from '../../Api/FormulariosRAR/FormulariosRARDetalleAgentes';
-import FormulariosRARDetalleAgentes from './FormulariosRARDetalleAgentes';
-import Select from 'react-select';
 import { Form, Col, Row } from 'react-bootstrap';
 import './FormulariosRAR.css'
+import { ConfirmarFormularioRAR } from '../../Api/FormulariosRAR/FormularioRAR';
 
 export class CargarFormularioRAR extends Component{
     constructor(props) {
@@ -28,6 +26,7 @@ export class CargarFormularioRAR extends Component{
         this.handleBorrar = this.handleBorrar.bind(this)
         this.handleLoading = this.handleLoading.bind(this)
         this.handleChangeAgente = this.handleChangeAgente.bind(this)
+        this.handleConfirmar = this.handleConfirmar.bind(this);
         this.state = {
             loading: true,
             formulariosRARDetalle: [],
@@ -36,6 +35,7 @@ export class CargarFormularioRAR extends Component{
             //formulariosRARDetalleAgentes: [],
             internoFormulariosRAR: null,
             internoFormulariosRARDetalle: null,
+            cantTrabajadoresExpuestos: 0,
             internoEstablecimiento: 0,
             cuil: null,
             nombre: null,
@@ -49,13 +49,17 @@ export class CargarFormularioRAR extends Component{
     }
 
     componentDidMount() {        
+        //console.log('ComponenDidMount - this.props.formularioRARGenerado: ' + this.props.formularioRARGenerado)
         //podría ver si tiene algo y traer los datos
         //console.log('formularioGenerado.Interno: ' + JSON.stringify(this.props.formularioRARGenerado[0].Interno))
-        console.log('this.props.formularioRARGenerado[0].Interno: ' + this.props.formularioRARGenerado[0].Interno)
-        this.setState({             
-            internoFormulariosRAR: this.props.formularioRARGenerado[0].Interno            
-        })
-
+        //console.log('this.props.formularioRARGenerado[0].Interno: ' + this.props.formularioRARGenerado[0].Interno)
+        this.props.formularioRARGenerado.map(form => (
+            this.setState({             
+                internoFormulariosRAR: form.Interno,
+                cantTrabajadoresExpuestos: form.CantTrabajadoresExpuestos
+            })
+        ))
+        
         //Cargo los agentes causantes
         ConsultarRefAgenteCausante()
         .then(resp => {
@@ -274,6 +278,42 @@ export class CargarFormularioRAR extends Component{
     }
     //#endregion
 
+    cantidadTrabajadoresCargados = () => {
+        const detalleCUIL = this.state.formulariosRARDetalle.map(detalle => {
+            return detalle.CUIL
+        })
+        //Filtro CUILs duplicados
+        const trabajadores = [...new Set(detalleCUIL)]
+        //console.log('trabajadores: ' + JSON.stringify(trabajadores))
+        return trabajadores.length
+    }
+
+    handleConfirmar(){
+        this.setState({ loading: !this.state.loading })
+
+        const props = this.state.internoFormulariosRAR
+
+        ConfirmarFormularioRAR(props)
+        .then(resp => {                            
+            this.setState({ 
+                loading: !this.state.loading
+            })
+            console.log('[CargarFormularioRAR] - ConfirmarFormularioRAR - resp: ' + resp)
+            switch(resp)
+            {
+                case true:
+                    this.props.finalizaCarga()
+                    break;
+
+                case false:
+                    break;
+
+                default:
+                    break;
+            }
+        })
+    }
+
     render(){
         //campos a cargar
         const CUIL = this.state.cuil === null ? '' : this.state.cuil
@@ -287,6 +327,10 @@ export class CargarFormularioRAR extends Component{
         //Disabled botones
         const disableBorrar = this.state.internoFormulariosRARDetalle !== null && this.state.internoFormulariosRARDetalle !== 0 ? false : true
         const disableCUIL = (this.state.internoFormulariosRARDetalle !== null && this.state.internoFormulariosRARDetalle !== 0) || (this.state.cuilValido === true) ? true : false
+        const disableConfirma = this.cantidadTrabajadoresCargados() !== this.state.cantTrabajadoresExpuestos ? true : false
+
+        //Cantidad trabajadores cargados
+        //const cantidadTrabajadoresCargados = this.cantidadTrabajadoresCargados(this.state.formulariosRARDetalle)
 
         //Propiedades de la tabla
         //#region Columnas
@@ -342,7 +386,7 @@ export class CargarFormularioRAR extends Component{
         //#endregion
 
         //Caption
-        const caption = 'Trabajadores cargados ' + this.state.formulariosRARDetalle.length + ' de ' + this.props.formularioRARGenerado[0].CantTrabajadoresExpuestos
+        const caption = 'Trabajadores cargados ' + this.cantidadTrabajadoresCargados(this.state.formulariosRARDetalle) + ' de ' + this.state.cantTrabajadoresExpuestos
         const CaptionElement = () => <h4 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'blue', border: '1px solid purple', padding: '0.5em' }}>{caption}</h4>;        
 
         //Seleccion
@@ -426,6 +470,7 @@ export class CargarFormularioRAR extends Component{
                                     name="sectortarea"
                                     placeholder="Sector/Tarea" 
                                     onChange={this.handleChangeCampos}
+                                    required
                                 >
                                 </Form.Control>
                             </Form.Group>
@@ -440,6 +485,7 @@ export class CargarFormularioRAR extends Component{
                                     name="fechaingreso"
                                     onChange={this.handleChangeCampos}
                                     placeholderText="Fecha de ingreso"
+                                    required
                                 >
                                 </Form.Control>
                             </Form.Group>
@@ -454,6 +500,7 @@ export class CargarFormularioRAR extends Component{
                                     name="horasexposicion"
                                     placeholder="Hs Exposición" 
                                     onChange={this.handleChangeCampos}
+                                    required
                                 >
                                 </Form.Control>
                             </Form.Group>
@@ -468,6 +515,7 @@ export class CargarFormularioRAR extends Component{
                                     name="fechaultimoexamenmedico"
                                     onChange={this.handleChangeCampos}
                                     placeholderText="Fecha de ultimo exámen médico"
+                                    required
                                 >
                                 </Form.Control>
                             </Form.Group>
@@ -482,6 +530,7 @@ export class CargarFormularioRAR extends Component{
                                 as="select" 
                                 name="codigoagente" 
                                 onChange={event => this.handleChangeAgente(event.target)}
+                                required
                             >                                            
                                 {this.state.refAgenteCausante.map(agente => {        
                                     return <option value={agente.Codigo}>{'Código: ' + agente.Codigo + ' - Agente: ' + agente.AgenteCausante + ' - Tipo: ' + agente.AgenteTipo}</option>
@@ -502,6 +551,7 @@ export class CargarFormularioRAR extends Component{
                     rowEvents={ rowEvents } 
                     selectRow={ selectRow }
                 />
+                <Button variant="primary" onClick={this.handleConfirmar} disabled={disableConfirma}>Confirma</Button>  
                 </>
             }
         </div>

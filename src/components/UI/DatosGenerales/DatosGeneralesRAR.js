@@ -1,11 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import * as tiposAcciones from '../../../Store/acciones';
 import BuscarPersona from '../../../Api/BuscarPersona'
-import ElegirEstablecimiento from '../ElegirEstablecimiento/ElegirEstablecimiento';
 import Button from 'react-bootstrap/Button'
 import './DatosGenerales.css'
-import ElegirTipoFormulario from '../ElegirTipoFormulario/ElegirTipoFormulario';
 import CustomizedSnackbars from '../Snackbar/Snackbar'
 
 //Componente que se conecta al web api y trae todas las preguntas
@@ -15,21 +11,34 @@ class DatosGeneralesRAR extends Component{
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
         this.state = {
             cuit: 0,
-            cuitValido: false,
-            nombre: '',
+            razonSocial: '',
+            cuitValido: false,            
             showSnackBar: false,
             mensajeSnackbar: '',
-            severitySnackbar: ''
+            severitySnackbar: '',
         }
     } 
     
     componentDidMount() {
-        //Limpio siempre todo del Redux
-        this.props.datosGenerales(0, 0, '') 
-        this.props.seleccionEstablecimiento(0, '');
-        
         console.log('[DatosGenerales] this.props.cuit: ' + this.props.cuit)
-        this.setState({cuit: parseInt(this.props.cuit)})
+        this.setState({
+            cuit: parseInt(this.props.cuit),            
+        })
+
+        switch (parseInt(this.props.cuit))
+        {
+            case 0:
+                break;
+
+            default:
+                this.setState({ 
+                    cuitValido: true,
+                    razonSocial: this.props.razonSocial
+                })
+
+                this.props.seleccionCUIT(this.state.cuit, this.state.razonSocial)
+                break;
+        }
     }
 
     handleChange = (event) => {   
@@ -50,16 +59,18 @@ class DatosGeneralesRAR extends Component{
         console.log('respuesta: ' + respuesta[0].razonSocial)
         if (respuesta[0].id !== 0)
         {
-            this.setState({ cuitValido: !this.state.cuitValido })  
-            this.setState({ nombre: respuesta[0].razonSocial})                     
+            this.setState({ 
+                cuitValido: !this.state.cuitValido,                
+            })    
+            
+            this.props.seleccionCUIT(this.state.cuit, respuesta[0].razonSocial)
         }
         else
-            this.setState({showSnackBar: !this.state.showSnackBar})                
-            this.setState({mensajeSnackbar: 'Es imprescindible que el CUIT ingresado pertenezca a un empleador relacionado con esta ART'})
-            this.setState({severitySnackbar: "warning"})
-
-            //al redux
-            this.props.datosGenerales(this.state.cuit, respuesta[0].id, respuesta[0].razonSocial)        
+            this.setState({
+                showSnackBar: !this.state.showSnackBar,
+                mensajeSnackbar: 'Es imprescindible que el CUIT ingresado pertenezca a un empleador relacionado con esta ART',
+                severitySnackbar: "warning"
+            })                
     }    
     
     handleCambioShowModal(){
@@ -71,8 +82,6 @@ class DatosGeneralesRAR extends Component{
     }
 
 render() {       
-    //console.log('this.state.cuitValido: ' + this.state.cuitValido) 
-    
     const disable = this.state.cuitValido === false ? false : true    
     let handleCerrarSnackbar=() => this.setState({showSnackBar: false})
 
@@ -89,25 +98,9 @@ render() {
                 disabled={disable}
             ></input> 
             <Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> 
-            <Button onClick={this.handleFinalizaCarga} variant="primary" disabled={disable}>Finaliza</Button> 
+            <Button onClick={this.handleFinalizaCarga} variant="primary">Finaliza</Button> 
         </fieldset>
-    </form>  
-    {this.state.cuitValido === true ?
-        <ElegirEstablecimiento 
-            cuit={this.state.cuit}
-            razonSocial={this.state.nombre}
-        />                         
-    :
-        null
-    }  
-    {/*{this.props.establecimientoSeleccionado ?
-        <ElegirTipoFormulario
-            cuit={this.state.cuit}
-            establecimiento={this.props.establecimientoSeleccionado}
-        />
-    :
-        null
-    }*/}
+    </form>       
     {this.state.showSnackBar === true ?
         <CustomizedSnackbars 
             show={this.state.showSnackBar}
@@ -125,18 +118,4 @@ render() {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        datGen: state.datos.cuit,
-        establecimientoSeleccionado: state.establecimiento.interno, 
-    };
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        datosGenerales: (cuit, interno, razonsocial) => dispatch({type: tiposAcciones.DATOSGENERALES_CUIT, cuit: cuit, interno: interno, razonsocial: razonsocial}),
-        seleccionEstablecimiento: (internoEstablecimiento, descripcion) => dispatch({type: tiposAcciones.ESTABLECIMIENTO_SELECCION, internoEstablecimiento: internoEstablecimiento, descripcion: descripcion})
-    };
-}
-
-export default connect(mapStateToProps,mapDispatchToProps) (DatosGeneralesRAR);
+export default DatosGeneralesRAR;

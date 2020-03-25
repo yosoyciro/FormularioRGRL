@@ -3,7 +3,7 @@ import Api from '../Api';
 async function CargarConsultaFormulariosRAR(props) {
     try {        
         const response = await Api.get(`FormulariosRAR/Consultar?pInternoEstablecimiento=${props}`)
-        //console.log('response.data: ' + response.data)
+        //console.log('response: ' + Object.values(response.data))
         return response.data
     }
 

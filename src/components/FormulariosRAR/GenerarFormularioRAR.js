@@ -18,26 +18,37 @@ export class GenerarFormularioRAR extends Component{
 
     componentDidMount() {
         //Verifico si hay un formulario en proceso de carga
-        this.setState({guardando: !this.state.guardando})
-        ConsultarPendientes(this.props.establecimiento)
-        .then(resp => {                
-            console.log('resp.Interno: ' + resp[0].Interno)                 
-            this.setState({
-                guardando: !this.state.guardando                
-            })
-            switch (resp[0].Interno)
-            {
-                case undefined:
-                    break;
-
-                default:
+        console.log('[GenerarFormularioRAR] - this.props.establecimiento: ' + parseInt(this.props.internoEstablecimiento))
+        switch (parseInt(this.props.internoEstablecimiento))
+        {
+            case 0:                
+                break;
+            
+            default:
+                this.setState({guardando: !this.state.guardando})
+                ConsultarPendientes(this.props.internoEstablecimiento)
+                .then(resp => {      
+                    //console.log('resp: ' + resp[0])  
+             
                     this.setState({
-                        cantTrabajadoresExpuestos: resp[0].CantTrabajadoresExpuestos,
-                        cantTrabajadoresNoExpuestos: resp[0].CantTrabajadoresNoExpuestos,
+                        guardando: !this.state.guardando                
                     })
-                    this.props.formularioGenerado(resp) 
-            }            
-        })
+                    //switch (resp[0].Interno)
+                    switch (resp[0])
+                    {
+                        case undefined:
+                            break;
+        
+                        default:
+                            this.setState({
+                                cantTrabajadoresExpuestos: resp[0].CantTrabajadoresExpuestos,
+                                cantTrabajadoresNoExpuestos: resp[0].CantTrabajadoresNoExpuestos,
+                            })
+                            this.props.formularioGenerado(resp) 
+                    }            
+                })
+                break;
+        }        
     }
 
     handleChange = (event) => {   
@@ -64,18 +75,35 @@ export class GenerarFormularioRAR extends Component{
     
         const props = {            
             Interno: 0,
-            InternoEstablecimiento: this.props.establecimiento,
+            InternoEstablecimiento: this.props.internoEstablecimiento,
             CantTrabajadoresExpuestos: this.state.cantTrabajadoresExpuestos,
             CantTrabajadoresNoExpuestos: this.state.cantTrabajadoresNoExpuestos,
             FechaCreacion: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss'),
             FechaPresentacion: ''
         }
         GuardarFormularioRAR(props)
-        .then(resp => {
-            this.setState({
-                guardando: !this.state.guardando,
-            })
-            this.props.formularioGenerado(resp)                
+        .then(formRAR => {
+            ConsultarPendientes(formRAR.InternoEstablecimiento)
+            .then(resp => {      
+                //console.log('resp: ' + resp[0])  
+            
+                this.setState({
+                    guardando: !this.state.guardando                
+                })
+                //switch (resp[0].Interno)
+                switch (resp[0])
+                {
+                    case undefined:
+                        break;
+    
+                    default:
+                        this.setState({
+                            cantTrabajadoresExpuestos: resp[0].CantTrabajadoresExpuestos,
+                            cantTrabajadoresNoExpuestos: resp[0].CantTrabajadoresNoExpuestos,
+                        })
+                        this.props.formularioGenerado(resp) 
+                }            
+            })   
         })
     }    
 
@@ -105,8 +133,7 @@ export class GenerarFormularioRAR extends Component{
                             onChange={this.handleChange}
                             disabled={disabled}
                         ></input> 
-                        <Button variant="primary" type="submit" disabled={disabled}>Genera</Button>  
-                        <Button variant="primary" type="submit" disabled={!disabled}>Confirma</Button>  
+                        <Button variant="primary" type="submit" disabled={disabled}>Genera</Button>                          
                     </fieldset> 
                 </form>       
             }

@@ -4,13 +4,12 @@ async function GuardarFormularioRAR(props) {
     let ret = []
     //console.log('props: ' + JSON.stringify(props))
     try {
-        await Api.post(`FormulariosRAR/Guardar`, props, {
+        const response = await Api.post(`FormulariosRAR/Guardar`, props, {
             headers: {
                 'Content-Type': 'application/json',
-            }            
-        })
-        .then(resp => 
-            ret = resp.data)   
+            }                        
+        })  
+        return response.data
     }
     catch (error) {
         console.log('[GuardarFormulariosRAR]: ' + error);        
