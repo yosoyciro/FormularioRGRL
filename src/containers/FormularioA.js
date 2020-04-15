@@ -580,7 +580,7 @@ class FormularioA extends Component{
     //#region Handles RespuestasCuestionatrios
     handleFechaRegularizacion(fechaRegularizacion, interno) {
         //console.log('internoRespuestaCuestionario: ' + interno)
-        console.log('handleFechaRegularizacion: ' + fechaRegularizacion)
+        //console.log('handleFechaRegularizacion: ' + fechaRegularizacion)
 
         const respuestasCuestionario = this.state.respuestasCuestionario
         //console.log('respuestasCuestionario: ' + JSON.stringify(respuestasCuestionario))

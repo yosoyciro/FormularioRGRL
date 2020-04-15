@@ -51,7 +51,7 @@ class PreguntaConsulta extends Component{
                         <label className="pregunta-lbl">{this.props.pregunta.Pregunta}</label>
                     </td>
                     <td>
-                    <label>{respuesta}</label> 
+                        <label>{respuesta}</label> 
                     </td>
                     <td>  
                     {respuesta !== 'No' ?
@@ -72,21 +72,26 @@ class PreguntaConsulta extends Component{
                         <label className="pregunta-comentario-label">{this.props.pregunta.Comentario}</label>             
                     </td>
                     </tr>                   
-                </Fragment> :
+                </Fragment> 
+            :
                 <Fragment>
                         <tr>
-                        <td>
-                            <label className="pregunta-lbl">{this.props.pregunta.Codigo}</label> 
-                        </td>
-                        <td className="celda">
-                            <label className="pregunta-lbl">{this.props.pregunta.Pregunta}</label>
-                        </td>
-                        <td>
-                            <label>{respuesta}</label>
-                        </td>
-                        <td className="pregunta-comentario">
-                            <label className="pregunta-comentario-label">{this.props.pregunta.Comentario}</label>             
-                        </td>
+                            <td>
+                                <label className="pregunta-lbl">{this.props.pregunta.Codigo}</label> 
+                            </td>
+                            <td className="celda">
+                                <label className="pregunta-lbl">{this.props.pregunta.Pregunta}</label>
+                            </td>
+                            <td>
+                                <label>{respuesta}</label>
+                            </td>
+                            {parseInt(this.props.pregunta.InternoSeccion) === 37 || parseInt(this.props.pregunta.InternoSeccion) === 101 || parseInt(this.props.pregunta.InternoSeccion) === 120 ?
+                                <td className="pregunta-comentario">
+                                    <label className="pregunta-comentario-label">{this.props.pregunta.Comentario}</label>             
+                                </td>
+                            :
+                                null
+                            }
                         </tr>
                 </Fragment>  
             }                                             

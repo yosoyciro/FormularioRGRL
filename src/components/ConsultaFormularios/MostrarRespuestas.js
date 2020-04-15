@@ -30,10 +30,18 @@ export class MostrarRespuestas extends Component{
             default:
                 const seccionesPagina = this.props.secciones.filter(seccion => seccion.Pagina === this.props.pagina)      
                 return <div>
-                    <h2>CONDICIONES A CUMPLIR</h2>
+                    {pagina >= 1 && pagina <= 8 ?
+                        <h3>CONDICIONES A CUMPLIR</h3>
+                    :
+                        null
+                    }
                     {seccionesPagina.map(seccion => 
                         <div>
-                            <label>{seccion.Descripcion}</label>                                   
+                            {seccion.Comentario !== '' ?
+                                <label>Comentario: {seccion.Comentario}</label>
+                            :
+                                null
+                            }                                 
                             <RenderizarPreguntas
                                 preguntas= {this.props.preguntas}
                                 seccion={seccion}

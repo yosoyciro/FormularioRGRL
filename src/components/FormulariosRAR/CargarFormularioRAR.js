@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
-import cellEditFactory, { Type } from 'react-bootstrap-table2-editor';
+import { Type } from 'react-bootstrap-table2-editor';
 import Button from 'react-bootstrap/Button';
 import GuardarFormularioRARDetalle from '../../Api/FormulariosRAR/GuardarFormularioRARDetalle';
 import CargarFormulariosRARDetalle from '../../Api/FormulariosRAR/CargarFormulariosRARDetalle';
@@ -11,9 +11,10 @@ import FormatearFechaSola from '../Utiles/FormatearFechaSola'
 import BuscarPersona from '../../Api/BuscarPersona';
 import ConsultarRefAgenteCausante from '../../Api/FormulariosRAR/RefAgenteCausante';
 import {ConsultarFormularioRARDetalleAgentes} from '../../Api/FormulariosRAR/FormulariosRARDetalleAgentes';
-import { Form, Col, Row } from 'react-bootstrap';
 import './FormulariosRAR.css'
 import { ConfirmarFormularioRAR } from '../../Api/FormulariosRAR/FormularioRAR';
+import TextField from '@material-ui/core/TextField';
+
 
 export class CargarFormularioRAR extends Component{
     constructor(props) {
@@ -27,6 +28,7 @@ export class CargarFormularioRAR extends Component{
         this.handleLoading = this.handleLoading.bind(this)
         this.handleChangeAgente = this.handleChangeAgente.bind(this)
         this.handleConfirmar = this.handleConfirmar.bind(this);
+        this.agenteDuplicado = this.agenteDuplicado.bind(this)
         this.state = {
             loading: true,
             formulariosRARDetalle: [],
@@ -44,7 +46,9 @@ export class CargarFormularioRAR extends Component{
             horasExposicion: null,
             fechaUltimoExamenMedico: null,
             codigoAgente: null,
-            cuilValido: false       
+            cuilValido: true,
+            trabajadorExiste: false,
+            errorAgente: false
         }
     }
 
@@ -63,11 +67,14 @@ export class CargarFormularioRAR extends Component{
         //Cargo los agentes causantes
         ConsultarRefAgenteCausante()
         .then(resp => {
-            this.setState({ refAgenteCausante: resp })
+            this.setState({ 
+                refAgenteCausante: resp,
+                codigoAgente: resp[0].Codigo
+            })
             //Cargo el detalle del form
             CargarFormulariosRARDetalle(this.props.formularioRARGenerado[0].Interno)
             .then(detalle => {
-                console.log('detalle: ' + detalle)            
+                //console.log('detalle: ' + detalle)            
                 this.setState({ formulariosRARDetalle: detalle })
             })
         })
@@ -105,13 +112,29 @@ export class CargarFormularioRAR extends Component{
         })
     }
 
+    //#region  handlechangecampos
     handleChangeCampos(event) {
-        switch (event.target.name)
+        //console.log('event: ' + event.target.id)
+        switch (event.target.id)
         {
             case 'cuil': 
+                this.setState({ 
+                    foco: 
+                    {
+                        cuil: true,
+                        sector: false,
+                        fechaIngreso: false,
+                        horas: false,
+                        fechaUltimoExamenMedico: false
+                    }
+                })
                 if (event.target.value.length === 11)
                 {
                     this.handleBuscarPersona(event.target.value)
+                }
+                else
+                {
+                    this.setState({ cuilValido: true }) 
                 }
 
                 this.setState({ 
@@ -121,14 +144,44 @@ export class CargarFormularioRAR extends Component{
                 break;
 
             case 'sectortarea':
+                this.setState({ 
+                    foco: 
+                    {
+                        cuil: false,
+                        sector: true,
+                        fechaIngreso: false,
+                        horas: false,
+                        fechaUltimoExamenMedico: false
+                    }
+                })
                 this.setState({ sectorTarea: event.target.value });
                 break;
 
             case 'horasexposicion':
+                this.setState({ 
+                    foco: 
+                    {
+                        cuil: false,
+                        sector: false,
+                        fechaIngreso: false,
+                        horas: true,
+                        fechaUltimoExamenMedico: false
+                    }
+                })
                 this.setState({ horasExposicion: event.target.value });
                 break;
 
             case 'fechaingreso':
+                this.setState({ 
+                    foco: 
+                    {
+                        cuil: false,
+                        sector: false,
+                        fechaIngreso: true,
+                        horas: false,
+                        fechaUltimoExamenMedico: false
+                    }
+                })
                 switch (event.target.value)
                 {
                     case null:
@@ -144,6 +197,16 @@ export class CargarFormularioRAR extends Component{
                 break;
 
             case 'fechaultimoexamenmedico':
+                this.setState({ 
+                    foco: 
+                    {
+                        cuil: false,
+                        sector: false,
+                        fechaIngreso: false,
+                        horas: false,
+                        fechaUltimoExamenMedico: true
+                    }
+                })
                 switch (event.target.value)
                 {
                     case null:
@@ -159,34 +222,74 @@ export class CargarFormularioRAR extends Component{
                 break;
         }
     }
+    //#endregion
 
     handleSubmit(event){                
-        event.preventDefault();
-        this.setState({ loading: !this.state.loading })
-        
-        const props = {
-            Interno: this.state.internoFormulariosRARDetalle === null ? 0 : this.state.internoFormulariosRARDetalle,
-            InternoFormulariosRAR: this.state.internoFormulariosRAR === null ? 0 : this.state.internoFormulariosRAR,
-            CUIL: event.target.cuil.value,
-            Nombre: event.target.nombre.value,
-            SectorTarea: event.target.sectortarea.value,
-            FechaIngreso: moment(this.state.fechaIngreso).format('YYYY-MM-DD') ,
-            HorasExposicion: event.target.horasexposicion.value,
-            FechaUltimoExamenMedico: moment(this.state.fechaUltimoExamenMedico).format('YYYY-MM-DD'),
-            CodigoAgente: this.state.codigoAgente
-        }
-        //console.log('props: ' + Object.values(props))
-        GuardarFormularioRARDetalle(props)
-        .then(resp => {
-            CargarFormulariosRARDetalle(resp.InternoFormulariosRAR)
-            .then(detalle => {                
+        event.preventDefault();        
+
+        //Verifico que el agente no se haya cargado para el trabajador
+        switch(this.agenteDuplicado(this.state.cuil, this.state.codigoAgente))
+        {
+            case true:
                 this.setState({ 
-                    loading: !this.state.loading,
-                    formulariosRARDetalle: detalle
+                    errorAgente:true,
+                    //loading: !this.state.loading
                 })
-            }) 
-            this.handleLimpiar()           
-        })
+                break;
+
+            case false:
+                this.setState({ loading: !this.state.loading })
+
+                const props = {
+                    Interno: this.state.internoFormulariosRARDetalle === null ? 0 : this.state.internoFormulariosRARDetalle,
+                    InternoFormulariosRAR: this.state.internoFormulariosRAR === null ? 0 : this.state.internoFormulariosRAR,
+                    CUIL: this.state.cuil,
+                    Nombre: this.state.nombre,
+                    SectorTarea: this.state.sectorTarea,
+                    FechaIngreso: moment(this.state.fechaIngreso).format('YYYY-MM-DD') ,
+                    HorasExposicion: this.state.horasExposicion,
+                    FechaUltimoExamenMedico: moment(this.state.fechaUltimoExamenMedico).format('YYYY-MM-DD'),
+                    CodigoAgente: this.state.codigoAgente
+                }
+                //console.log('props: ' + Object.values(props))
+                GuardarFormularioRARDetalle(props)
+                .then(resp => {
+                    CargarFormulariosRARDetalle(resp.InternoFormulariosRAR)
+                    .then(detalle => {                
+                        this.setState({ 
+                            loading: !this.state.loading,
+                            formulariosRARDetalle: detalle
+                        })
+                    }) 
+                    this.handleLimpiar()           
+                })
+
+                break;
+
+            default:
+
+        }                
+    }
+
+    agenteDuplicado(cuil, agente) {
+        console.log('parseInt(cuil): ' + parseInt(cuil) + ' - parseInt(agente): ' + parseInt(agente))
+        const detalle = this.state.formulariosRARDetalle
+        const trabajadoresCargados = detalle.find(trabajador => parseInt(trabajador.CUIL) === parseInt(cuil) && parseInt(trabajador.CodigoAgente) === parseInt(agente))
+        console.log('trabajadoresCargados: ' + trabajadoresCargados)
+        switch (trabajadoresCargados)
+        {            
+            case undefined: //si no esta el trabajador, busco la persona normalmente
+                console.log('agenteDuplicado false')
+                return false
+           
+            case trabajadoresCargados:
+                console.log('agenteDuplicado true')
+               return true
+
+            default: //existe  
+                console.log('agenteDuplicado false')
+                return false
+        }                
     }
 
     handleBorrar(){
@@ -199,7 +302,8 @@ export class CargarFormularioRAR extends Component{
             .then(detalle => {                
                 this.setState({ 
                     loading: !this.state.loading,
-                    formulariosRARDetalle: detalle
+                    formulariosRARDetalle: detalle,
+                    codigoAgente: 40001,
                 })
             }) 
             this.handleLimpiar()           
@@ -216,13 +320,26 @@ export class CargarFormularioRAR extends Component{
             fechaIngreso: null,
             horasExposicion: null,
             fechaUltimoExamenMedico: null,
-            codigoAgente: null,
-            cuilValido: false
+            codigoAgente: 40001,
+            cuilValido: true,
+            trabajadorExiste: false,
+            errorAgente: false
         })
     }
 
     handleSeleccion(e, row, rowIndex){
-        console.log('row.FechaIngreso: ' + row.FechaIngreso)
+        //Veo cuantas veces fue cargado el CUIL, si es mas de 1 bloqueo las fechas
+        let cont = 0
+        this.state.formulariosRARDetalle.map(detalle => {            
+            if (detalle.CUIL === row.CUIL)
+            {
+                cont++
+            }
+            return cont        
+        })
+        //console.log('repetidos: ' + cont)
+
+
         this.setState({             
             internoFormulariosRARDetalle: row.Interno,
             //internoFormulariosRAR: row.InternoFormulariosRAR,
@@ -232,7 +349,8 @@ export class CargarFormularioRAR extends Component{
             fechaIngreso: moment(row.FechaIngreso).format('YYYY-MM-DD'), //row.FechaIngreso,
             horasExposicion: row.HorasExposicion,
             fechaUltimoExamenMedico: moment(row.FechaUltimoExamenMedico).format('YYYY-MM-DD'),
-            codigoAgente: row.CodigoAgente
+            codigoAgente: row.CodigoAgente,
+            trabajadorExiste: cont > 1 ? true : false
         })
 
         ConsultarFormularioRARDetalleAgentes(row.Interno)
@@ -242,33 +360,66 @@ export class CargarFormularioRAR extends Component{
     }
 
     handleBuscarPersona (cuil){        
-        this.setState({ loading: !this.state.loading })
-        const param = {
-            CUIT: cuil,
-            BuscarEnAFIP: true
-        }
-
-        BuscarPersona(param)
-        .then(resp => {
-            //console.log('resp[0].razonSocial: ' + resp[0].razonSocial) 
-            this.setState({ loading: !this.state.loading })    
-
-            switch(resp[0].razonSocial)
-            {
-                case '':
-                    break;
-
-                default:
-                    this.setState({ 
-                        cuilValido: true,
-                        nombre: resp[0].razonSocial
-                     })
-            }
+        this.setState({ 
+            loading: !this.state.loading,
+            cuilValido: false
         })
+
+        //Busco si el cuit ya se cargo en los trabajadores y traigo nombre y hs exposicion, y pongo las hs en disabled
+        const detalle = this.state.formulariosRARDetalle
+        const trabajadoresCargados = detalle.find(trabajador => parseInt(trabajador.CUIL) === parseInt(cuil))
+        //console.log('resul: ' + trabajadoresCargados)
+        switch (trabajadoresCargados)
+        {            
+            case undefined: //si no esta el trabajador, busco la persona normalmente
+                console.log('undefined')
+                const param = {
+                    CUIT: cuil,
+                    BuscarEnAFIP: true
+                }
+        
+                BuscarPersona(param)
+                .then(resp => {           
+                    this.setState({ loading: false })         
+                    //console.log('resp[0].razonSocial: ' + resp[0].razonSocial)                                 
+                    switch(resp[0].razonSocial)
+                    {
+                        case '':
+                            break;
+        
+                        default:
+                            this.setState({ 
+                                cuilValido: true,
+                                nombre: resp[0].razonSocial
+                             })
+                    }
+                })
+                break;
+           
+            case trabajadoresCargados:
+                console.log('cuil')                
+                this.setState({
+                    nombre: trabajadoresCargados.Nombre,
+                    fechaIngreso: moment(trabajadoresCargados.FechaIngreso).format('YYYY-MM-DD'), //trabajadoresCargados.FechaIngreso,
+                    fechaUltimoExamenMedico: moment(trabajadoresCargados.FechaUltimoExamenMedico).format('YYYY-MM-DD'), //trabajadoresCargados trabajadoresCargados.FechaUltimoExamenMedico,
+                    cuilValido: true,
+                    trabajadorExiste: true,
+                    loading: false
+                })
+                break;
+
+            default: //existe  
+                console.log('DEFAULT')    
+                this.setState({ loading: false })
+                break;
+        }                
     }    
 
     handleChangeAgente = (selectedOption) => {
-        this.setState({ codigoAgente: selectedOption.value })   
+        this.setState({ 
+            codigoAgente: selectedOption.value,
+            errorAgente: false
+        })   
     } 
     //#endregion    
 
@@ -298,7 +449,7 @@ export class CargarFormularioRAR extends Component{
             this.setState({ 
                 loading: !this.state.loading
             })
-            console.log('[CargarFormularioRAR] - ConfirmarFormularioRAR - resp: ' + resp)
+            //console.log('[CargarFormularioRAR] - ConfirmarFormularioRAR - resp: ' + resp)
             switch(resp)
             {
                 case true:
@@ -314,26 +465,26 @@ export class CargarFormularioRAR extends Component{
         })
     }
 
-    render(){
+    
+    render(){      
         //campos a cargar
         const CUIL = this.state.cuil === null ? '' : this.state.cuil
         const Nombre = this.state.nombre === null ? '' : this.state.nombre
         const SectorTarea = this.state.sectorTarea === null ? '' : this.state.sectorTarea
         const FechaIngreso = this.state.fechaIngreso === null ? '' : this.state.fechaIngreso
-        const HorasExposicion = this.state.horasExposicion === null ? '' : this.state.horasExposicion
+        const HorasExposicion = this.state.horasExposicion === null ? '' : parseInt(this.state.horasExposicion)
         const FechaUltimoExamenMedico = this.state.fechaUltimoExamenMedico === null ? '' : this.state.fechaUltimoExamenMedico
-        const CodigoAgente = this.state.codigoAgente === null ? '' : this.state.codigoAgente
+        const CodigoAgente = this.state.codigoAgente === null ? 40001 : this.state.codigoAgente
 
         //Disabled botones
-        const disableBorrar = this.state.internoFormulariosRARDetalle !== null && this.state.internoFormulariosRARDetalle !== 0 ? false : true
-        const disableCUIL = (this.state.internoFormulariosRARDetalle !== null && this.state.internoFormulariosRARDetalle !== 0) || (this.state.cuilValido === true) ? true : false
+        const disableBorrar = this.state.internoFormulariosRARDetalle !== null && this.state.internoFormulariosRARDetalle !== 0 ? false : true  
         const disableConfirma = this.cantidadTrabajadoresCargados() !== this.state.cantTrabajadoresExpuestos ? true : false
 
         //Cantidad trabajadores cargados
         //const cantidadTrabajadoresCargados = this.cantidadTrabajadoresCargados(this.state.formulariosRARDetalle)
 
         //Propiedades de la tabla
-        //#region Columnas
+        //#region Columnas de la grilla
         const columns = [
             {
                 dataField: 'Interno',
@@ -387,7 +538,14 @@ export class CargarFormularioRAR extends Component{
 
         //Caption
         const caption = 'Trabajadores cargados ' + this.cantidadTrabajadoresCargados(this.state.formulariosRARDetalle) + ' de ' + this.state.cantTrabajadoresExpuestos
-        const CaptionElement = () => <h4 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'blue', border: '1px solid purple', padding: '0.5em' }}>{caption}</h4>;        
+        const CaptionElement = () => <h4 style=
+        {{ 
+            borderRadius: '0.25em', 
+            textAlign: 'center', 
+            color: '#000080',
+            border: '1px solid purple', 
+            padding: '0.5em' 
+        }}>{caption}</h4>;        
 
         //Seleccion
         const selectRow = {
@@ -419,142 +577,264 @@ export class CargarFormularioRAR extends Component{
             ),
             showExpandColumn: true,            
         };*/
-        //#endregion
+        //#endregion                
 
         //#region return
-        return <div>
-            {this.state.loading === true ?
-                <Spinner/>
-            :
-                <>
-                <h3>Datos del trabajador</h3>
-                <div>
-                <Form onSubmit={this.handleSubmit}>
-                    <Row>
-                        <Col lg={2}>
-                            <Form.Group controlId="formGridCUIL">
-                                <Form.Label>CUIL</Form.Label>
-                                <Form.Control 
-                                    className="form-control-size"
+        return ( 
+            <div>
+                {this.state.loading === true ?
+                    <Spinner/>
+                :
+                    <>
+                    <h3>Datos del trabajador</h3>
+                    <form autoComplete="off" onSubmit={this.handleSubmit} className="form-datostrabajador">
+                        <div>
+                            {this.state.cuilValido === true ?
+                                <TextField
+                                    required
+                                    type="number"
+                                    id="cuil"
+                                    label="CUIL"
+                                    defaultValue=""
                                     value={CUIL}
-                                    type="number" 
-                                    name="cuil" 
-                                    placeholder="CUIT del trabajador"
-                                    onChange={this.handleChangeCampos}
-                                    disabled={disableCUIL}
+                                    variant="outlined"
+                                    onChange={this.handleChangeCampos}                            
+                                    margin="dense"
+                                    disabled={this.state.trabajadorExiste}
+                                    style={{ width: "10%", fontFamily: "sans-serif" }}  
+                                    InputProps={{
+                                        style: {fontSize: "12px"} 
+                                    }}                              
+                                    InputLabelProps={{ 
+                                        shrink: true,                                       
+                                        style: {
+                                            fontSize: "14px",
+                                            color: "blue",
+                                        }
+                                    }}
+                                />
+                            :
+                                <TextField
+                                    error
                                     required
-                                >
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>
-                        <Col lg={2}>
-                            <Form.Group as={Col} controlId="formGridNombre">
-                                <Form.Label>Nombre</Form.Label>
-                                <Form.Control 
-                                    className="form-control-size"
-                                    value={Nombre}
-                                    type="text" 
-                                    name="nombre" 
-                                    disabled={true}
-                                >
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>                            
-                        <Col lg={2}>
-                            <Form.Group controlId="formGridSectorTarea">
-                                <Form.Label>Sector/Tarea</Form.Label>
-                                <Form.Control 
-                                    className="form-control-size"
-                                    value={SectorTarea}
-                                    type="text" 
-                                    name="sectortarea"
-                                    placeholder="Sector/Tarea" 
-                                    onChange={this.handleChangeCampos}
-                                    required
-                                >
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>   
-                        <Col lg={2}>
-                            <Form.Group controlId="formGridFechaIngreso">
-                                <Form.Label>Fecha Ingreso</Form.Label>
-                                <Form.Control 
-                                    className="form-control-size"
-                                    value={FechaIngreso}
-                                    type="date" 
-                                    name="fechaingreso"
-                                    onChange={this.handleChangeCampos}
-                                    placeholderText="Fecha de ingreso"
-                                    required
-                                >
-                                </Form.Control>
-                            </Form.Group>
-                        </Col> 
-                        <Col lg={2}>
-                            <Form.Group controlId="formGridHorasExposicion">
-                                <Form.Label>Hs Exposición</Form.Label>
-                                <Form.Control 
-                                    className="form-control-size"
-                                    value={HorasExposicion}
-                                    type="number" 
-                                    name="horasexposicion"
-                                    placeholder="Hs Exposición" 
-                                    onChange={this.handleChangeCampos}
-                                    required
-                                >
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>  
-                        <Col lg={2}>
-                            <Form.Group controlId="formGridFechaUltimoExamenMedico">
-                                <Form.Label>Fecha Ult. Exámen Médico</Form.Label>
-                                <Form.Control 
-                                    className="form-control-size"
-                                    value={FechaUltimoExamenMedico}
-                                    type="date" 
-                                    name="fechaultimoexamenmedico"
-                                    onChange={this.handleChangeCampos}
-                                    placeholderText="Fecha de ultimo exámen médico"
-                                    required
-                                >
-                                </Form.Control>
-                            </Form.Group>
-                        </Col> 
-                    </Row>
-                    <Col lg={5}>
-                        <Form.Group controlId="formGridCodigoAgente">
-                            <Form.Label>Cód. Agente</Form.Label>
-                            <Form.Control 
-                                value={CodigoAgente}
-                                className="form-control-size"
-                                as="select" 
-                                name="codigoagente" 
-                                onChange={event => this.handleChangeAgente(event.target)}
+                                    type="number"
+                                    id="cuil"
+                                    label="CUIL"
+                                    defaultValue=""
+                                    value={CUIL}
+                                    variant="outlined"
+                                    onChange={this.handleChangeCampos}                            
+                                    margin="dense"
+                                    disabled={this.state.trabajadorExiste}
+                                    helperText="CUIL incorrecto/inexistente"
+                                    style={{ width: "10%", fontFamily: "sans-serif"}}
+                                    InputProps={{
+                                        style: {fontSize: "12px"} 
+                                    }}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                        style: {
+                                            fontSize: "14px",
+                                        }
+                                    }}
+                                />
+                            }                        
+                            <TextField
+                                disabled
+                                id="nombre"
+                                label="Nombre"
+                                value={Nombre}
+                                defaultValue=""
+                                variant="outlined"                            
+                                margin="dense"
+                                style={{ width: "15%", fontFamily: "sans-serif"}}  
+                                InputProps={{
+                                    style: {fontSize: "12px"} 
+                                }}
+                                InputLabelProps={{
+                                    shrink: true,
+                                    style: {
+                                        fontSize: "14px",
+                                        color: "blue",
+                                        borderColor: "blue"
+                                    }
+                                }}
+                            />
+                            <TextField
                                 required
-                            >                                            
-                                {this.state.refAgenteCausante.map(agente => {        
-                                    return <option value={agente.Codigo}>{'Código: ' + agente.Codigo + ' - Agente: ' + agente.AgenteCausante + ' - Tipo: ' + agente.AgenteTipo}</option>
-                                })}
-                            </Form.Control>
-                        </Form.Group>
-                    </Col> 
+                                id="sectortarea"
+                                label="Sector/Tarea"
+                                value={SectorTarea}
+                                defaultValue=""
+                                variant="outlined"
+                                onChange={this.handleChangeCampos}                                
+                                margin="dense"      
+                                style={{ width: "11%", fontFamily: "sans-serif" }} 
+                                InputProps={{
+                                    style: {fontSize: "12px"} 
+                                }}  
+                                InputLabelProps={{
+                                    shrink: true,
+                                    style: {
+                                        fontSize: "14px",
+                                        color: "blue",
+                                    }
+                                }}             
+                            />
+                            <TextField
+                                required
+                                type="date"
+                                id="fechaingreso"  
+                                label="Ingreso"                          
+                                value={FechaIngreso}
+                                defaultValue=""
+                                variant="outlined"
+                                onChange={this.handleChangeCampos}
+                                InputLabelProps={{
+                                    shrink: true,
+                                    style: {
+                                        fontSize: "14px",
+                                        color: "blue",
+                                        borderColor: "blue"
+                                    }
+                                }}
+                                disabled={this.state.trabajadorExiste}
+                                margin="dense"
+                                style={{ width: "11%", fontFamily: "sans-serif" }}
+                                InputProps={{
+                                    style: {fontSize: "12px"} 
+                                }}
+                            />
+                            <TextField
+                                required
+                                type="number"
+                                id="horasexposicion"
+                                label="Exposición"
+                                helperText="Horas"
+                                value={HorasExposicion}
+                                variant="outlined"
+                                onChange={this.handleChangeCampos}    
+                                margin="dense"                              
+                                style={{ width: "7%", fontFamily: "sans-serif"}}
+                                InputProps={{
+                                    style: {fontSize: "12px"} 
+                                }}
+                                InputLabelProps={{
+                                    shrink: true,
+                                    style: {
+                                        fontSize: "14px",
+                                        color: "blue",
+                                        borderColor: "blue"
+                                    }
+                                }}  
+                            />
+                            <TextField
+                                required
+                                type="date"
+                                id="fechaultimoexamenmedico"   
+                                label="Ult. Examen Médico"                         
+                                value={FechaUltimoExamenMedico}
+                                variant="outlined"
+                                onChange={this.handleChangeCampos}
+                                InputLabelProps={{
+                                    shrink: true,
+                                    style: {
+                                        fontSize: "14px",
+                                        color: "blue",
+                                        borderColor: "blue"
+                                    }
+                                }}  
+                                margin="dense"
+                                disabled={this.state.trabajadorExiste}
+                                style={{ width: "11%", fontFamily: "sans-serif" }}
+                                InputProps={{
+                                    style: {fontSize: "12px"} 
+                                }}
+                            />
+                            {this.state.errorAgente === false ?
+                                <TextField
+                                    required
+                                    select
+                                    id="codigoagente"
+                                    value={CodigoAgente}
+                                    SelectProps={{
+                                        native: true,
+                                    }}
+                                    label="Codigo Agente Riesgo"
+                                    variant="outlined"
+                                    onChange={event => this.handleChangeAgente(event.target)}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                        style: {
+                                            fontSize: "14px",
+                                            color: "blue",
+                                            borderColor: "blue"
+                                        }
+                                    }}  
+                                    margin="dense"
+                                    style={{ width: "25%", fontFamily: "sans-serif" }}
+                                    InputProps={{
+                                        style: {fontSize: "12px"} 
+                                    }}
+                                >                                            
+                                    {this.state.refAgenteCausante.map(agente => {        
+                                        return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.AgenteCausante}</option>
+                                    })}
+                                </TextField>
+                            :
+                                <TextField
+                                    error
+                                    required
+                                    select
+                                    id="codigoagente"
+                                    value={CodigoAgente}
+                                    SelectProps={{
+                                        native: true,
+                                    }}
+                                    label="Codigo Agente Riesgo"
+                                    variant="outlined"
+                                    onChange={event => this.handleChangeAgente(event.target)}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                        style: {
+                                            fontSize: "14px",                                            
+                                        }
+                                    }}  
+                                    margin="dense"
+                                    style={{ width: "25%", fontFamily: "sans-serif" }}
+                                    InputProps={{
+                                        style: {fontSize: "12px"} 
+                                    }}
+                                    helperText="Ya se cargó el Codigo de Agente al trabajador"
+                                    FormHelperTextProps={{
+                                        style: {
+                                            fontSize: "10px",
+                                        }
+                                    }}
+                                >                                            
+                                    {this.state.refAgenteCausante.map(agente => {        
+                                        return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.AgenteCausante}</option>
+                                    })}
+                                </TextField>
+                            }
+                        </div>
                     <Button variant="primary" type="submit" disabled={false}>Carga</Button>  
                     <Button variant="danger" onClick={this.handleBorrar} disabled={disableBorrar}>Borra</Button>
-                    <Button variant="light" onClick={this.handleLimpiar} disabled={false}>Limpia</Button>                                             
-                </Form>
-                </div>
-                <BootstrapTable
-                    keyField="Interno"
-                    caption={<CaptionElement />}
-                    data={ this.state.formulariosRARDetalle }
-                    columns={ columns }                    
-                    rowEvents={ rowEvents } 
-                    selectRow={ selectRow }
-                />
-                <Button variant="primary" onClick={this.handleConfirmar} disabled={disableConfirma}>Confirma</Button>  
-                </>
-            }
-        </div>
+                    <Button variant="light" onClick={this.handleLimpiar} disabled={false}>Limpia</Button>
+                    </form>
+                    <BootstrapTable
+                        keyField="Interno"
+                        caption={<CaptionElement />}
+                        data={ this.state.formulariosRARDetalle }
+                        columns={ columns }                    
+                        rowEvents={ rowEvents } 
+                        selectRow={ selectRow }
+                    />
+                    <Button variant="primary" onClick={this.handleConfirmar} disabled={disableConfirma}>Confirma</Button>  
+                    </>
+                }
+            </div>
+        )
         //#endregion
     }
 }

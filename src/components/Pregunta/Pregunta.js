@@ -69,7 +69,7 @@ class Pregunta extends Component{
         //console.log('this.props.fechaRegularizacion: ' + this.props.fechaRegularizacion)
         var fecha = new Date(this.props.fechaRegularizacion)
         var anio = moment(fecha).format('YYYY')
-        console.log('respuesta: ' + respuesta + ' anio: ' + anio)
+        //console.log('respuesta: ' + respuesta + ' anio: ' + anio)
         switch (respuesta) {
             case 'N':
                 //console.log('No')

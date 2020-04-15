@@ -1,3 +1,25 @@
 .form-control-size {
     height: 30px;
 }
+
+.form-control-size-codigoagente {
+    height: 30px;
+    width: 80%;
+}
+
+.form-control-size-cuil {
+    width: 4%;
+}
+
+.div-cuil {
+    width: 10%;
+}
+
+.div-nombre {
+    width: 30%;
+}
+
+.form-datostrabajador {
+    text-align: left;   
+    font-size: 13px;     
+}

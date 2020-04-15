@@ -36,7 +36,7 @@ export class ListaFormularios extends Component{
         this.setState({ loading: true })
         CargarConsultaFormularios()
         .then(response => {
-            console.log('traigo los datos')
+            //console.log('traigo los datos')
             this.setState({
                 loading: !this.state.loading,
                 formulariosCargados: response
@@ -46,7 +46,7 @@ export class ListaFormularios extends Component{
     }
 
     handleClick (e, row, rowIndex) {
-        console.log(`Interno: ${row.Interno}`);
+        //console.log(`Interno: ${row.Interno}`);
         this.setState({
             internoFormulario: row.InternoFormulario,
             internoEstablecimiento: row.internoEstablecimiento,
@@ -75,14 +75,14 @@ export class ListaFormularios extends Component{
     }
 
     handleCambioPagina = (pagina) => {
-        console.log('pagina: ' + pagina)
+        //console.log('pagina: ' + pagina)
         this.setState({pagina: parseInt(pagina)})
         this.props.seleccionaRegistro(0)
     }
 
     handleDataChange = ({ dataSize }) => {
         //this.setState({ rowCount: dataSize });
-        console.log('cambia la tabla')
+        //console.log('cambia la tabla')
         this.setState({
             internoFormulario: 0,
             internoEstablecimiento: 0

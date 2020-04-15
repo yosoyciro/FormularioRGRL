@@ -12,24 +12,20 @@ class App extends React.Component {
     render() {
       
       return (
-        <Router history={history}>
-        <BrowserRouter>
-          <div className="App"> 
-              <Redirect
-                  from="/"
-                  to="/ConsultaFormulariosRAR" 
-              />      
-              <Switch>                
-                <Route path='/NuevoFormulario/:handle' component={Formularios}/>
-                <Route path='/NuevoFormulario' component={Formularios}/>
-                <Route path='/ConsultaFormularios' component={ConsultaFormularios}/>
-                <Route path='/ConsultaFormulariosRAR' component={FormulariosRAR}/>
-                <Route path='/NuevoFormularioRAR' component={NuevoFormularioRAR}/>
-                <Route path='/NuevoFormularioRAR/:cuitSeleccionado' component={NuevoFormularioRAR}/>
-              </Switch>   
-          </div>
-        </BrowserRouter>
-        </Router>         
+        <Router history={history}>    
+          <BrowserRouter>
+            <div className="App">                 
+                <Switch>
+                  <Route path='/ConsultaFormularios' component={ConsultaFormularios}/>
+                  <Route path='/ConsultaFormulariosRAR' component={FormulariosRAR}/>
+                  <Route path='/NuevoFormulario/:handle' component={Formularios}/>
+                  <Route path='/NuevoFormulario' component={Formularios}/>                  
+                  <Route path='/NuevoFormularioRAR' component={NuevoFormularioRAR}/>
+                  <Route path='/NuevoFormularioRAR/:cuitSeleccionado' component={NuevoFormularioRAR}/>
+                </Switch>   
+            </div>
+          </BrowserRouter>
+        </Router>       
       );
   }
 }
