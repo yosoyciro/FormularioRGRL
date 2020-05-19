@@ -38,7 +38,7 @@ render() {
     const menuIsOpen= (this.props.establecimientoSeleccionado === 0 ? true : false)    
     const disable = (this.props.establecimientoSeleccionado !== 0 && this.props.formSel !== 0)  ? true : false
     const opciones = this.state.establecimientos.map(establecimiento => {
-        console.log('establecimiento: ' + establecimiento)            
+        //console.log('establecimiento: ' + establecimiento)            
         return {value: establecimiento.Interno, label: establecimiento.Direccion, cuit: this.props.cuit, razonsocial: this.props.razonSocial }
     })
 
