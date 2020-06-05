@@ -7,11 +7,12 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import CargarConsultaFormularios from '../../Api/CargarConsultaFormularios';
 import MostrarRespuestas from './MostrarRespuestas';
 import CargarSeccionesFormulario from '../../Api/CargarSeccionesFormulario';
-import CargarRespuestas from '../../Api/CargarRespuestas';
+import CargarRespuestasConsulta from '../../Api/CargarRespuestasConsulta';
 import CargarPreguntas from '../../Api/CargarPreguntas';
 import BotonesPagina from '../BotonesFormulario/BotonesPaginas';
 import FormatearFechaCelda from '../Utiles/FormatearFechaCelda'
 import './ListarFormularios.css'
+import BotonesPaginaDinamicos from '../BotonesFormulario/BotonesPaginasDinamico';
 
 export class ListaFormularios extends Component{
     constructor(props) {
@@ -22,12 +23,14 @@ export class ListaFormularios extends Component{
             formulariosCargados: [],
             internoFormulario: 0,
             internoEstablecimiento: 0,
+            internoRespuestasFormulario: 0,
             secciones: [],
             preguntas: [],
             respuestasCuestionario: [],
             respuestasGremio: [],
             respuestasContratista: [],
-            respuestasResponsable: []
+            respuestasResponsable: [],
+            paginas: []
         }
     }
 
@@ -49,18 +52,27 @@ export class ListaFormularios extends Component{
         //console.log(`Interno: ${row.Interno}`);
         this.setState({
             internoFormulario: row.InternoFormulario,
-            internoEstablecimiento: row.internoEstablecimiento,
+            internoEstablecimiento: row.InternoEstablecimiento,
+            internoRespuestasFormulario: row.Interno,
             pagina: 1,
             //loading: !this.state.loading
         })
-        this.cargarDatos(row.InternoFormulario, row.InternoEstablecimiento)
-        this.props.seleccionaRegistro(row.CUIT)
+        this.cargarDatos(row.InternoFormulario, row.InternoEstablecimiento, row.Interno)
+        this.props.seleccionaRegistro(row.CUIT, row.InternoFormulario, row.InternoEstablecimiento, row.Estado, row.RazonSocial, row.Direccion)
     }
 
-    cargarDatos = async (internoFormulario, internoEstablecimiento) => {
+    cargarDatos = async (internoFormulario, internoEstablecimiento, internoRespuestasFormulario) => {
         const secciones = await CargarSeccionesFormulario(internoFormulario)
         const preguntas = await CargarPreguntas(internoFormulario)
-        const respuestasCuestionario = await CargarRespuestas({internoFormulario, internoEstablecimiento})
+        const respuestasCuestionario = await CargarRespuestasConsulta({internoRespuestasFormulario})        
+
+        //cargar un array de paginas para pasarlo a BotonesPaginas
+        const paginasSecciones = secciones.map(seccion => {
+            return seccion.Pagina
+        })
+        //console.log('paginasSeeciones: ' + paginasSecciones)
+        const paginas = [...new Set(paginasSecciones)]
+        console.log('paginas: ' + paginas)
 
         this.setState({
             secciones,
@@ -68,16 +80,23 @@ export class ListaFormularios extends Component{
             respuestasCuestionario: respuestasCuestionario.RespuestasCuestionario,
             respuestasGremio: respuestasCuestionario.RespuestasGremio,
             respuestasContratista: respuestasCuestionario.RespuestasContratista,
-            respuestasResponsable: respuestasCuestionario.RespuestasResponsable
+            respuestasResponsable: respuestasCuestionario.RespuestasResponsable,
+            paginas
             //loading: !this.state.loading
         })
         //console.log('respuestasGremio: ' + JSON.stringify(this.state.respuestasGremio))
+
+        
+    }
+
+    limpiarSeleccion = () => {
+        this.props.seleccionaRegistro(0, 0, 0, '', '', '')
     }
 
     handleCambioPagina = (pagina) => {
         //console.log('pagina: ' + pagina)
         this.setState({pagina: parseInt(pagina)})
-        this.props.seleccionaRegistro(0)
+        //this.limpiarSeleccion()
     }
 
     handleDataChange = ({ dataSize }) => {
@@ -85,9 +104,10 @@ export class ListaFormularios extends Component{
         //console.log('cambia la tabla')
         this.setState({
             internoFormulario: 0,
-            internoEstablecimiento: 0
+            internoEstablecimiento: 0,
+            internoRespuestasFormulario: 0
         })
-        this.props.seleccionaRegistro(0)
+        this.limpiarSeleccion()
     }  
 
     handlePagChange = () => {
@@ -95,14 +115,15 @@ export class ListaFormularios extends Component{
         console.log('cambia la pagina')
         this.setState({
             internoFormulario: 0,
-            internoEstablecimiento: 0
+            internoEstablecimiento: 0,
+            internoRespuestasFormulario: 0
         })
-        this.props.seleccionaRegistro(0)
+        this.limpiarSeleccion()
     } 
     
 
     render(){
-        console.log('render-loading: ' + this.state.loading) 
+        //console.log('render-loading: ' + this.state.loading) 
         const { SearchBar } = Search;
 
         const selectOptions = {
@@ -253,10 +274,11 @@ export class ListaFormularios extends Component{
                     </PaginationProvider>
                     {this.state.internoFormulario !== 0 && this.state.internoEstablecimiento !== 0 ?
                         <>
-                            <BotonesPagina 
+                            <BotonesPaginaDinamicos 
                                 confirmado={false}                            
                                 pagina={this.state.pagina}
                                 cambioPagina={this.handleCambioPagina}
+                                paginas={this.state.paginas}
                             />                      
                             <MostrarRespuestas
                                 secciones={this.state.secciones}

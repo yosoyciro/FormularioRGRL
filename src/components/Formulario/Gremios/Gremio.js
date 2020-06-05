@@ -27,7 +27,7 @@ class Gremio extends Component{
                 <td>
                     <input 
                     className="gremios-legajo"
-                        type="text" 
+                        type="number" 
                         name="legajo" 
                         onChange={this.handleChange} 
                         value={legajo}>                        

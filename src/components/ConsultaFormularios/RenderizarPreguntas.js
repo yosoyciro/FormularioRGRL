@@ -48,16 +48,16 @@ function RenderizarPreguntas(props) {
                     <thead className="cabecera">
                         {parseInt(props.seccion.Interno) === 37 || parseInt(props.seccion.Interno) === 101 || parseInt(props.seccion.Interno) === 120 ?
                             <tr>
-                                <th className="cabecera-codigo">Cod</th>
+                                <th className="cabecera-codigo">Código</th>
                                 <th className="cabecera-pregunta">{props.seccion.Descripcion}</th>
-                                <th className="cabecera-select">Sí</th>
+                                <th className="cabecera-select">Sí/No</th>
                                 <th className="cabecera-comentario">Norma Vigente</th>                                                
                             </tr>
                         :
                             <tr>
-                                <th className="cabecera-codigo">Cod</th>
+                                <th className="cabecera-codigo">Código</th>
                                 <th className="cabecera-pregunta">{props.seccion.Descripcion}</th>
-                                <th className="cabecera-select">Sí</th>                                         
+                                <th className="cabecera-select">Sí/No</th>                                         
                             </tr>
                         }
                     </thead>

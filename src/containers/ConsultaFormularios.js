@@ -1,20 +1,24 @@
 import React, {Component} from 'react';
 import ListaFormularios from '../components/ConsultaFormularios/ListaFormularios';
-import { Button } from 'react-bootstrap';
 import './ConsultaFormularios.css';
 
 export class ConsultaFormularios extends Component{
     constructor(props) {
         super(props)
         this.state = {
-            cuit: 0
+            cuit: 0,
+            internoFormulario: 0,
+            internoEstablecimiento: 0,
+            razonSocial: null,
+            direccion: null,
+            estado: null
         }
         this.seleccionaRegistro = this.seleccionaRegistro.bind(this)
         
     }
 
     handleClick = () => {
-        this.props.history.push('/NuevoFormulario/');
+        this.props.history.push('/NuevoFormularioRGRL/');
     }
 
     handleClickCerrar() {       
@@ -23,40 +27,24 @@ export class ConsultaFormularios extends Component{
     }
 
     handleEdita = () => {
-        this.props.history.push('/NuevoFormulario/' + this.state.cuit);
+        this.props.history.push('/NuevoFormularioRGRL/' + this.state.cuit);
     }
 
-    seleccionaRegistro = (cuit) => {
-        this.setState({cuit})
+    seleccionaRegistro = (cuit, internoFormulario, internoEstablecimiento, estado, razonSocial, direccion) => {
+        //console.log('[ConsultaFormularios] - seleccionaRegistro - cuit: ' + cuit)
+        this.setState({
+            cuit,
+            internoFormulario,
+            internoEstablecimiento,
+            estado,
+            razonSocial,
+            direccion
+        })
+        this.props.seleccionaRegistro(cuit, internoFormulario, internoEstablecimiento, estado, razonSocial, direccion)
     }
  
     render(){
-        return <div>
-            <div>
-                <h1>Consulta de Formularios RGRL</h1>
-                {this.state.cuit !== 0 ?
-                    <Button 
-                        onClick={this.handleEdita}
-                        className="btn-consultaformulario"
-                    >
-                        Edita Formulario
-                    </Button>
-                :
-                    null
-                }
-                <Button 
-                    onClick={this.handleClick}
-                    className="btn-consultaformulario"
-                >
-                    Genera Formulario
-                </Button>
-                <Button 
-                    onClick={this.handleClickCerrar}
-                    className="btn-consultaformulario"
-                >
-                    Finaliza
-                </Button>
-            </div>            
+        return <div>            
             <ListaFormularios 
                 seleccionaRegistro={this.seleccionaRegistro}
             />            

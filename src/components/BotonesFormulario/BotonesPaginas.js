@@ -184,7 +184,7 @@ class BotonesPagina extends Component {
                         }
                     </>
                     }   
-                    {this.errorPagina(10) === 'ok' ?
+                    {/*{this.errorPagina(10) === 'ok' ?
                     <>
                         {this.props.pagina === 10 ?                        
                             <Button value="10" variant="success" size="lg" onClick={this.handleCambioPagina}>Planilla B</Button>
@@ -200,7 +200,7 @@ class BotonesPagina extends Component {
                             <Button value="10" variant="danger" onClick={this.handleCambioPagina}>Planilla B</Button>
                         }
                     </>
-                    }    
+                    }*/}    
                     {this.errorPagina(11) === 'ok' ?
                     <>
                         {this.props.pagina === 11 ?                        
@@ -266,11 +266,11 @@ class BotonesPagina extends Component {
                     :
                         <Button value="9" variant="info" onClick={this.handleCambioPagina}>Planilla A</Button>
                     }
-                    {this.props.pagina === 10 ?
+                    {/*{this.props.pagina === 10 ?
                         <Button value="10" variant="info" size="lg" onClick={this.handleCambioPagina}>Planilla B</Button>
                     :
                         <Button value="10" variant="info" onClick={this.handleCambioPagina}>Planilla B</Button>
-                    }
+                    }*/}
                     {this.props.pagina === 11 ?
                         <Button value="11" variant="info" size="lg" onClick={this.handleCambioPagina}>Planilla C</Button>
                     :

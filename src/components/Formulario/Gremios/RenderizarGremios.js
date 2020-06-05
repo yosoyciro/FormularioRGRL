@@ -9,8 +9,8 @@ function RenderizarGremios (props) {
             <table className="gremios-table">
                 <thead className="cabecera">
                     <tr>
-                        <th className="cabecera-gremioslegajo">Legajo</th>
-                        <th className="cabecera-gremiosgremio">Gremio</th>
+                        <th className="cabecera-gremioslegajo">Nro Legajo del Gremio</th>
+                        <th className="cabecera-gremiosgremio">Nombre del Gremio</th>
                     </tr>
                 </thead>
                 <tbody>

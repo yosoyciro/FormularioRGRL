@@ -6,6 +6,7 @@ import { history } from '../components/Utiles/history';
 import './App.css';
 import FormulariosRAR from '../containers/FormulariosRAR';
 import NuevoFormularioRAR from '../components/FormulariosRAR/NuevoFormularioRAR';
+import NuevoFormularioRGRL from '../components/Formulario/NuevoFormularioRGRL';
 
 class App extends React.Component {    
 
@@ -16,10 +17,10 @@ class App extends React.Component {
           <BrowserRouter>
             <div className="App">                 
                 <Switch>
-                  <Route path='/ConsultaFormularios' component={ConsultaFormularios}/>
+                  <Route path='/ConsultaFormulariosRGRL' component={Formularios}/>
                   <Route path='/ConsultaFormulariosRAR' component={FormulariosRAR}/>
-                  <Route path='/NuevoFormulario/:handle' component={Formularios}/>
-                  <Route path='/NuevoFormulario' component={Formularios}/>                  
+                  <Route path='/NuevoFormularioRGRL/:handle' component={NuevoFormularioRGRL}/>
+                  <Route path='/NuevoFormularioRGRL' component={NuevoFormularioRGRL }/>                  
                   <Route path='/NuevoFormularioRAR' component={NuevoFormularioRAR}/>
                   <Route path='/NuevoFormularioRAR/:cuitSeleccionado' component={NuevoFormularioRAR}/>
                 </Switch>   

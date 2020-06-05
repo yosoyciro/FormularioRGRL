@@ -1,6 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import * as tiposAcciones from '../../../Store/acciones';
 import BuscarPersona from '../../../Api/BuscarPersona'
 import ElegirEstablecimiento from '../ElegirEstablecimiento/ElegirEstablecimiento';
 import Button from 'react-bootstrap/Button'
@@ -12,6 +10,7 @@ import CustomizedSnackbars from '../../../components/UI/Snackbar/Snackbar'
 class DatosGenerales extends Component{
     constructor(props) {
         super(props)
+        this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
         this.state = {
             cuit: 0,
             cuitValido: false,
@@ -23,12 +22,31 @@ class DatosGenerales extends Component{
     } 
     
     componentDidMount() {
-        //Limpio siempre todo del Redux
+        /*//Limpio siempre todo del Redux
         this.props.datosGenerales(0, 0, '') 
         this.props.seleccionEstablecimiento(0, '');
         
         console.log('[DatosGenerales] this.props.cuit: ' + this.props.cuit)
-        this.setState({cuit: parseInt(this.props.cuit)})
+        this.setState({cuit: parseInt(this.props.cuit)})*/
+        console.log('[DatosGenerales] this.props.cuit: ' + this.props.cuit)
+        this.setState({
+            cuit: parseInt(this.props.cuit),            
+        })
+
+        switch (parseInt(this.props.cuit))
+        {
+            case 0:
+                break;
+
+            default:
+                this.setState({ 
+                    cuitValido: true,
+                    razonSocial: this.props.razonSocial
+                })
+
+                this.props.seleccionCUIT(this.state.cuit, this.state.razonSocial)
+                break;
+        }
     }
 
     handleChange = (event) => {   
@@ -65,72 +83,45 @@ class DatosGenerales extends Component{
         this.setState({showModal: !this.state.showModal})
     }
 
-render() {       
-    //console.log('this.state.cuitValido: ' + this.state.cuitValido) 
+    handleFinalizaCarga() {
+        this.props.finalizaCarga()
+    }
+
+    render() {       
+        const disable = this.state.cuitValido === false ? false : true    
+        let handleCerrarSnackbar=() => this.setState({showSnackBar: false})
     
-    const disable = this.state.cuitValido === false ? false : true    
-    let handleCerrarSnackbar=() => this.setState({showSnackBar: false})
-
-    return <Fragment>
-    <form className="form" onSubmit={this.handleSubmit}>
-        <fieldset>
-            <label>CUIT del Empleador a Registrar: </label>
-            <input 
-                value={this.state.cuit}
-                className="cuit-input"
-                type="number" 
-                name="cuit" 
-                onChange={this.handleChange}
-                disabled={disable}
-            ></input> 
-            <Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> 
-        </fieldset>
-    </form>  
-    {this.state.cuitValido === true ?
-        <ElegirEstablecimiento 
-            cuit={this.state.cuit}
-            razonSocial={this.state.nombre}
-        />                         
-    :
-        null
-    }  
-    {this.props.establecimientoSeleccionado ?
-        <ElegirTipoFormulario
-            cuit={this.state.cuit}
-            establecimiento={this.props.establecimientoSeleccionado}
-        />
-    :
-        null
-    }
-    {this.state.showSnackBar === true ?
-        <CustomizedSnackbars 
-            show={this.state.showSnackBar}
-            mensaje={this.state.mensajeSnackbar}
-            onClose={handleCerrarSnackbar}
-            severity={this.state.severitySnackbar}
-            vertical="top"
-            horizontal="right"
-            timer={8000}
-        />
-    :
-        null
-    }  
-    </Fragment>
-    }
+        return <Fragment>
+        <form className="form" onSubmit={this.handleSubmit}>
+            <fieldset>
+                <label>CUIT del Empleador a Registrar: </label>
+                <input 
+                    value={this.state.cuit}
+                    className="cuit-input"
+                    type="number" 
+                    name="cuit" 
+                    onChange={this.handleChange}
+                    disabled={disable}
+                ></input> 
+                <Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> 
+                <Button onClick={this.handleFinalizaCarga} variant="primary">Finaliza</Button> 
+            </fieldset>
+        </form>       
+        {this.state.showSnackBar === true ?
+            <CustomizedSnackbars 
+                show={this.state.showSnackBar}
+                mensaje={this.state.mensajeSnackbar}
+                onClose={handleCerrarSnackbar}
+                severity={this.state.severitySnackbar}
+                vertical="top"
+                horizontal="right"
+                timer={8000}
+            />
+        :
+            null
+        }  
+        </Fragment>
+        }
 }
 
-const mapStateToProps = state => {
-    return {
-        datGen: state.datos.cuit,
-        establecimientoSeleccionado: state.establecimiento.interno, 
-    };
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        datosGenerales: (cuit, interno, razonsocial) => dispatch({type: tiposAcciones.DATOSGENERALES_CUIT, cuit: cuit, interno: interno, razonsocial: razonsocial}),
-        seleccionEstablecimiento: (internoEstablecimiento, descripcion) => dispatch({type: tiposAcciones.ESTABLECIMIENTO_SELECCION, internoEstablecimiento: internoEstablecimiento, descripcion: descripcion})
-    };
-}
-
-export default connect(mapStateToProps,mapDispatchToProps) (DatosGenerales);
+export default DatosGenerales;

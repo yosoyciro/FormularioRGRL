@@ -57,6 +57,7 @@ class FormularioA extends Component{
             hayErrores: false,
             //#region SnackbarErrores,
             showSnackbarErrores: false,
+            paginas: []
             //#endregion
         }
     }
@@ -69,15 +70,25 @@ class FormularioA extends Component{
     //#region CargaDatos
     cargarDatos = async event => {
         this.setState({saving: true})
+        console.log('[FormularioA] - cargarDatos - internoFormulario: ' + this.props.internoFormulario)
         try {                                 
-            const secc = await Api.get(`Secciones/ListarSeccionesFormulario?pInternoFormulario=${this.props.formSel}`)
-            this.setState({ secciones: secc.data });
+            const secc = await Api.get(`Secciones/ListarSeccionesFormulario?pInternoFormulario=${this.props.internoFormulario}`)
+            //cargar un array de paginas para pasarlo a BotonesPaginas
+            /*const paginasSecciones = secc.map(seccion => {
+                return seccion.Pagina
+            })*/
 
-            const preg = await Api.get(`Cuestionarios/ListarPorFormulario?pInternoFormulario=${this.props.formSel}`)
+            //const paginas = [...new Set(paginasSecciones)]
+            this.setState({
+                secciones: secc.data,
+                //paginas
+            });
+
+            const preg = await Api.get(`Cuestionarios/ListarPorFormulario?pInternoFormulario=${this.props.internoFormulario}`)
             this.setState({ preguntas: preg.data });      
 
-            //console.log('(this.props.formEstado: ' + (this.props.estadoForm))
-            if (this.props.estadoForm === '(En proceso de carga)')
+            console.log('(this.props.estado: ' + (this.props.estado))
+            if (this.props.estado === 'En proceso de carga')
                 this.cargarRespuestas()   
         }
         catch (error) {
@@ -91,8 +102,8 @@ class FormularioA extends Component{
 
     cargarRespuestas = async() => {
         const respuestasCuestionario = await CargarRespuestas({
-            internoFormulario: this.props.formSel, 
-            internoEstablecimiento: this.props.establecimientoSeleccionado
+            internoFormulario: this.props.internoFormulario, 
+            internoEstablecimiento: this.props.internoEstablecimiento
         })
         this.setState({ respuestasFormulario: respuestasCuestionario, 
             respuestasCuestionario: respuestasCuestionario.RespuestasCuestionario,
@@ -165,14 +176,14 @@ class FormularioA extends Component{
     handleGenerar(event) {
         this.setState({saving: !this.state.saving})        
         
-        switch (this.props.estadoForm)
+        switch (this.props.estado)
         {
-            case '(No generado)':
+            case 'No generado':
                 this.generarFormulario();
                 break;
 
-            case '(Nueva instancia)':
-                ReplicarFormulario({internoFormulario: this.props.formSel, internoEstablecimiento: this.props.establecimientoSeleccionado})
+            case 'Nueva instancia':
+                ReplicarFormulario({internoFormulario: this.props.internoFormulario, internoEstablecimiento: this.props.internoEstablecimiento})
                 .then(res => {                        
                     this.cargarRespuestas();
                     this.setState({
@@ -271,8 +282,8 @@ class FormularioA extends Component{
         const RespuestaFormulario = {
             $id: 1,
             Interno: 0,
-            InternoFormulario: this.props.formSel,
-            InternoEstablecimiento: this.props.establecimientoSeleccionado,
+            InternoFormulario: this.props.internoFormulario,
+            InternoEstablecimiento: this.props.internoEstablecimiento,
             CreacionFechaHora: fechaCreacion,
             CompletadoFechaHora: fechaCompletado,
             RespuestasCuestionario,
@@ -361,10 +372,10 @@ class FormularioA extends Component{
             case 40:
                 //Gremios
                 return <div>
-                    <h2>Gremios</h2>
-                    <h4 style={{textAlign: "initial"}}>EN CASO DE CONTAR CON DELEGADOS GREMIALES INDIQUE EL N° DE LEGAJO CONFORME A LA INSCRIPCION EN EL MINISTERIO DE TRABAJO, EMPLEO Y SEGURIDAD SOCIAL</h4>
-                    <a style={{display: "table-cell", fontSize: "initial"}} href="http://www.trabajo.gov.ar/left/sindicales/dnas2/Entidades/entidades.asp" target="_blank">(http://www.trabajo.gov.ar/left/sindicales/dnas2/Entidades/entidades.asp)</a>
+                    <h2>Representación Gremial</h2>                    
                     {this.renderGremios()}
+                    <h4 style={{textAlign: "initial"}}>En caso de contar con delegados gremiales indicar número de legajo conforme a la inscripción en el Ministerio de Trabajo, Empleo y Seguiridad Social</h4>
+                    <a style={{display: "table-cell", fontSize: "initial"}} href="http://www.trabajo.gov.ar" target="_blank">(http://www.trabajo.gov.ar)</a>
                 </div>
 
 
@@ -373,13 +384,26 @@ class FormularioA extends Component{
                 return <div>
                     <h2>Contratistas</h2>
                     {this.renderContratistas()}
+                    <h4 style={{textAlign: "initial"}}>En caso de tener contratistas, indicar nro de CUIT y Nombre - Razón Social</h4>
                 </div>
 
             case 60:
                 //Responsables
                 return <div>
-                    <h2>Responsables</h2>
+                    <h2>Datos Laborales del Profesional o Responsable del Formulario</h2>
                     {this.renderResponsables()}
+                    <h4 style={{textAlign: "initial"}}>Cargos:</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Profesional de Higiene y Seguridad en el Trabajo</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Profesional de Medicina Laboral</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Responsable de Datos del Formulario</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "2%"}}>En Representación ingresar</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Representante Legal</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Presidente</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>VicePresidente</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Director General</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Gerente General</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Administrador General</h4>
+                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Otros</h4>
                 </div>
 
             default: return <div>
@@ -415,8 +439,8 @@ class FormularioA extends Component{
             <table className="gremios-table">
                 <thead className="cabecera">
                     <tr>
-                        <th className="cabecera-gremioslegajo">Legajo</th>
-                        <th className="cabecera-gremiosgremio">Gremio</th>
+                        <th className="cabecera-gremioslegajo">Nro Legajo del Gremio</th>
+                        <th className="cabecera-gremiosgremio">Nombre del Gremio</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -536,16 +560,16 @@ class FormularioA extends Component{
                         <thead className="cabecera">
                         {parseInt(seccion.Interno) === 37 || parseInt(seccion.Interno) === 101 || parseInt(seccion.Interno) === 120 ?
                             <tr>
-                                <th className="cabecera-codigo">Cod</th>
+                                <th className="cabecera-codigo">Código</th>
                                 <th className="cabecera-pregunta">{seccion.Descripcion}</th>
-                                <th className="cabecera-select">Sí</th>
+                                <th className="cabecera-select">Sí/No</th>
                                 <th className="cabecera-comentario">Norma Vigente</th>                                                
                             </tr>
                         :
                             <tr>
-                                <th className="cabecera-codigo">Cod</th>
+                                <th className="cabecera-codigo">Código</th>
                                 <th className="cabecera-pregunta">{seccion.Descripcion}</th>
-                                <th className="cabecera-select">Sí</th>                                         
+                                <th className="cabecera-select">Sí/No</th>                                         
                             </tr>
                         }
                         </thead>
@@ -754,7 +778,7 @@ class FormularioA extends Component{
         const disabledConfirmar = this.state.generado === false ? true : false
 
         if (this.state.cancelar === true) {
-            return <Redirect to='/ConsultaFormularios/' />
+            return <Redirect to='/ConsultaFormulariosRGRL/' />
         }
 
         return <div className="container">
@@ -777,6 +801,7 @@ class FormularioA extends Component{
                                 erroresRespuestas={this.state.erroresRespuestas}
                                 pagina={this.state.pagina}
                                 cambioPagina={this.handleCambioPagina}
+                                paginas={this.state.paginas}
                             />
                             {this.state.pagina >= 1 && this.state.pagina <= 8 ?
                                 <h3>CONDICIONES A CUMPLIR</h3>
@@ -810,12 +835,12 @@ class FormularioA extends Component{
 
 const mapStateToProps = state => {
     return {
-        formSel: state.form.formSeleccionado,
+        /*formSel: state.form.formSeleccionado,
         cantGremios: state.form.cantGremios,
         cantContratistas: state.form.cantContratistas,
         cantResponsables: state.form.cantResponsables,
         estadoForm: state.form.estado,
-        establecimientoSeleccionado: state.establecimiento.interno  
+        establecimientoSeleccionado: state.establecimiento.interno  */
     };
 }
 

@@ -586,7 +586,7 @@ export class CargarFormularioRAR extends Component{
                     <Spinner/>
                 :
                     <>
-                    <h3>Datos del trabajador</h3>
+                    <h3>Datos del Trabajador Expuesto</h3>
                     <form autoComplete="off" onSubmit={this.handleSubmit} className="form-datostrabajador">
                         <div>
                             {this.state.cuilValido === true ?
@@ -778,7 +778,7 @@ export class CargarFormularioRAR extends Component{
                                     }}
                                 >                                            
                                     {this.state.refAgenteCausante.map(agente => {        
-                                        return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.AgenteCausante}</option>
+                                        return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.Descripcion}</option>
                                     })}
                                 </TextField>
                             :
@@ -813,7 +813,7 @@ export class CargarFormularioRAR extends Component{
                                     }}
                                 >                                            
                                     {this.state.refAgenteCausante.map(agente => {        
-                                        return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.AgenteCausante}</option>
+                                        return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.Descripcion}</option>
                                     })}
                                 </TextField>
                             }

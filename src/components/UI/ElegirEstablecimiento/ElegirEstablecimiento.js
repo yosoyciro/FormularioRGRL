@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import { connect } from 'react-redux';
-import * as tiposAcciones from '../../../Store/acciones';
 import Api from '../../../Api/Api';
 import './ElegirEstablecimiento.css'
 
@@ -13,7 +11,27 @@ class ElegirEstablecimiento extends Component{
     }
         
     componentDidMount() {        
-        this.cargarEstablecimientos()
+        switch(parseInt(this.props.internoEstablecimiento))
+        {
+            case 0:
+                this.cargarEstablecimientos()
+                break;
+
+            default:
+                // Create a new array based on current state:
+                let establecimientos = [...this.state.establecimientos];
+
+                // Add item to it
+                establecimientos.push({ 
+                    Interno: this.props.internoEstablecimiento,
+                    DomicilioCalle: this.props.direccion
+                 });
+
+                // Set state
+                this.setState({ establecimientos });
+                this.props.seleccionEstablecimiento(parseInt(this.props.internoEstablecimiento), this.props.direccion)
+                break;
+        }
     }
 
     handleChange = (selectedOption) => {
@@ -39,7 +57,7 @@ render() {
     const disable = (this.props.establecimientoSeleccionado !== 0 && this.props.formSel !== 0)  ? true : false
     const opciones = this.state.establecimientos.map(establecimiento => {
         //console.log('establecimiento: ' + establecimiento)            
-        return {value: establecimiento.Interno, label: establecimiento.Direccion, cuit: this.props.cuit, razonsocial: this.props.razonSocial }
+        return {value: establecimiento.Interno, label: establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, cuit: this.props.cuit, razonsocial: this.props.razonSocial }
     })
 
     //Cuando elijo, armo el label nuevo
@@ -80,18 +98,4 @@ render() {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        establecimientoSeleccionado: state.establecimiento.interno,
-        descripcionEstablecimiento: state.establecimiento.descripcion,
-        formSel: state.form.formSeleccionado
-    };
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        seleccionEstablecimiento: (internoEstablecimiento, descripcion) => dispatch({type: tiposAcciones.ESTABLECIMIENTO_SELECCION, internoEstablecimiento: internoEstablecimiento, descripcion: descripcion})
-    };
-}
-
-export default connect(mapStateToProps,mapDispatchToProps) (ElegirEstablecimiento);
+export default ElegirEstablecimiento;

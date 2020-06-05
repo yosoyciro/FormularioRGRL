@@ -54,7 +54,7 @@ render() {
     const opciones = this.state.establecimientos.map(establecimiento => {
         return {
             value: establecimiento.Interno, 
-            label: establecimiento.Direccion, 
+            label: establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, 
             cuit: this.props.cuit, 
             razonsocial: this.props.razonSocial 
         }

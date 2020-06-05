@@ -109,13 +109,13 @@ class Responsable extends Component{
                 </td>
                 <td>
                     <select className="Select" name="representacion" disabled={isDisable} onChange={this.handleChange} value={representacion}>
-                        <option value="Representante Legal">Representante Legal</option>
-                        <option value="Presidente">Presidente</option>
-                        <option value="Vicepresidente">Vicepresidente</option>
-                        <option value="Gerente General">Gerente General</option>
-                        <option value="Director General">Director General</option>
-                        <option value="Administrador General">Administrador General</option>
-                        <option value="Otro">Otro</option>
+                        <option value={1}>Representante Legal</option>
+                        <option value={2}>Presidente</option>
+                        <option value={5}>Vicepresidente</option>
+                        <option value={6}>Gerente General</option>
+                        <option value={3}>Director General</option>
+                        <option value={4}>Administrador General</option>
+                        <option value={99}>Otro</option>
                     </select>
                 </td>
                 <td>
