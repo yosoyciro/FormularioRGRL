@@ -10,10 +10,10 @@ render() {
     return <Fragment>
             <tr>
                 <td>
-                    <input className="gremios-legajo" type="number" name="legajo" value={legajo} disabled={true}></input>
+                    <input className="gremios-legajo" type="text" name="legajo" value={legajo} disabled={true}></input>
                 </td>
                 <td>
-                    <input className="gremios-legajo" type="text" name="nombre" value={nombre} disabled={true}></input>     
+                    <input className="gremios-nombre" type="text" name="nombre" value={nombre} disabled={true}></input>     
                 </td>
             </tr>
         </Fragment>

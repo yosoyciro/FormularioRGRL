@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
-import Api from '../../../Api/Api';
+import CargarEstablecimientos from '../../../Api/CargarEstablecimientos';
 import './ElegirEstablecimiento.css'
 
 //Componente que se conecta al web api y trae todas las preguntas
@@ -10,25 +10,29 @@ class ElegirEstablecimiento extends Component{
         establecimientos: []      
     }
         
-    componentDidMount() {        
+    componentDidMount = async() => {        
         switch(parseInt(this.props.internoEstablecimiento))
         {
             case 0:
-                this.cargarEstablecimientos()
+                await this.cargarEstablecimientos(0)
                 break;
 
             default:
-                // Create a new array based on current state:
+                await this.cargarEstablecimientos(1)                
+                /*// Create a new array based on current state:
                 let establecimientos = [...this.state.establecimientos];
 
                 // Add item to it
                 establecimientos.push({ 
                     Interno: this.props.internoEstablecimiento,
+                    Nombre: this.props.direccion,
                     DomicilioCalle: this.props.direccion
                  });
 
                 // Set state
                 this.setState({ establecimientos });
+                this.props.seleccionEstablecimiento(parseInt(this.props.internoEstablecimiento), this.props.direccion)*/
+                console.log('devuelve')
                 this.props.seleccionEstablecimiento(parseInt(this.props.internoEstablecimiento), this.props.direccion)
                 break;
         }
@@ -37,35 +41,41 @@ class ElegirEstablecimiento extends Component{
     handleChange = (selectedOption) => {
         this.setState({ selectedOption: selectedOption.value }) 
 
-        //Grabo el form elegido en el Redux
         this.props.seleccionEstablecimiento(selectedOption.value, selectedOption.label);    
     }    
 
-    cargarEstablecimientos = async  event => {
-        try {
-            const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorCuit?pCuit=${this.props.cuit}`)             
-            console.log(refEstablecimientos.data)
-            this.setState({establecimientos: refEstablecimientos.data})            
-        }
-        catch (error) {
-            console.log(error);
-        }     
+    cargarEstablecimientos = async(opcion) => {
+        const establecimientos = await CargarEstablecimientos({
+            opcion: opcion,
+            cuit: this.props.cuit,
+            internoEstablecimiento: this.props.internoEstablecimiento
+        })    
+        this.setState({establecimientos})
+        console.log('Establecimientos: ' + JSON.stringify(this.state.establecimientos))
     }
 
-render() {           
-    const menuIsOpen= (this.props.establecimientoSeleccionado === 0 ? true : false)    
-    const disable = (this.props.establecimientoSeleccionado !== 0 && this.props.formSel !== 0)  ? true : false
+render() {    
+    const internoEstablecimiento = parseInt(this.props.internoEstablecimiento)         
+    const menuIsOpen= (this.props.internoEstablecimiento === 0 ? true : false)    
+    const disable = (this.props.internoEstablecimiento !== 0 && this.props.internoFormulario !== 0)  ? true : false
     const opciones = this.state.establecimientos.map(establecimiento => {
-        //console.log('establecimiento: ' + establecimiento)            
-        return {value: establecimiento.Interno, label: establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, cuit: this.props.cuit, razonsocial: this.props.razonSocial }
+        return {
+            value: establecimiento.Interno, 
+            label: establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, 
+            cuit: this.props.cuit, 
+            razonsocial: this.props.razonSocial 
+        }
     })
 
     //Cuando elijo, armo el label nuevo
     var currentSelection = []
-    if (this.props.establecimientoSeleccionado)
+    if (internoEstablecimiento !== 0 && this.state.establecimientos.length !== 0)
         currentSelection = [
-            {label: 'Seleccione formulario para ' + this.props.cuit + ' - ' + this.props.razonSocial + ' - ' + this.props.descripcionEstablecimiento, value: this.props.establecimientoSeleccionado}
-        ];    
+            {
+                label: 'Seleccione formulario para ' + this.props.cuit + ' - ' + this.props.razonSocial + ' - ' + this.establecimientos.Nombre, 
+                value: parseInt(this.props.internoEstablecimiento)
+            }
+        ];     
     
     return <>
             <table className="table-establecimiento">

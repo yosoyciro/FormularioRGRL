@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import ListaFormularios from '../components/ConsultaFormularios/ListaFormularios';
+import ListaFormularios from '../FormulariosRGRL/ListaFormularios';
 import './ConsultaFormularios.css';
 
 export class ConsultaFormularios extends Component{

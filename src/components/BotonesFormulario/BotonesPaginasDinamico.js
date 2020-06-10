@@ -25,7 +25,7 @@ class BotonesPaginaDinamicos extends Component {
     }
 
     render() { 
-        console.log('[BotonesPaginasDinamico - render] this.props.confirmado: ' + this.props.confirmado)              
+        //console.log('[BotonesPaginasDinamico - render] this.props.pagina: ' + this.props.pagina)              
         return <ButtonToolbar aria-label="Toolbar with button groups">
             <ButtonGroup className="botonesformulario" aria-label="Paginas">                
                 {this.props.paginas.map(pagina => {
@@ -72,7 +72,7 @@ class BotonesPaginaDinamicos extends Component {
                                     buttonProperties = {value:pagina, variant:"info"}
                             }                             
                     }   
-                    return <Button {...buttonProperties} onClick={this.handleCambioPagina}>{textoBoton}</Button>                                                                            
+                    return <Button {...buttonProperties} onClick={this.handleCambioPagina} key={pagina}>{textoBoton}</Button>                                                                            
                 })}  
             </ButtonGroup>
 

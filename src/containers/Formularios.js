@@ -1,9 +1,8 @@
-import React, { Component, Fragment } from 'react';
-//import { connect } from 'react-redux';
-import FormularioA from './FormularioA';
+import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
-import ConsultaFormularios from './ConsultaFormularios';
-import NuevoFormularioRGRL from '../components/Formulario/NuevoFormularioRGRL';
+import NuevoFormularioRGRL from '../components/FormulariosRGRL/NuevoFormularioRGRL';
+import ListaFormularios from '../components/FormulariosRGRL/ListaFormularios';
+import Spinner from '../components/UI/Spinner'
 
 class Formulario extends Component{   
     constructor(props) {
@@ -13,10 +12,12 @@ class Formulario extends Component{
             internoEstablecimiento: 0,
             razonSocial: '',
             direccion: '',
-            cargarFormulario: false
+            cargarFormulario: false,
+            loadingFormularios: false
         }
         this.seleccionaRegistro = this.seleccionaRegistro.bind(this)
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this)
+        this.handleLoadingFormularios = this.handleLoadingFormularios.bind(this)
     }
 
     handleClick = () => {
@@ -27,7 +28,7 @@ class Formulario extends Component{
             internoFormulario: 0,
             estado: '',
             razonSocial: null,
-            direccion: null,                        
+            direccion: null                      
         })
     }
 
@@ -44,7 +45,7 @@ class Formulario extends Component{
     }
 
     seleccionaRegistro = (cuit, internoFormulario, internoEstablecimiento, estado, razonSocial, direccion) => {
-        console.log('[Formularios] - Direccion: ' + direccion)
+        //console.log('[Formularios] - Direccion: ' + direccion)
         this.setState({
             cuit,
             internoFormulario,
@@ -67,10 +68,28 @@ class Formulario extends Component{
         })
     }
 
+    handleLoadingFormularios(estadoNum) {
+        //console.log('[Formularios] handleLoadingFormularios ' + estadoNum)    
+        var estado = false
+        switch (parseInt(estadoNum)) {
+            case 1:
+                estado = true
+                break;
+        
+            case 0:
+                estado = false
+                break;
+            default:
+                break;
+        }   
+        this.setState({ loadingFormularios: estado })
+    }
+
     componentDidMount() {
         
     }  
     render(){
+        //console.log('[Formularios] loadingFormularios: ' + this.state.loadingFormularios)
         return <div>
             {this.state.cargarFormulario === false ?
                 <div>
@@ -97,10 +116,14 @@ class Formulario extends Component{
                     >
                         Finaliza
                     </Button>
-                    <ConsultaFormularios
-                        seleccionaRegistro={this.seleccionaRegistro}
-                        cargarFormulario={this.state.cargarFormulario}
-                    />
+                    {this.state.loadingFormularios === false ?
+                        <ListaFormularios
+                            seleccionaRegistro={this.seleccionaRegistro}
+                            loadingFormularios={this.handleLoadingFormularios}
+                        />
+                    :
+                        <Spinner />
+                    }
                 </div>
             :
                 <NuevoFormularioRGRL

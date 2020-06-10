@@ -1,24 +1,23 @@
-import React, {Component, Fragment} from 'react';
-import {Spinner} from 'react-bootstrap';
+import React, {Component } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
 import filterFactory, { textFilter ,selectFilter } from 'react-bootstrap-table2-filter';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import CargarConsultaFormularios from '../../Api/CargarConsultaFormularios';
-import MostrarRespuestas from './MostrarRespuestas';
+import MostrarRespuestas from '../ConsultaFormularios/MostrarRespuestas';
 import CargarSeccionesFormulario from '../../Api/CargarSeccionesFormulario';
 import CargarRespuestasConsulta from '../../Api/CargarRespuestasConsulta';
 import CargarPreguntas from '../../Api/CargarPreguntas';
-import BotonesPagina from '../BotonesFormulario/BotonesPaginas';
 import FormatearFechaCelda from '../Utiles/FormatearFechaCelda'
 import './ListarFormularios.css'
 import BotonesPaginaDinamicos from '../BotonesFormulario/BotonesPaginasDinamico';
+import Spinner from '../UI/Spinner'
 
 export class ListaFormularios extends Component{
     constructor(props) {
         super(props)
+        this.handleLoadingRespuestas = this.handleLoadingRespuestas.bind(this)
         this.state = {
-            loading: true,
             pagina: 1,
             formulariosCargados: [],
             internoFormulario: 0,
@@ -30,21 +29,24 @@ export class ListaFormularios extends Component{
             respuestasGremio: [],
             respuestasContratista: [],
             respuestasResponsable: [],
-            paginas: []
+            paginas: [],
+            loadingRespuestas: false
         }
     }
 
     componentDidMount() {        
         //this.setState({formulariosCargados: await CargarConsultaFormularios()})
-        this.setState({ loading: true })
+        this.props.loadingFormularios(1)
+
         CargarConsultaFormularios()
         .then(response => {
             //console.log('traigo los datos')
             this.setState({
-                loading: !this.state.loading,
                 formulariosCargados: response
             })
+            
         })
+        .finally (this.props.loadingFormularios(0))
         //console.log('JSON: ' + JSON.stringify(response))        
     }
 
@@ -72,7 +74,7 @@ export class ListaFormularios extends Component{
         })
         //console.log('paginasSeeciones: ' + paginasSecciones)
         const paginas = [...new Set(paginasSecciones)]
-        console.log('paginas: ' + paginas)
+        //console.log('paginas: ' + paginas)
 
         this.setState({
             secciones,
@@ -94,8 +96,10 @@ export class ListaFormularios extends Component{
     }
 
     handleCambioPagina = (pagina) => {
-        //console.log('pagina: ' + pagina)
-        this.setState({pagina: parseInt(pagina)})
+        console.log('pagina: ' + pagina)
+        this.setState({
+            pagina: parseInt(pagina)   
+        })
         //this.limpiarSeleccion()
     }
 
@@ -112,7 +116,7 @@ export class ListaFormularios extends Component{
 
     handlePagChange = () => {
         //this.setState({ rowCount: dataSize });
-        console.log('cambia la pagina')
+        //console.log('cambia la pagina')
         this.setState({
             internoFormulario: 0,
             internoEstablecimiento: 0,
@@ -120,10 +124,27 @@ export class ListaFormularios extends Component{
         })
         this.limpiarSeleccion()
     } 
+
+    handleLoadingRespuestas(estadoNum) {      
+        //console.log('[ListaFormularios] handleLoadingRespuestas ' + estadoNum)    
+        var estado = false
+        switch (parseInt(estadoNum)) {
+            case 1:
+                estado = true
+                break;
+        
+            case 0:
+                estado = false
+                break;
+            default:
+                break;
+        }     
+        this.setState({ loadingRespuestas: estado })        
+    }
     
 
     render(){
-        //console.log('render-loading: ' + this.state.loading) 
+        //console.log('[ListaFormularios] handleLoadingRespuestas ' + this.state.loadingRespuestas)
         const { SearchBar } = Search;
 
         const selectOptions = {
@@ -260,10 +281,6 @@ export class ListaFormularios extends Component{
         );
         
         return <div>
-            {this.state.loading === true ?
-                <Spinner />
-            :
-                <>
                     <PaginationProvider
                         className="paginacion"
                         pagination={
@@ -273,13 +290,15 @@ export class ListaFormularios extends Component{
                         { contentTable }
                     </PaginationProvider>
                     {this.state.internoFormulario !== 0 && this.state.internoEstablecimiento !== 0 ?
-                        <>
-                            <BotonesPaginaDinamicos 
-                                confirmado={false}                            
-                                pagina={this.state.pagina}
-                                cambioPagina={this.handleCambioPagina}
-                                paginas={this.state.paginas}
-                            />                      
+                        <>                        
+                        <BotonesPaginaDinamicos
+                            confirmado={false}                            
+                            pagina={this.state.pagina}
+                            cambioPagina={this.handleCambioPagina}
+                            paginas={this.state.paginas}
+                        /> 
+                        {this.state.loadingRespuestas === false ?
+                            <>                     
                             <MostrarRespuestas
                                 secciones={this.state.secciones}
                                 preguntas={this.state.preguntas}
@@ -287,14 +306,17 @@ export class ListaFormularios extends Component{
                                 gremios={this.state.respuestasGremio}
                                 contratistas={this.state.respuestasContratista}
                                 responsables={this.state.respuestasResponsable}
-                                pagina={this.state.pagina}
+                                pagina={this.state.pagina}     
+                                handleLoadingRespuestas={this.handleLoadingRespuestas}                           
                             />
+                            </>
+                        :
+                            <Spinner />
+                        }
                         </>
                     :
                         null                    
                     }
-                </> 
-            }
         </div>
     }
 }

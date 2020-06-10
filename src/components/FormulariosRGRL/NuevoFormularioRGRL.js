@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import DatosGenerales from '../UI/DatosGenerales/DatosGenerales';
-import ElegirEstablecimiento from '../UI/ElegirEstablecimiento/ElegirEstablecimiento';
 import FormularioA from '../../containers/FormularioA';
+import ElegirTipoFormulario from '../UI/ElegirTipoFormulario/ElegirTipoFormulario';
+import ElegirEstablecimientoRAR from '../UI/ElegirEstablecimiento/ElegirEstablecimientoRAR';
+import Spinner from '../UI/Spinner';
 //import CargarFormulario from './CargarFormulario';
 //import GenerarFormularioRAR from './GenerarFormularioRAR';
 //import ElegirEstablecimientoRAR from '../UI/ElegirEstablecimiento/ElegirEstablecimientoRAR'
@@ -9,18 +11,19 @@ import FormularioA from '../../containers/FormularioA';
 class NuevoFormularioRGRL extends Component{   
     constructor(props) {
         super(props)
-        this.handleFormularioGenerado = this.handleFormularioGenerado.bind(this);
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
         this.handleSeleccionEstablecimiento = this.handleSeleccionEstablecimiento.bind(this);
+        this.handleSeleccionFormulario = this.handleSeleccionFormulario.bind(this);
         this.handleSeleccionCUIT = this.handleSeleccionCUIT.bind(this);
+        this.handleLoading = this.handleLoading.bind(this);
         this.state = {
-            formularioRARGenerado: [],
+            formularioRGRL: [],
             cuit: 0,
             razonSocial: '',
             internoFormulario: 0,
             internoEstablecimiento: 0,
             direccion: '',
-            estado: null
+            loading: false
         }
     }
 
@@ -35,24 +38,34 @@ class NuevoFormularioRGRL extends Component{
         })
     }
 
-    handleFormularioGenerado(formularioRARGenerado) { 
-        //console.log('[NuevoFormularioRAR] handleFormularioGenerado - formularioRARGenerado: ' + formularioRARGenerado)        
-        this.setState({
-            formularioRARGenerado: formularioRARGenerado
-        })            
-    }
-
     handleFinalizaCarga() {
         this.props.finalizaCarga()
     }
 
-    handleSeleccionEstablecimiento(internoEstablecimiento, direccion) {
+    handleSeleccionEstablecimiento(internoEstablecimiento, direccion, loading) {
         //console.log('[NuevoFormularioRAR]-handleSeleccionEstablecimiento - internoEstablecimiento: ' + internoEstablecimiento + '- direccion: ' + direccion)
         this.setState({ 
-            internoEstablecimiento: internoEstablecimiento,
-            direccion: direccion
+            internoEstablecimiento,
+            direccion,
+            loading
         })
         //console.log('[NuevoFormularioRGRL]-establecimiento: ' + this.state.internoEstablecimiento)
+    }
+
+    handleSeleccionFormulario(formularioRGRL, internoFormulario) {
+        /*this.setState({ 
+            internoFormulario,
+            cantGremios,
+            cantContratistas,
+            cantResponsables,            
+            estado,    
+        })*/
+        this.setState({
+            formularioRGRL,
+            internoFormulario
+        })
+        console.log('[NuevoFormularioRGRL]-formularioRGRL: ' + JSON.stringify(this.state.formularioRGRL))
+        console.log('[NuevoFormularioRGRL]-internoFormulario: ' + internoFormulario)
     }
 
     handleSeleccionCUIT(cuit, razonSocial) {
@@ -61,22 +74,27 @@ class NuevoFormularioRGRL extends Component{
             razonSocial
         })
     }
+
+    handleLoading(loading) {
+        this.setState({
+            loading
+        })
+    }
     
     render() {        
-        console.log('RENDER - formularioRARGenerador: ' + Object.values(this.state.formularioRARGenerado))
-        const disabled = this.state.formularioRARGenerado.length === 0 ? false : true
         //console.log('[NuevoFormularioRAR] cuit: ' + params.cuitSeleccionado)
         //console.log('[NuevoFormularioRAR] - internoEstablecimiento: ' + this.state.internoEstablecimiento)
-        return <Fragment>
-            <h2>Formulario RAR</h2>
+        return <Fragment> 
+            <h2>Formulario RGRL</h2>        
             <DatosGenerales
                 cuit={this.props.cuit}
                 seleccionCUIT={this.handleSeleccionCUIT}                
                 finalizaCarga={this.handleFinalizaCarga}
             />
             {this.state.cuit !== 0 ?
-                <ElegirEstablecimiento
+                <ElegirEstablecimientoRAR
                     cuit={this.state.cuit}
+                    internoFormulario={this.state.internoFormulario}
                     internoEstablecimiento={this.state.internoEstablecimiento}
                     razonSocial={this.state.razonSocial}
                     direccion={this.state.direccion}
@@ -86,17 +104,24 @@ class NuevoFormularioRGRL extends Component{
                 null
             } 
             {this.state.internoEstablecimiento !== 0 ? 
-                <FormularioA
-                    internoFormulario={this.state.internoFormulario}
+                <ElegirTipoFormulario
                     internoEstablecimiento={this.state.internoEstablecimiento}
-                    estado={this.state.estado}
-                    formularioGenerado={this.handleFormularioGenerado}
-                    disabled={disabled}
+                    internoFormulario={this.state.internoFormulario}
+                    seleccionFormulario={this.handleSeleccionFormulario}
+                    loading={this.handleLoading}
                 />
             :
                 null
             }
-        </Fragment>
+            {this.state.internoEstablecimiento !== 0 && this.state.formularioRGRL.length !== 0 && this.state.loading === false ? 
+                <FormularioA
+                    formularioRGRL={this.state.formularioRGRL}
+                    internoEstablecimiento={this.state.internoEstablecimiento}
+                />
+            :
+                null
+            }
+        </Fragment>        
     }
 }
 

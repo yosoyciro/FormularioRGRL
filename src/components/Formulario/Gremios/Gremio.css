@@ -14,3 +14,7 @@
 .gremios-legajo {
     width: -webkit-fill-available;
 }
+
+.gremios-nombre {
+    width: 100%;
+}

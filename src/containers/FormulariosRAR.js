@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { Button } from 'react-bootstrap';
-import './ConsultaFormularios.css';
 import ListaFormulariosRAR from '../components/FormulariosRAR/ListaFormulariosRAR';
 import NuevoFormularioRAR from '../components/FormulariosRAR/NuevoFormularioRAR';
 

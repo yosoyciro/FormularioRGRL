@@ -57,38 +57,38 @@ class FormularioA extends Component{
             hayErrores: false,
             //#region SnackbarErrores,
             showSnackbarErrores: false,
-            paginas: []
+            paginas: [],
             //#endregion
         }
     }
 
     componentDidMount() {
-        //Vengan las preguntontas        
+        //Vengan las preguntontas  
         this.cargarDatos()        
     }
 
     //#region CargaDatos
     cargarDatos = async event => {
         this.setState({saving: true})
-        console.log('[FormularioA] - cargarDatos - internoFormulario: ' + this.props.internoFormulario)
+        console.log('[FormularioA] - cargarDatos - formularioRGRL: ' + JSON.stringify(this.props.formularioRGRL))
         try {                                 
-            const secc = await Api.get(`Secciones/ListarSeccionesFormulario?pInternoFormulario=${this.props.internoFormulario}`)
+            const secc = await Api.get(`Secciones/ListarSeccionesFormulario?pInternoFormulario=${this.props.formularioRGRL.value}`)
             //cargar un array de paginas para pasarlo a BotonesPaginas
-            /*const paginasSecciones = secc.map(seccion => {
+            const paginasSecciones = secc.data.map(seccion => {
                 return seccion.Pagina
-            })*/
+            })
 
-            //const paginas = [...new Set(paginasSecciones)]
+            const paginas = [...new Set(paginasSecciones)]
             this.setState({
                 secciones: secc.data,
-                //paginas
+                paginas
             });
 
-            const preg = await Api.get(`Cuestionarios/ListarPorFormulario?pInternoFormulario=${this.props.internoFormulario}`)
+            const preg = await Api.get(`Cuestionarios/ListarPorFormulario?pInternoFormulario=${this.props.formularioRGRL.value}`)
             this.setState({ preguntas: preg.data });      
 
-            console.log('(this.props.estado: ' + (this.props.estado))
-            if (this.props.estado === 'En proceso de carga')
+            console.log('(this.props.estado: ' + (this.props.formularioRGRL.estado))
+            if (this.props.formularioRGRL.estado === '(En proceso de carga)')
                 this.cargarRespuestas()   
         }
         catch (error) {
@@ -102,7 +102,7 @@ class FormularioA extends Component{
 
     cargarRespuestas = async() => {
         const respuestasCuestionario = await CargarRespuestas({
-            internoFormulario: this.props.internoFormulario, 
+            internoFormulario: this.props.formularioRGRL.value, 
             internoEstablecimiento: this.props.internoEstablecimiento
         })
         this.setState({ respuestasFormulario: respuestasCuestionario, 
@@ -176,14 +176,14 @@ class FormularioA extends Component{
     handleGenerar(event) {
         this.setState({saving: !this.state.saving})        
         
-        switch (this.props.estado)
+        switch (this.props.formularioRGRL.estado)
         {
-            case 'No generado':
+            case '(No generado)':
                 this.generarFormulario();
                 break;
 
-            case 'Nueva instancia':
-                ReplicarFormulario({internoFormulario: this.props.internoFormulario, internoEstablecimiento: this.props.internoEstablecimiento})
+            case '(Nueva instancia)':
+                ReplicarFormulario({internoFormulario: this.props.formularioRGRL.value, internoEstablecimiento: this.props.internoEstablecimiento})
                 .then(res => {                        
                     this.cargarRespuestas();
                     this.setState({
@@ -224,7 +224,7 @@ class FormularioA extends Component{
 
         //Genero RespuestasGremio
         let RespuestasGremio = []
-        const cantGremios = parseInt(this.props.cantGremios)
+        const cantGremios = parseInt(this.props.formularioRGRL.gremios)
         for (var i = 1; i <= cantGremios; i++) {
             indice++
             const nuevoGremio = {
@@ -240,7 +240,7 @@ class FormularioA extends Component{
 
         //Genero RespuestasContratista
         let RespuestasContratista = []
-        const cantContratistas = parseInt(this.props.cantContratistas)
+        const cantContratistas = parseInt(this.props.formularioRGRL.contratistas)
         for (var c = 1; c <= cantContratistas; c++) {
             indice++
             const nuevoContratista = {
@@ -257,8 +257,8 @@ class FormularioA extends Component{
         
         //Genero RespuestasResponsable
         let RespuestasResponsable = []
-        console.log('this.props.cantResponsables: ' + this.props.cantResponsables)
-        const cantResponsables = parseInt(this.props.cantResponsables)
+        console.log('this.props.cantResponsables: ' + this.props.formularioRGRL.responsables)
+        const cantResponsables = parseInt(this.props.formularioRGRL.responsables)
         for (var r = 1; r <= cantResponsables; r++) {
             indice++
             const nuevoResponsable = {
@@ -282,7 +282,7 @@ class FormularioA extends Component{
         const RespuestaFormulario = {
             $id: 1,
             Interno: 0,
-            InternoFormulario: this.props.internoFormulario,
+            InternoFormulario: this.props.this.props.formularioRGRL.value,
             InternoEstablecimiento: this.props.internoEstablecimiento,
             CreacionFechaHora: fechaCreacion,
             CompletadoFechaHora: fechaCompletado,

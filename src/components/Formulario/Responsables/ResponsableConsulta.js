@@ -28,7 +28,41 @@ class ResponsableConsulta extends Component{
                 break;
         }
         
-        const representacion = this.props.responsable.Representacion
+        let representacion = ''
+        switch (parseInt(this.props.responsable.Representacion)) {
+            case 1:
+                representacion = 'Representante Legal'
+                break;
+
+            case 2:
+                representacion = 'Presidente'
+                break;
+            
+            case 3:
+                representacion = 'Director General'
+                break;
+
+            case 4:
+                representacion = 'Administrador General'
+                break;
+
+            case 5:
+                representacion = 'VicePresidente'
+                break;
+
+            case 6:
+                representacion = 'Gerente General'
+                break;
+
+            case 99:
+                representacion = 'Otros'
+                break;
+
+            default:
+                representacion = 'No especificado'
+                break;
+        }
+        
         
         //const esContratado = this.props.responsable.EsContratado
         let esContratado = ''

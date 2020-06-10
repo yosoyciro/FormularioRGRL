@@ -15,7 +15,7 @@ render() {
         <td>
             <input 
                 className="contratistas-cuit"
-                type="number" 
+                type="text" 
                 name="cuit" 
                 value={cuit}
                 disabled={true}
@@ -24,7 +24,7 @@ render() {
         </td>
         <td>
             <input 
-                className="contratistas-cuit"
+                className="contratistas-contratista"
                 type="text" 
                 name="contratista" 
                 disabled={isDisable} 

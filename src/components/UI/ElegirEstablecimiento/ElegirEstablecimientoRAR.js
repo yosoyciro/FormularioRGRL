@@ -15,11 +15,11 @@ class ElegirEstablecimientoRAR extends Component{
         switch(parseInt(this.props.internoEstablecimiento))
         {
             case 0:
-                this.cargarEstablecimientos()
+                this.cargarEstablecimientos(1)
                 break;
 
             default:
-                this.props.seleccionEstablecimiento(parseInt(this.props.internoEstablecimiento), this.props.direccion)
+                this.cargarEstablecimientos(2)                
                 break;
         }
         
@@ -30,31 +30,62 @@ class ElegirEstablecimientoRAR extends Component{
         this.setState({ 
             selectedOption: selectedOption.value
         }) 
-        this.props.seleccionEstablecimiento(parseInt(selectedOption.value), selectedOption.label)
+        this.props.seleccionEstablecimiento(parseInt(selectedOption.value), selectedOption.label, false)
     }    
 
-    cargarEstablecimientos = async  event => {
-        try {
-            const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorCuit?pCuit=${this.props.cuit}`)             
-            console.log(refEstablecimientos.data)
-            this.setState({establecimientos: refEstablecimientos.data})            
+    cargarEstablecimientos = async opcion => {
+        switch (opcion) {
+            case 1:
+                try {
+                    const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorCuit?pCuit=${this.props.cuit}`)             
+                    console.log(refEstablecimientos.data)
+                    this.setState({establecimientos: refEstablecimientos.data})            
+                }
+                catch (error) {
+                    console.log(error);
+                }    
+                break;
+        
+            case 2:
+                try {
+                    const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorInterno?pInternoEstablecimiento=${this.props.internoEstablecimiento}`) 
+                    console.log('Nombre estabelcimiento: ' + refEstablecimientos.data.Nombre)
+
+                    // Create a new array based on current state:
+                    let establecimientos = [...this.state.establecimientos];
+
+                    // Add item to it
+                    establecimientos.push({ 
+                        Interno: refEstablecimientos.data.Interno,
+                        Nombre: refEstablecimientos.data.Nombre,
+                        DomicilioCalle: refEstablecimientos.data.DomicilioCalle + ' ' + refEstablecimientos.data.DomicilioNro
+                    });
+
+                    this.setState({establecimientos})
+                    this.props.seleccionEstablecimiento(parseInt(this.props.internoEstablecimiento), refEstablecimientos.data.Nombre, false)
+
+                } catch (error) {
+                    console.log(error);
+                }
+                break;
+
+            default:
+                break;
         }
-        catch (error) {
-            console.log(error);
-        }     
+         
     }
     
 
 render() {         
     const internoEstablecimiento = parseInt(this.props.internoEstablecimiento)  
-    //console.log('[ElegirEstablecimientoRAR] internoEstablecimiento: ' + internoEstablecimiento)
+    console.log('[ElegirEstablecimientoRAR] Nombre: ' + this.state.establecimientos.Nombre)
     //console.log('[ElegirEstablecimientoRAR] direccion: ' + this.props.direccion)
     const menuIsOpen= (internoEstablecimiento === 0 ? true : false)    
     const disable = (internoEstablecimiento !== 0)  ? true : false
     const opciones = this.state.establecimientos.map(establecimiento => {
         return {
             value: establecimiento.Interno, 
-            label: establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, 
+            label: establecimiento.Nombre, //establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, 
             cuit: this.props.cuit, 
             razonsocial: this.props.razonSocial 
         }

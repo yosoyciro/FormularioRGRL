@@ -53,8 +53,7 @@ class Responsable extends Component{
 
             default:
                 break;
-        }
-        
+        }        
     }
 
     handleBuscarPersona = async event => {        
@@ -120,8 +119,8 @@ class Responsable extends Component{
                 </td>
                 <td>
                     <select className="Select" name="escontratado" disabled={isDisable} onChange={this.handleChange} value={esContratado}>
-                        <option value="0">Propio</option>
-                        <option value="1">Contratado</option>
+                        <option value={0}>Propio</option>
+                        <option value={1}>Contratado</option>
                     </select>
                 </td>
                 <td>

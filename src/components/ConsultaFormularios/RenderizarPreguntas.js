@@ -13,7 +13,7 @@ function RenderizarPreguntas(props) {
     const preguntasSeccion = props.preguntas.filter(pregunta => pregunta.InternoSeccion === props.seccion.Interno)                
 
     let preguntasRender = null
-    console.log('Seccion ' + props.seccion.Interno + ' ' + props.seccion.Descripcion)
+    //console.log('Seccion ' + props.seccion.Interno + ' ' + props.seccion.Descripcion)
     switch (parseInt(props.seccion.TieneNoAplica)) {
         case 1:
             preguntasRender = (

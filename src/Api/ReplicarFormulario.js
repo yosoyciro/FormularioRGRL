@@ -5,7 +5,7 @@ async function ReplicarFormulario(props) {
 
     try {
         //await Api.get(`RespuestasFormulario/ReplicarFormulario?pInternoFormulario=${props.internoFormulario}&pInternoEstablecimiento=${props.internoEstablecimiento}`)
-        const respForm = await Api.get(`RespuestasFormulario/ReplicarFormulario?pInternoFormulario=${props.internoFormulario}&pInternoEstablecimiento=${props.internoEstablecimiento}`)
+        await Api.get(`RespuestasFormulario/ReplicarFormulario?pInternoFormulario=${props.internoFormulario}&pInternoEstablecimiento=${props.internoEstablecimiento}`)
         //console.log('[ReplicarFormulario] respForm.data ' + JSON.stringify(respForm.data))
         return ret
     }

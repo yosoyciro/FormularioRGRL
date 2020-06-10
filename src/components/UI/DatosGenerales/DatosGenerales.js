@@ -1,9 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import BuscarPersona from '../../../Api/BuscarPersona'
-import ElegirEstablecimiento from '../ElegirEstablecimiento/ElegirEstablecimiento';
 import Button from 'react-bootstrap/Button'
 import './DatosGenerales.css'
-import ElegirTipoFormulario from '../ElegirTipoFormulario/ElegirTipoFormulario';
 import CustomizedSnackbars from '../../../components/UI/Snackbar/Snackbar'
 
 //Componente que se conecta al web api y trae todas las preguntas
@@ -14,7 +12,7 @@ class DatosGenerales extends Component{
         this.state = {
             cuit: 0,
             cuitValido: false,
-            nombre: '',
+            razonSocial: '',
             showSnackBar: false,
             mensajeSnackbar: '',
             severitySnackbar: ''
@@ -67,16 +65,21 @@ class DatosGenerales extends Component{
         console.log('respuesta: ' + respuesta[0].razonSocial)
         if (respuesta[0].id !== 0)
         {
-            this.setState({ cuitValido: !this.state.cuitValido })  
-            this.setState({ nombre: respuesta[0].razonSocial})                     
+            this.setState({ 
+                cuitValido: !this.state.cuitValido,
+                razonSocial: respuesta[0].razonSocial
+            })                      
         }
         else
-            this.setState({showSnackBar: !this.state.showSnackBar})                
-            this.setState({mensajeSnackbar: 'Es imprescindible que el CUIT ingresado pertenezca a un empleador relacionado con esta ART'})
-            this.setState({severitySnackbar: "warning"})
+            this.setState({
+                showSnackBar: !this.state.showSnackBar,
+                mensajeSnackbar: 'Es imprescindible que el CUIT ingresado pertenezca a un empleador relacionado con esta ART',
+                severitySnackbar: "warning"
+            })                
 
             //al redux
-            this.props.datosGenerales(this.state.cuit, respuesta[0].id, respuesta[0].razonSocial)        
+            //this.props.datosGenerales(this.state.cuit, respuesta[0].id, respuesta[0].razonSocial)  
+            this.props.seleccionCUIT(this.state.cuit, this.state.razonSocial)      
     }    
     
     handleCambioShowModal(){

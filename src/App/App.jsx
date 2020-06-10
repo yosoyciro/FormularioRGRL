@@ -1,12 +1,11 @@
 import React from 'react';
 import Formularios from '../containers/Formularios';
-import ConsultaFormularios from '../containers/ConsultaFormularios';
-import {BrowserRouter, Route, Switch, Router, Redirect} from 'react-router-dom';
+import {BrowserRouter, Route, Switch, Router } from 'react-router-dom';
 import { history } from '../components/Utiles/history';
 import './App.css';
 import FormulariosRAR from '../containers/FormulariosRAR';
 import NuevoFormularioRAR from '../components/FormulariosRAR/NuevoFormularioRAR';
-import NuevoFormularioRGRL from '../components/Formulario/NuevoFormularioRGRL';
+import NuevoFormularioRGRL from '../components/FormulariosRGRL/NuevoFormularioRGRL';
 
 class App extends React.Component {    
 

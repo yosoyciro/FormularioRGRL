@@ -14,3 +14,7 @@
 .contratistas-cuit {
     width: -webkit-fill-available;
 }
+
+.contratistas-contratista {
+    width: 100%;
+}
