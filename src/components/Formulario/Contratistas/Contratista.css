@@ -11,8 +11,8 @@
     margin-bottom: 4px;
 }
 
-.contratistas-cuit {
-    width: -webkit-fill-available;
+.td-contratista-cuit {
+    display: inline-flex;
 }
 
 .contratistas-contratista {

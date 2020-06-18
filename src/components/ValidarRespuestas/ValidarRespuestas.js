@@ -46,30 +46,40 @@ async function ValidarRespuestas(secciones, preguntas, respuestasCuestionario, r
     })    
 
     //Recorro respuestasGremio
-    respuestasGremio.map(respGre => {
+    //No es necesario cargar Gremios
+    /*respuestasGremio.map(respGre => {
         if (respGre.Legajo === '' || respGre.Gremio === '')
             erroresRespuestas.push({InternoRespuestaCuestionario: respGre.Interno, InternoCuestionario: 0, Pagina: 40})
 
         return respGre
-    })
+    })*/
 
     //Recorro respuestasContratista
-    respuestasContratista.map(respCon => {
+    //NO es necesario cargar contratistas
+    /*respuestasContratista.map(respCon => {
         if (respCon.CUIT === 0 || respCon.Contratista === '')
             erroresRespuestas.push({InternoRespuestaCuestionario: respCon.Interno, InternoCuestionario: 0, Pagina: 50})
             
         return respCon
-    })
+    })*/
 
     //Recorro respuestasResponsable
-    respuestasResponsable.map(respRes => {
-        console.log('error responsables: ' + JSON.stringify(respRes))
-        if (respRes.CUIT === 0 || respRes.Responsable === '' ||respRes.Representacion === '' || respRes.TituloHabilitante === '' || respRes.Matricula === '' || respRes.EntidadOtorganteTitulo === '')
-            erroresRespuestas.push({InternoRespuestaCuestionario: respRes.Interno, InternoCuestionario: 0, Pagina: 60})
-            
-        return respRes
-    })
+    //Busco un registro correcto
+    const responsableOK = respuestasResponsable.filter(resp => resp.CUIT !== 0 && resp.Responsable !== '')
+    if (responsableOK.length === 0)
+    {
+        respuestasResponsable.map(respRes => {
+            //console.log('error responsables: ' + JSON.stringify(respRes))
+            if (respRes.CUIT !== 0 && respRes.Responsable === '')
+                erroresRespuestas.push({InternoRespuestaCuestionario: respRes.Interno, InternoCuestionario: 0, Pagina: 60})
 
+            if (respRes.CUIT === 0 || respRes.Responsable === '')
+                erroresRespuestas.push({InternoRespuestaCuestionario: respRes.Interno, InternoCuestionario: 0, Pagina: 60})
+ 
+            return respRes
+        })
+    }
+    //console.log('[ValidarRespuestas] erroresRespuestas' + JSON.stringify(erroresRespuestas))
     return erroresRespuestas
 }
 

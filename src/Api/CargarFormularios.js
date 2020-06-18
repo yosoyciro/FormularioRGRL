@@ -11,17 +11,17 @@ async function CargarFormularios(props) {
             const isDisabled = false //formulario.Estado === '(Confirmado)' ? true : false
             respuestaFormularios.push({value: formulario.Interno, label: formulario.Descripcion + ' ' + formulario.Estado, isDisabled: isDisabled, gremios: formulario.CantidadGremios, contratistas: formulario.CantidadContratistas, responsables: formulario.CantidadResponsables, estado: formulario.Estado })
 
-            return formulario
+            //return formulario            
         })
+        return respuestaFormularios
                 
     }
     catch (error) {
-        //console.log('[CargarFormularios]: ' + error);
-        respuestaFormularios.push({value: 0, label: 'Error cargando formularios', isDisabled: true, gremios: 0, contratistas: 0, responsables: 0, estado: 0 })
+        console.log('[CargarFormularios]: ' + error);
+        //respuestaFormularios.push({value: 0, label: 'Error cargando formularios', isDisabled: true, gremios: 0, contratistas: 0, responsables: 0, estado: 0 })
+
+        //return respuestaFormularios
     } 
-    //respuestaFormularios.map(form => console.log('form: ' + form.Descripcion))
-    //console.log('respuestaFormularios: ' + respuestaFormularios)
-    return respuestaFormularios
 }
 
 export default CargarFormularios;

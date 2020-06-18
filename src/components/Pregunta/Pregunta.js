@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import './Pregunta.css'
 import * as moment from 'moment';
-import { RadioGroup, Radio } from '@material-ui/core';
+import { Radio } from '@material-ui/core';
 
 
 //Componente que se conecta al web api y trae todas las preguntas
@@ -98,6 +98,7 @@ class Pregunta extends Component{
         var fechaMax = new Date(fechaHoy.getDate + 365)
         
         const isDisable = (respuesta === "N") && (parseInt(this.props.tieneNoAplica) === 1) ? false : true
+        const respuestaDisable = this.props.pregunta.BajaFecha !== 0 ? true : false
 
         return <Fragment>                        
             {(parseInt(this.props.tieneNoAplica) === 1) ?  
@@ -123,6 +124,7 @@ class Pregunta extends Component{
                                 name="radio-button-demo"
                                 color="default"
                                 size="small"
+                                disabled={respuestaDisable}
                             />
                             <Radio
                                 /*style={{margin: '0% 10%'}}*/
@@ -132,6 +134,7 @@ class Pregunta extends Component{
                                 name="radio-button-demo"
                                 color="default"
                                 size="small"
+                                disabled={respuestaDisable}
                             />
                             <Radio           
                                 style={{float: 'right'}}                     
@@ -141,6 +144,7 @@ class Pregunta extends Component{
                                 name="radio-button-demo"
                                 color="default"
                                 size="small"
+                                disabled={respuestaDisable}
                             />
                         </div>	
                     </td>

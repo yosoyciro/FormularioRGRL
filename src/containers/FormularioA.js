@@ -1,12 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import Api from '../Api/Api';
-import { connect } from 'react-redux';
 import Pregunta from '../components/Pregunta/Pregunta';
-import Gremio from '../components/Formulario/Gremios/Gremio';
-import Contratista  from '../components/Formulario/Contratistas/Contratista';
-import Responsable  from '../components/Formulario/Responsables/Responsable';
+import RenderizarContratistas  from '../components/Formulario/Contratistas/RenderizarContratistas';
 import update from 'react-addons-update';
-import * as moment from 'moment';
+//import * as moment from 'moment';
 import CustomizedSnackbars from '../components/UI/Snackbar/Snackbar'
 import ValidarRespuestas from '../components/ValidarRespuestas/ValidarRespuestas'
 import Spinner from '../components/UI/Spinner'
@@ -15,10 +12,13 @@ import BotonesFormulario from '../components/BotonesFormulario/BotonesFormulario
 import BotonesPagina from '../components/BotonesFormulario/BotonesPaginas';
 import ConfirmarFormulario from '../Api/ConfirmarFormulario';
 import { Redirect } from 'react-router-dom';
-import ReplicarFormulario from '../Api/ReplicarFormulario';
-import CargarRespuestas from '../Api/CargarRespuestas';
+import ReplicarFormulario from '../Api/FormulariosRGRL/ReplicarFormulario';
+import CargarRespuestas from '../Api/FormulariosRGRL/CargarRespuestas';
+import GenerarFormulario from '../Api/FormulariosRGRL/GenerarFormulario';
+import RenderizarGremios from '../components/Formulario/Gremios/RenderizarGremios';
+import RenderizarResponsables from '../components/Formulario/Responsables/RenderizarResponsables';
 
-class FormularioA extends Component{     
+export default class FormularioA extends Component{     
     constructor(props) {
         super(props);
         this.handleGenerar = this.handleGenerar.bind(this);        
@@ -27,11 +27,11 @@ class FormularioA extends Component{
 
         this.handleCambioGremio = this.handleCambioGremio.bind(this);
         this.handleCambioContratista = this.handleCambioContratista.bind(this)
-        this.handleCambioResponsablesTodo = this.handleCambioResponsablesTodo.bind(this)
+        this.handleCambioResponsable = this.handleCambioResponsable.bind(this)
 
         this.handleCambioPagina = this.handleCambioPagina.bind(this)
         this.handleConfirmar = this.handleConfirmar.bind(this)
-        this.handleVerErrores = this.handleVerErrores.bind(this)
+        //this.handleVerErrores = this.handleVerErrores.bind(this)
 
         this.state = {
             saving: true,
@@ -63,14 +63,16 @@ class FormularioA extends Component{
     }
 
     componentDidMount() {
-        //Vengan las preguntontas  
-        this.cargarDatos()        
+        this.setState({saving: true}) 
+        this.cargarDatos() 
+        .then(res => {
+            this.setState({saving: false}) 
+        })       
     }
 
     //#region CargaDatos
-    cargarDatos = async event => {
-        this.setState({saving: true})
-        console.log('[FormularioA] - cargarDatos - formularioRGRL: ' + JSON.stringify(this.props.formularioRGRL))
+    cargarDatos = async event => {        
+        console.log('[FormularioA] - cargarDatos - formularioRGRL: ' + JSON.stringify(this.props.formularioRGRL) + ' - internoRespuestaFormulario: ' + this.props.internoRespuestasFormulario)
         try {                                 
             const secc = await Api.get(`Secciones/ListarSeccionesFormulario?pInternoFormulario=${this.props.formularioRGRL.value}`)
             //cargar un array de paginas para pasarlo a BotonesPaginas
@@ -89,29 +91,43 @@ class FormularioA extends Component{
 
             console.log('(this.props.estado: ' + (this.props.formularioRGRL.estado))
             if (this.props.formularioRGRL.estado === '(En proceso de carga)')
-                this.cargarRespuestas()   
+            {
+                this.setState({ loading: !this.state.saving })
+                /*this.cargarRespuestas(this.props.internoRespuestasFormulario)
+                .then(res => (
+                    this.setState({ loading: !this.state.saving })
+                )) */
+                CargarRespuestas({ internoRespuestasFormulario: this.props.internoRespuestasFormulario })  
+                .then(response => {                    
+                    this.setState({ respuestasFormulario: response, 
+                        respuestasCuestionario: response.RespuestasCuestionario,
+                        respuestasGremio: response.RespuestasGremio,
+                        respuestasContratista: response.RespuestasContratista,
+                        respuestasResponsable: response.RespuestasResponsable,
+                        generado: !this.state.generado,
+                        loading: !this.state.saving
+                    })  
+                })                
+            }
+                
         }
         catch (error) {
             console.log('cargarDatos: ' + error);
-        }     
-
-        finally {
-            this.setState({saving: false})
-        }
+        }             
     }
 
-    cargarRespuestas = async() => {
-        const respuestasCuestionario = await CargarRespuestas({
-            internoFormulario: this.props.formularioRGRL.value, 
-            internoEstablecimiento: this.props.internoEstablecimiento
-        })
-        this.setState({ respuestasFormulario: respuestasCuestionario, 
-            respuestasCuestionario: respuestasCuestionario.RespuestasCuestionario,
-            respuestasGremio: respuestasCuestionario.RespuestasGremio,
-            respuestasContratista: respuestasCuestionario.RespuestasContratista,
-            respuestasResponsable: respuestasCuestionario.RespuestasResponsable,
-            generado: !this.state.generado
-        })                    
+    cargarRespuestas = async(internoRespuestasFormulario) => {
+        const respuestasCuestionario = await CargarRespuestas({ internoRespuestasFormulario: internoRespuestasFormulario })
+        if (respuestasCuestionario !== null)
+        {
+            this.setState({ respuestasFormulario: respuestasCuestionario, 
+                respuestasCuestionario: respuestasCuestionario.RespuestasCuestionario,
+                respuestasGremio: respuestasCuestionario.RespuestasGremio,
+                respuestasContratista: respuestasCuestionario.RespuestasContratista,
+                respuestasResponsable: respuestasCuestionario.RespuestasResponsable,
+                generado: !this.state.generado
+            })  
+        }                  
     }
             
     //#endregion
@@ -137,7 +153,7 @@ class FormularioA extends Component{
         }
         //console.log('Responsables ' + JSON.stringify(RespuestasResponsable))
 
-        //console.log('JSON: ' + JSON.stringify(RespuestaFormulario))
+        console.log('JSON: ' + JSON.stringify(RespuestaFormulario))
         try {
             //const resp = await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
             await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
@@ -168,7 +184,6 @@ class FormularioA extends Component{
         finally {
             this.setState({saving: false})
         }
-        //this.cargarRespuestas()
     }
     //#endregion
 
@@ -179,17 +194,48 @@ class FormularioA extends Component{
         switch (this.props.formularioRGRL.estado)
         {
             case '(No generado)':
-                this.generarFormulario();
+                GenerarFormulario({
+                    internoFormulario: this.props.formularioRGRL.value,
+                    internoEstablecimiento: this.props.internoEstablecimiento,
+                    preguntas: this.state.preguntas,
+                    gremios: this.props.formularioRGRL.gremios,
+                    contratistas: this.props.formularioRGRL.contratistas,
+                    responsables: this.props.formularioRGRL.responsables
+                })
+                .then(res => { 
+                    this.cargarRespuestas(res.InternoRespuestasFormulario)
+                    .then(res => {
+                        this.setState({
+                            saving: !this.state.saving
+                        });
+                    })                                                             
+                })
                 break;
 
             case '(Nueva instancia)':
-                ReplicarFormulario({internoFormulario: this.props.formularioRGRL.value, internoEstablecimiento: this.props.internoEstablecimiento})
-                .then(res => {                        
-                    this.cargarRespuestas();
-                    this.setState({
-                        saving: false                        
-                    });
-                })
+                //Cuando es una Nueva Instancia, se cargan las respuestas del formulario confirmado
+                //Se replica el form enun juego de datos nuevo
+                //Se cargan las respuestas del nuevo formulario generado
+                CargarRespuestas({ internoRespuestasFormulario: this.props.internoRespuestasFormulario })
+                .then(response => {      
+                    //console.log('[FormularioA] response ' + JSON.stringify(response))               
+                    ReplicarFormulario({ RespuestaFormulario: response })
+                    .then(res => {    
+                        //console.log('[FormularioA] - res.InternoRespuestasFormulario ' + res.InternoRespuestasFormulario)                    
+                        CargarRespuestas({ internoRespuestasFormulario: res.InternoRespuestasFormulario })
+                        .then(response => {
+                            this.setState({ respuestasFormulario: response, 
+                                respuestasCuestionario: response.RespuestasCuestionario,
+                                respuestasGremio: response.RespuestasGremio,
+                                respuestasContratista: response.RespuestasContratista,
+                                respuestasResponsable: response.RespuestasResponsable,
+                                generado: !this.state.generado,
+                                saving: false
+                            })  
+                        })
+                        
+                    })
+                })                                
                 break;
 
             default:
@@ -197,117 +243,6 @@ class FormularioA extends Component{
         }                
     }
 
-    generarFormulario() {
-        //Fecha
-        var today = new Date(), date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-        const fechaCreacion = moment(date).format('YYYY-MM-DDTHH:mm:ss')
-        const fechaCompletado = '1800-01-01T00:00:00'
-
-        //RespuestasCuestionario        
-        let RespuestasCuestionario = []
-        let indice = 1
-        this.state.preguntas.map(pregunta => {
-            indice++
-            const nuevaPregunta = {
-                $id: indice,
-                Interno: 0,
-                InternoCuestionario: pregunta.Interno,
-                InternoRespuestaFormulario: 0,
-                Respuesta: '',
-                FechaRegularizacion: 0,
-                Observaciones: '',
-                FechaRegularizacionNormal: '2000-01-01T00:00:00'
-            }  	
-            RespuestasCuestionario.push(nuevaPregunta)            
-            return RespuestasCuestionario
-        })
-
-        //Genero RespuestasGremio
-        let RespuestasGremio = []
-        const cantGremios = parseInt(this.props.formularioRGRL.gremios)
-        for (var i = 1; i <= cantGremios; i++) {
-            indice++
-            const nuevoGremio = {
-                $id: indice,
-                Interno: 0,
-                InternoRespuestaFormulario: 0,
-                Legajo: '',
-                Nombre: ''
-            }
-
-            RespuestasGremio.push(nuevoGremio)
-        }
-
-        //Genero RespuestasContratista
-        let RespuestasContratista = []
-        const cantContratistas = parseInt(this.props.formularioRGRL.contratistas)
-        for (var c = 1; c <= cantContratistas; c++) {
-            indice++
-            const nuevoContratista = {
-                $id: indice,
-                Interno: 0,
-                InternoRespuestaFormulario: 0,
-                CUIT: 0,
-                Nombre: ''
-            }
-
-            RespuestasContratista.push(nuevoContratista)
-        }
-
-        
-        //Genero RespuestasResponsable
-        let RespuestasResponsable = []
-        console.log('this.props.cantResponsables: ' + this.props.formularioRGRL.responsables)
-        const cantResponsables = parseInt(this.props.formularioRGRL.responsables)
-        for (var r = 1; r <= cantResponsables; r++) {
-            indice++
-            const nuevoResponsable = {
-                $id: indice,
-                Interno: 0,
-                InternoRespuestaFormulario: 0,
-                CUIT: 0,
-                Responsable: '',
-                Cargo: 'R',
-                Representacion: '',
-                EsContratado: 0,
-                TituloHabilitante: '',
-                Matricula: '',
-                EntidadOtorganteTitulo: ''
-            }
-
-            RespuestasResponsable.push(nuevoResponsable)
-        }       
-
-        //JSON final
-        const RespuestaFormulario = {
-            $id: 1,
-            Interno: 0,
-            InternoFormulario: this.props.this.props.formularioRGRL.value,
-            InternoEstablecimiento: this.props.internoEstablecimiento,
-            CreacionFechaHora: fechaCreacion,
-            CompletadoFechaHora: fechaCompletado,
-            RespuestasCuestionario,
-            RespuestasGremio,
-            RespuestasContratista,
-            RespuestasResponsable
-        }     
-
-        Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
-            headers: {
-                'Content-Type': 'application/json',
-            }            
-        })     
-        .then(res => {            
-            this.cargarRespuestas()
-            .then(res => {
-                this.setState({
-                    saving: !this.state.saving
-                });
-            })
-            
-        })
-        
-    }
     //#endregion
 
     //#region Confirmar
@@ -365,53 +300,41 @@ class FormularioA extends Component{
     //#endregion
 
     //#region Renderizados
-    paginaMostrar(gremios, responsables, contratistas) {
+    paginaMostrar = (gremios, responsables, contratistas) => {
         const copiaSecciones = this.state.secciones.filter(seccion => seccion.Pagina === this.state.pagina)
 
         switch (this.state.pagina) {
             case 40:
                 //Gremios
-                return <div>
-                    <h2>Representación Gremial</h2>                    
-                    {this.renderGremios()}
-                    <h4 style={{textAlign: "initial"}}>En caso de contar con delegados gremiales indicar número de legajo conforme a la inscripción en el Ministerio de Trabajo, Empleo y Seguiridad Social</h4>
-                    <a style={{display: "table-cell", fontSize: "initial"}} href="http://www.trabajo.gov.ar" target="_blank">(http://www.trabajo.gov.ar)</a>
-                </div>
-
+                return <RenderizarGremios
+                    gremios={this.state.respuestasGremio}
+                    esConsulta={false}
+                    cambioGremio={this.handleCambioGremio}
+                />
 
             case 50:
                 //Contratistas
-                return <div>
-                    <h2>Contratistas</h2>
-                    {this.renderContratistas()}
-                    <h4 style={{textAlign: "initial"}}>En caso de tener contratistas, indicar nro de CUIT y Nombre - Razón Social</h4>
-                </div>
+                return <RenderizarContratistas
+                    contratistas={this.state.respuestasContratista}
+                    esConsulta={false}
+                    cambioContratista={this.handleCambioContratista}
+                />
 
             case 60:
                 //Responsables
-                return <div>
-                    <h2>Datos Laborales del Profesional o Responsable del Formulario</h2>
-                    {this.renderResponsables()}
-                    <h4 style={{textAlign: "initial"}}>Cargos:</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Profesional de Higiene y Seguridad en el Trabajo</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Profesional de Medicina Laboral</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Responsable de Datos del Formulario</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "2%"}}>En Representación ingresar</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Representante Legal</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Presidente</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>VicePresidente</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Director General</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Gerente General</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Administrador General</h4>
-                    <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Otros</h4>
-                </div>
+                return <RenderizarResponsables
+                    responsables={this.state.respuestasResponsable}
+                    esConsulta={false}
+                    cambioResponsable={this.handleCambioResponsable}
+                />
 
             default: return <div>
                     {copiaSecciones.map(seccion => 
                         <div>
-                        {/*<label key={seccion.Interno}>{seccion.Descripcion}</label>*/}
                         {seccion.Comentario !== '' ?
-                            <label>Comentario: {seccion.Comentario}</label>
+                            seccion.Comentario.split(".,").map(comentario =>
+                                <p className="comentario">{comentario}</p>
+                            )
                         :
                             null
                         }
@@ -421,100 +344,7 @@ class FormularioA extends Component{
                     </div>
         }
     }
-
-    renderGremios = () => {
-        const GremiosList = this.state.respuestasGremio
-
-        /*let gremiosRender = (        
-            GremiosList.map(gremio =>
-                <Gremio 
-                    key={gremio.Interno} 
-                    gremio={gremio}
-                    cambioGremio={this.handleCambioGremio}
-                />)
-        )*/
-
-        let gremiosRender = null
-        gremiosRender = (
-            <table className="gremios-table">
-                <thead className="cabecera">
-                    <tr>
-                        <th className="cabecera-gremioslegajo">Nro Legajo del Gremio</th>
-                        <th className="cabecera-gremiosgremio">Nombre del Gremio</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {GremiosList.map(gremio =>
-                    <Gremio 
-                        key={gremio.Interno} 
-                        gremio={gremio}
-                        cambioGremio={this.handleCambioGremio}
-                    />)}
-                </tbody>
-            </table>
-        )
-        return gremiosRender
-    }
-
-    renderContratistas = () => {
-        const contratistasList = this.state.respuestasContratista
-
-        let contratistasRender = null
-        contratistasRender = (
-            <table className="gremios-table">
-                <thead className="cabecera">
-                    <tr>
-                        <th className="cabecera-gremioslegajo">CUIT</th>
-                        <th className="cabecera-gremiosgremio">Contratista</th>
-                        <th className="cabecera-verificar"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {contratistasList.map(contratista =>
-                    <Contratista 
-                        key={contratista.Interno}                     
-                        contratista={contratista}
-                        cambioContratista={this.handleCambioContratista}
-                    />)}
-                </tbody>
-            </table>
-        )
-        return contratistasRender
-    }
-
-    renderResponsables = () => {
-        const responsablesList = this.state.respuestasResponsable
-
-        let responsablesRender = null
-        responsablesRender = (
-            <table className="gremios-table">
-                <thead className="cabecera">
-                    <tr>
-                        <th>CUIT/CUIL/CUIP</th>
-                        <th>Nombre y apellido</th>
-                        <th>Cargo</th>
-                        <th>Representación</th>
-                        <th>Propio/contratado</th>
-                        <th>Título habilitante</th>
-                        <th>N° matrícula</th>
-                        <th>Entidad que otorgó el título habilitante</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {responsablesList.map(responsable =>
-                    <Responsable 
-                        key={responsable.Interno} 
-                        id={responsable.Interno}
-                        responsable={responsable}
-                        entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
-                        cambioResponsablesTodo={this.handleCambioResponsablesTodo}
-                    />)}
-                </tbody>
-            </table>
-        )
-        return responsablesRender
-    }
-
+    
     renderPreguntas = (seccion) => {
         const preguntasSeccion = this.state.preguntas.filter(pregunta => pregunta.InternoSeccion === seccion.Interno)                
 
@@ -642,69 +472,17 @@ class FormularioA extends Component{
     }
     //#endregion
 
-    //#region handles Gremios
-    handleCambioGremio(legajo, gremio, interno) {
-        const respuestasGremio = this.state.respuestasGremio
-        
-        var commentIndex = respuestasGremio.findIndex(function(c) { 
-            return c.Interno == interno; 
-        });
-        //console.log('commentIndex: ' + commentIndex)
-        
-        var updateRespuesta = update(respuestasGremio[commentIndex], {Legajo: {$set: legajo},
-            Nombre: {$set: gremio}
-        })
-        var newData = update(respuestasGremio, {
-            $splice: [[commentIndex, 1, updateRespuesta]]
-        });      
-        this.setState({respuestasGremio: newData})
-    }    
-    //#endregion
+    //#region handles Gremios, Contratistas y Responsables
+    handleCambioGremio(gremio) {            
+        this.setState({respuestasGremio: gremio})
+    }
 
-    //#region Handles Contratistas
-    handleCambioContratista(interno, cuit, contratista) {
-        const respuestasContratista = this.state.respuestasContratista
-        
-        var commentIndex = respuestasContratista.findIndex(function(c) { 
-            return c.Interno == interno; 
-        });
-        //console.log('commentIndex: ' + commentIndex)
-        
-        var updateRespuesta = update(respuestasContratista[commentIndex], {CUIT: {$set: cuit},
-            Contratista: {$set: contratista}
-        })
-        var newData = update(respuestasContratista, {
-            $splice: [[commentIndex, 1, updateRespuesta]]
-        });      
-        this.setState({respuestasContratista: newData})
+    handleCambioContratista(contratista) {    
+        this.setState({respuestasContratista: contratista})
     }
     
-    //#endregion
-
-    //#region Handles Responsables
-    handleCambioResponsablesTodo(interno, cuit, responsable, cargo, representacion, esContratado, tituloHabilitante, matricula, entidadOtorganteTitulo) {
-        const respuestasResponsable = this.state.respuestasResponsable
-        //console.log('CUIT: ' + cuit)
-        
-        var commentIndex = respuestasResponsable.findIndex(function(c) { 
-            return c.Interno == interno; 
-        });
-        //console.log('commentIndex: ' + commentIndex)
-        
-        var updateRespuesta = update(respuestasResponsable[commentIndex], {CUIT: {$set: cuit}, 
-            Responsable: {$set: responsable},
-            Cargo: {$set: cargo},
-            Representacion: {$set: representacion},
-            EsContratado: {$set: esContratado},            
-            TituloHabilitante: {$set: tituloHabilitante},
-            Matricula: {$set: matricula},
-            EntidadOtorganteTitulo: {$set: entidadOtorganteTitulo}
-        })
-
-        var newData = update(respuestasResponsable, {
-            $splice: [[commentIndex, 1, updateRespuesta]]
-        });      
-        this.setState({respuestasResponsable: newData})
+    handleCambioResponsable(responsable) {      
+        this.setState({respuestasResponsable: responsable})
     }    
     //#endregion
 
@@ -762,12 +540,6 @@ class FormularioA extends Component{
         this.grabarFormulario()
     }
 
-    //#endregion
-
-    //#region handleVerErrores
-    handleVerErrores() {
-        this.setState({verErrores: !this.state.verErrores})
-    }
     //#endregion
 
     //#region Render
@@ -833,15 +605,4 @@ class FormularioA extends Component{
     //#endregion
 }
 
-const mapStateToProps = state => {
-    return {
-        /*formSel: state.form.formSeleccionado,
-        cantGremios: state.form.cantGremios,
-        cantContratistas: state.form.cantContratistas,
-        cantResponsables: state.form.cantResponsables,
-        estadoForm: state.form.estado,
-        establecimientoSeleccionado: state.establecimiento.interno  */
-    };
-}
-
-export default connect(mapStateToProps, null) (FormularioA);
+//export default FormularioA;

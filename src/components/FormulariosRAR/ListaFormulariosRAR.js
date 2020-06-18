@@ -81,10 +81,10 @@ export class ListaFormulariosRAR extends Component{
     render(){
         const { SearchBar } = Search;
 
-        const selectOptions = {
+        /*const selectOptions = {
             'En proceso de carga': 'En proceso de carga',
             'Confirmado': 'Confirmado'
-        };
+        };*/
 
         const options = {           
             custom: true,

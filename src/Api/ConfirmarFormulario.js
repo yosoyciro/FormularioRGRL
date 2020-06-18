@@ -9,7 +9,7 @@ async function ConfirmarFormulario(props) {
                 'Content-Type': 'application/json',
             }            
         })
-        .then(resp => resp.data)   
+        return ret   
     }
     catch (error) {
         console.log('[ConfirmarFormulario]: ' + error);

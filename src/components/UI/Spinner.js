@@ -4,7 +4,6 @@ import Loader from 'react-loader-spinner';
  export default class App extends React.Component {
    //other logic
    render() {
-      console.log('spinner')
       return <div>
          <label>Procesando informacion...</label>
          <Loader

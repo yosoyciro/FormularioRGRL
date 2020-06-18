@@ -1,7 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import * as moment from 'moment';
 
 
 //Componente que se conecta al web api y trae todas las preguntas
@@ -39,6 +38,7 @@ class PreguntaConsulta extends Component{
         const respuesta = this.respuesta(this.props.respuesta.Respuesta, this.props.tieneNoAplica)      
         var fecha = new Date(this.props.respuesta.FechaRegularizacion)                      
         const isDisable = true
+        //console.log('[PreguntaConsulta] this.props.pregunta.BajaFecha: ' + this.props.pregunta.BajaFecha)
 
         return <Fragment>                        
             {(parseInt(this.props.tieneNoAplica) === 1) ?  
@@ -48,7 +48,8 @@ class PreguntaConsulta extends Component{
                         <label className="pregunta-lbl">{this.props.pregunta.Codigo}</label> 
                     </td>
                     <td className="celda">
-                        <label className="pregunta-lbl">{this.props.pregunta.Pregunta}</label>
+                        {/*<label className="pregunta-lbl">{this.props.pregunta.Pregunta}</label>*/}
+                        <label className="pregunta-lbl">{this.props.pregunta.BajaFecha === 0 ? this.props.pregunta.Pregunta : '**********BAJA ' + this.props.pregunta.Pregunta + '*************'}</label>
                     </td>
                     <td>
                         <label>{respuesta}</label> 

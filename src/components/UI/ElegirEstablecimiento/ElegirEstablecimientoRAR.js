@@ -38,7 +38,7 @@ class ElegirEstablecimientoRAR extends Component{
             case 1:
                 try {
                     const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorCuit?pCuit=${this.props.cuit}`)             
-                    console.log(refEstablecimientos.data)
+                    //console.log(refEstablecimientos.data)
                     this.setState({establecimientos: refEstablecimientos.data})            
                 }
                 catch (error) {
@@ -49,7 +49,7 @@ class ElegirEstablecimientoRAR extends Component{
             case 2:
                 try {
                     const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorInterno?pInternoEstablecimiento=${this.props.internoEstablecimiento}`) 
-                    console.log('Nombre estabelcimiento: ' + refEstablecimientos.data.Nombre)
+                    //console.log('Nombre estabelcimiento: ' + refEstablecimientos.data.Nombre)
 
                     // Create a new array based on current state:
                     let establecimientos = [...this.state.establecimientos];
@@ -78,14 +78,14 @@ class ElegirEstablecimientoRAR extends Component{
 
 render() {         
     const internoEstablecimiento = parseInt(this.props.internoEstablecimiento)  
-    console.log('[ElegirEstablecimientoRAR] Nombre: ' + this.state.establecimientos.Nombre)
+    //console.log('[ElegirEstablecimientoRAR] Nombre: ' + this.state.establecimientos.Nombre)
     //console.log('[ElegirEstablecimientoRAR] direccion: ' + this.props.direccion)
     const menuIsOpen= (internoEstablecimiento === 0 ? true : false)    
     const disable = (internoEstablecimiento !== 0)  ? true : false
     const opciones = this.state.establecimientos.map(establecimiento => {
         return {
             value: establecimiento.Interno, 
-            label: establecimiento.Nombre, //establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, 
+            label: establecimiento.Nombre + ' ' + establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, 
             cuit: this.props.cuit, 
             razonsocial: this.props.razonSocial 
         }

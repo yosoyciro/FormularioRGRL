@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import NuevoFormularioRGRL from '../components/FormulariosRGRL/NuevoFormularioRGRL';
-import ListaFormularios from '../components/FormulariosRGRL/ListaFormularios';
+import ListaFormularios from '../components/ConsultaFormularios/ListaFormularios';
 import Spinner from '../components/UI/Spinner'
 
 class Formulario extends Component{   
@@ -10,6 +10,7 @@ class Formulario extends Component{
         this.state = {
             cuit: 0,
             internoEstablecimiento: 0,
+            internoFormulario: 0,
             razonSocial: '',
             direccion: '',
             cargarFormulario: false,
@@ -23,6 +24,7 @@ class Formulario extends Component{
     handleClick = () => {
         this.setState({ 
             cargarFormulario: true,
+            internoRespuestaFormulario: 0,
             cuit: 0,
             internoEstablecimiento: 0,
             internoFormulario: 0,
@@ -44,9 +46,10 @@ class Formulario extends Component{
         })
     }
 
-    seleccionaRegistro = (cuit, internoFormulario, internoEstablecimiento, estado, razonSocial, direccion) => {
+    seleccionaRegistro = (internoRespuestaFormulario, cuit, internoFormulario, internoEstablecimiento, estado, razonSocial, direccion) => {
         //console.log('[Formularios] - Direccion: ' + direccion)
         this.setState({
+            internoRespuestaFormulario,
             cuit,
             internoFormulario,
             internoEstablecimiento,
@@ -59,6 +62,7 @@ class Formulario extends Component{
     handleFinalizaCarga() {
         this.setState({ 
             cargarFormulario: false,
+            internoRespuestaFormulario: 0,
             cuit: 0,
             internoFormulario: 0,
             internoEstablecimiento: 0,
@@ -69,7 +73,7 @@ class Formulario extends Component{
     }
 
     handleLoadingFormularios(estadoNum) {
-        //console.log('[Formularios] handleLoadingFormularios ' + estadoNum)    
+        console.log('[Formularios] handleLoadingFormularios ' + estadoNum)    
         var estado = false
         switch (parseInt(estadoNum)) {
             case 1:
@@ -89,6 +93,7 @@ class Formulario extends Component{
         
     }  
     render(){
+        const disableEditar = this.state.estado === 'Confirmado' ? true : false
         //console.log('[Formularios] loadingFormularios: ' + this.state.loadingFormularios)
         return <div>
             {this.state.cargarFormulario === false ?
@@ -98,6 +103,7 @@ class Formulario extends Component{
                         <Button  
                             onClick={this.handleEdita}
                             className="btn-consultaformulario"
+                            disabled={disableEditar}
                         >
                             Edita Formulario
                         </Button>
@@ -127,6 +133,7 @@ class Formulario extends Component{
                 </div>
             :
                 <NuevoFormularioRGRL
+                    internoRespuestaFormulario={this.state.internoRespuestaFormulario}
                     cuit={this.state.cuit}
                     internoEstablecimiento={this.state.internoEstablecimiento}
                     internoFormulario={this.state.internoFormulario}

@@ -1,4 +1,4 @@
-import Api from './Api';
+import Api from '../Api';
 
 async function CargarRespuestasConsulta(props) {
     //console.log('props: ' + props.internoFormulario + ' ' + props.internoEstablecimiento)

@@ -10,29 +10,30 @@ class ElegirTipoFormulario extends Component{
         formSeleccionado: []
     }
 
-    componentDidMount = async event => {     
+    componentDidMount() {     
         this.props.loading(true)        
 
-        const formularios = await CargarFormularios(this.props.internoEstablecimiento) 
-        this.setState({ 
-            formularios 
+        CargarFormularios(this.props.internoEstablecimiento) 
+        .then(formularios => {
+            this.setState({ 
+                formularios 
+            })
+
+            switch (this.props.internoFormulario) {
+                case 0:    
+                    break;    
+            
+                default:
+                    const formSeleccionado = this.state.formularios.find(form => form.value === this.props.internoFormulario)
+                    this.setState({
+                        formSeleccionado
+                    })
+                    
+                    this.props.seleccionFormulario(this.state.formSeleccionado, this.props.internoFormulario); 
+                    break;
+            }
         })
 
-        switch (this.props.internoFormulario) {
-            case 0:
-                
-                break;
-        
-            default:
-                const formSeleccionado = this.state.formularios.find(form => form.value === this.props.internoFormulario)
-                this.setState({
-                    formSeleccionado
-                })
-                //console.log('[ElegirTipoFormulario] formSeleccionado: ' + JSON.stringify(this.state.formSeleccionado))
-                this.props.seleccionFormulario(this.state.formSeleccionado, this.props.internoFormulario); 
-                break;
-        } 
-        
         this.props.loading(false)
     }
 
@@ -43,7 +44,7 @@ class ElegirTipoFormulario extends Component{
         this.setState({
             formSeleccionado
         })
-        console.log('[ElegirTipoFormulario] handleChange - formSeleccionado: ' + JSON.stringify(this.state.formSeleccionado))
+        //console.log('[ElegirTipoFormulario] handleChange - formSeleccionado: ' + JSON.stringify(this.state.formSeleccionado))
         this.props.seleccionFormulario(formSeleccionado, selectedOption.value);                                    
     }
 
@@ -54,7 +55,7 @@ class ElegirTipoFormulario extends Component{
 render() {     
     const internoFormulario = this.props.internoFormulario
     const tiposForm = this.state.formularios
-    console.log('internoFormulario: ' + internoFormulario)
+    //console.log('internoFormulario: ' + internoFormulario)
 
     //Cuando elijo, armo el label nuevo
     var currentSelection = []    
@@ -62,12 +63,13 @@ render() {
     {
         const formSel = this.state.formularios.filter(form => form.value === internoFormulario)
         //console.log('formSel: ' + formSel[0].label)
-        currentSelection = [
-            {
-                label: formSel[0].label,
-                value: parseInt(this.props.internoEstablecimiento)
-            }
-        ];   
+        if (formSel.length !== 0)
+            currentSelection = [
+                {
+                    label: formSel[0].label,
+                    value: parseInt(this.props.internoEstablecimiento)
+                }
+            ];   
     }
     //Habilitado o no
     const disable = (this.props.internoEstablecimiento !== 0 && this.props.internoFormulario !== 0)  ? true : false

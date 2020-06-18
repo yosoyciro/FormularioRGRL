@@ -3,7 +3,6 @@ import DatosGenerales from '../UI/DatosGenerales/DatosGenerales';
 import FormularioA from '../../containers/FormularioA';
 import ElegirTipoFormulario from '../UI/ElegirTipoFormulario/ElegirTipoFormulario';
 import ElegirEstablecimientoRAR from '../UI/ElegirEstablecimiento/ElegirEstablecimientoRAR';
-import Spinner from '../UI/Spinner';
 //import CargarFormulario from './CargarFormulario';
 //import GenerarFormularioRAR from './GenerarFormularioRAR';
 //import ElegirEstablecimientoRAR from '../UI/ElegirEstablecimiento/ElegirEstablecimientoRAR'
@@ -53,22 +52,14 @@ class NuevoFormularioRGRL extends Component{
     }
 
     handleSeleccionFormulario(formularioRGRL, internoFormulario) {
-        /*this.setState({ 
-            internoFormulario,
-            cantGremios,
-            cantContratistas,
-            cantResponsables,            
-            estado,    
-        })*/
+        console.log('[NuevoFormularioRGRL] internoFormulario ' + internoFormulario)
         this.setState({
             formularioRGRL,
             internoFormulario
-        })
-        console.log('[NuevoFormularioRGRL]-formularioRGRL: ' + JSON.stringify(this.state.formularioRGRL))
-        console.log('[NuevoFormularioRGRL]-internoFormulario: ' + internoFormulario)
+        })        
     }
 
-    handleSeleccionCUIT(cuit, razonSocial) {
+    handleSeleccionCUIT(cuit, razonSocial, estado) {
         this.setState({ 
             cuit,
             razonSocial
@@ -82,8 +73,6 @@ class NuevoFormularioRGRL extends Component{
     }
     
     render() {        
-        //console.log('[NuevoFormularioRAR] cuit: ' + params.cuitSeleccionado)
-        //console.log('[NuevoFormularioRAR] - internoEstablecimiento: ' + this.state.internoEstablecimiento)
         return <Fragment> 
             <h2>Formulario RGRL</h2>        
             <DatosGenerales
@@ -107,6 +96,7 @@ class NuevoFormularioRGRL extends Component{
                 <ElegirTipoFormulario
                     internoEstablecimiento={this.state.internoEstablecimiento}
                     internoFormulario={this.state.internoFormulario}
+                    estado={this.props.estado}
                     seleccionFormulario={this.handleSeleccionFormulario}
                     loading={this.handleLoading}
                 />
@@ -117,6 +107,7 @@ class NuevoFormularioRGRL extends Component{
                 <FormularioA
                     formularioRGRL={this.state.formularioRGRL}
                     internoEstablecimiento={this.state.internoEstablecimiento}
+                    internoRespuestasFormulario={this.props.internoRespuestaFormulario}
                 />
             :
                 null

@@ -1,11 +1,47 @@
 import React from 'react';
 import ResponsableConsulta from './ResponsableConsulta';
+import update from 'react-addons-update';
+import { Component } from 'react';
+import Responsable from './Responsable';
 
-function RenderizarResponsables (props) {
-    const responsablesList = props
+export default class RenderizarResponsables extends Component {
+    constructor(props) {
+        super(props)
+        this.handleCambioResponsable = this.handleCambioResponsable.bind(this);
+        this.state = {
+            loading: false
+        }
+    }
 
-        let responsablesRender = null
-        responsablesRender = (
+    handleCambioResponsable(interno, cuit, responsable, cargo, representacion, esContratado, tituloHabilitante, matricula, entidadOtorganteTitulo) {
+        const respuestasResponsable = this.props.responsables
+        //console.log('CUIT: ' + cuit)
+        
+        var commentIndex = respuestasResponsable.findIndex(function(c) { 
+            return c.Interno == interno; 
+        });
+        //console.log('commentIndex: ' + commentIndex)
+        
+        var updateRespuesta = update(respuestasResponsable[commentIndex], {CUIT: {$set: cuit}, 
+            Responsable: {$set: responsable},
+            Cargo: {$set: cargo},
+            Representacion: {$set: representacion},
+            EsContratado: {$set: esContratado},            
+            TituloHabilitante: {$set: tituloHabilitante},
+            Matricula: {$set: matricula},
+            EntidadOtorganteTitulo: {$set: entidadOtorganteTitulo}
+        })
+
+        var newData = update(respuestasResponsable, {
+            $splice: [[commentIndex, 1, updateRespuesta]]
+        });      
+        
+        this.props.cambioResponsable(newData)
+    }   
+    
+    render() {
+        return(<div>
+            <h2>Datos Laborales del Profesional o Responsable del Formulario</h2>
             <table className="gremios-table">
                 <thead className="cabecera">
                     <tr>
@@ -19,19 +55,45 @@ function RenderizarResponsables (props) {
                         <th>Entidad que otorgó el título habilitante</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {responsablesList.map(responsable =>
-                    <ResponsableConsulta 
-                        key={responsable.Interno} 
-                        id={responsable.Interno}
-                        responsable={responsable}
-                        entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
-                    />)}
-                </tbody>
+                {this.props.esConsulta === true ?
+                    <tbody>
+                        {this.props.responsables.map(responsable =>
+                        <ResponsableConsulta 
+                            key={responsable.Interno} 
+                            id={responsable.Interno}
+                            responsable={responsable}
+                            entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
+                        />)}
+                    </tbody>
+                :
+                    <tbody>
+                        {this.props.responsables.map(responsable =>
+                        <Responsable 
+                            key={responsable.Interno} 
+                            id={responsable.Interno}
+                            responsable={responsable}
+                            entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
+                            cambioResponsable={this.handleCambioResponsable}
+                        />)}
+                    </tbody>
+                }   
             </table>
-            
+            <h4 style={{textAlign: "initial"}}>Cargos:</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Profesional de Higiene y Seguridad en el Trabajo</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Profesional de Medicina Laboral</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "1%"}}>Responsable de Datos del Formulario</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "2%"}}>En Representación ingresar</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Representante Legal</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Presidente</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "3%"}}>VicePresidente</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Director General</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Gerente General</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Administrador General</h4>
+            <h4 style={{textAlign: "initial", marginLeft: "3%"}}>Otros</h4>
+        </div>
+
         )
-        return responsablesRender
+    }        
 }
 
-export default RenderizarResponsables;
+//export default RenderizarResponsables;
