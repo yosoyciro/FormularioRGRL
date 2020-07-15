@@ -3,12 +3,15 @@ import BuscarPersona from '../../../Api/BuscarPersona'
 import Button from 'react-bootstrap/Button'
 import './DatosGenerales.css'
 import CustomizedSnackbars from '../../../components/UI/Snackbar/Snackbar'
+import DatePicker from "react-datepicker";
+import * as moment from 'moment';
 
 //Componente que se conecta al web api y trae todas las preguntas
 class DatosGenerales extends Component{
     constructor(props) {
         super(props)
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
+        this.handleChangeNotificacionFecha = this.handleChangeNotificacionFecha.bind(this);
         this.state = {
             cuit: 0,
             cuitValido: false,
@@ -35,7 +38,7 @@ class DatosGenerales extends Component{
                     razonSocial: this.props.razonSocial
                 })
 
-                this.props.seleccionCUIT(this.state.cuit, this.state.razonSocial)
+                this.props.seleccionCUIT(this.state.cuit, this.state.razonSocial, this.state.notificacionFecha)
                 break;
         }
     }
@@ -43,6 +46,11 @@ class DatosGenerales extends Component{
     handleChange = (event) => {   
         this.setState({ cuit: event.target.value })  
         //this.props.nuevoCuit(event.target.value)       
+    }
+
+    handleChangeNotificacionFecha (date){
+        const fecha = moment(date).format('YYYY-MM-DD')
+        this.props.changeNotificacionFecha(fecha)
     }
 
     handleSubmit = async event => {
@@ -55,13 +63,14 @@ class DatosGenerales extends Component{
         }
 
         const respuesta = await BuscarPersona(param);
-        console.log('respuesta: ' + respuesta[0].razonSocial)
+        //console.log('respuesta: ' + respuesta[0].razonSocial)
         if (respuesta[0].id !== 0)
         {
             this.setState({ 
                 cuitValido: !this.state.cuitValido,
                 razonSocial: respuesta[0].razonSocial
             })                      
+            this.props.seleccionCUIT(this.state.cuit, this.state.razonSocial)      
         }
         else
             this.setState({
@@ -71,8 +80,7 @@ class DatosGenerales extends Component{
             })                
 
             //al redux
-            //this.props.datosGenerales(this.state.cuit, respuesta[0].id, respuesta[0].razonSocial)  
-            this.props.seleccionCUIT(this.state.cuit, this.state.razonSocial)      
+            //this.props.datosGenerales(this.state.cuit, respuesta[0].id, respuesta[0].razonSocial)              
     }    
     
     handleCambioShowModal(){
@@ -84,9 +92,12 @@ class DatosGenerales extends Component{
     }
 
     render() {       
-        const disable = this.state.cuitValido === false ? false : true    
+        const disable = this.state.cuitValido === false ? false : true  
+        const notificacionFechaDisable = parseInt(this.props.cuit) !== 0 ? true : false  
         let handleCerrarSnackbar=() => this.setState({showSnackBar: false})
-    
+        var notificacionFecha = this.props.notificacionFecha == null ? new Date() : new Date(this.props.notificacionFecha)
+        notificacionFecha = this.props.notificacionFecha === null ? notificacionFecha : notificacionFecha.setDate(notificacionFecha.getDate() + 1)
+        
         return <Fragment>
         <form className="form" onSubmit={this.handleSubmit}>
             <fieldset>
@@ -101,6 +112,17 @@ class DatosGenerales extends Component{
                 ></input> 
                 <Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> 
                 <Button onClick={this.handleFinalizaCarga} variant="primary">Finaliza</Button> 
+                <label className="notificacionFecha-label">Notificación Fecha:</label>
+                <DatePicker
+                        //locale="es"
+                        className="datepicker-formato"
+                        todayButton="Hoy"
+                        dateFormat="dd/MM/yyyy"
+                        selected={notificacionFecha}
+                        onChange={this.handleChangeNotificacionFecha}
+                        disabled={notificacionFechaDisable}
+                        placeholderText="Seleccione una fecha"
+                /> 
             </fieldset>
         </form>       
         {this.state.showSnackBar === true ?

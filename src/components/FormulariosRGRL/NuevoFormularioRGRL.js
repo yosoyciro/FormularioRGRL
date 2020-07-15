@@ -15,12 +15,16 @@ class NuevoFormularioRGRL extends Component{
         this.handleSeleccionFormulario = this.handleSeleccionFormulario.bind(this);
         this.handleSeleccionCUIT = this.handleSeleccionCUIT.bind(this);
         this.handleLoading = this.handleLoading.bind(this);
+        this.handleNotificacionFecha = this.handleNotificacionFecha.bind(this)
         this.state = {
             formularioRGRL: [],
             cuit: 0,
             razonSocial: '',
             internoFormulario: 0,
             internoEstablecimiento: 0,
+            cantTrabajadores: 0,
+            superficie: 0,
+            notificacionFecha: null,
             direccion: '',
             loading: false
         }
@@ -41,28 +45,38 @@ class NuevoFormularioRGRL extends Component{
         this.props.finalizaCarga()
     }
 
-    handleSeleccionEstablecimiento(internoEstablecimiento, direccion, loading) {
+    handleSeleccionEstablecimiento(internoEstablecimiento, direccion, cantTrabajadores, superficie, loading) {
         //console.log('[NuevoFormularioRAR]-handleSeleccionEstablecimiento - internoEstablecimiento: ' + internoEstablecimiento + '- direccion: ' + direccion)
         this.setState({ 
             internoEstablecimiento,
             direccion,
+            cantTrabajadores,
+            superficie,
             loading
         })
         //console.log('[NuevoFormularioRGRL]-establecimiento: ' + this.state.internoEstablecimiento)
     }
 
     handleSeleccionFormulario(formularioRGRL, internoFormulario) {
-        console.log('[NuevoFormularioRGRL] internoFormulario ' + internoFormulario)
+        //console.log('[NuevoFormularioRGRL] internoFormulario ' + internoFormulario)
         this.setState({
             formularioRGRL,
             internoFormulario
         })        
     }
 
-    handleSeleccionCUIT(cuit, razonSocial, estado) {
+    handleSeleccionCUIT(cuit, razonSocial, notificacionFecha) {
         this.setState({ 
             cuit,
-            razonSocial
+            razonSocial,
+            notificacionFecha
+        })
+    }
+
+    handleNotificacionFecha(notificacionFecha) {
+        console.log('notificacionFecha: ' + notificacionFecha)
+        this.setState({ 
+            notificacionFecha,
         })
     }
 
@@ -77,7 +91,9 @@ class NuevoFormularioRGRL extends Component{
             <h2>Formulario RGRL</h2>        
             <DatosGenerales
                 cuit={this.props.cuit}
-                seleccionCUIT={this.handleSeleccionCUIT}                
+                notificacionFecha={this.state.notificacionFecha}
+                seleccionCUIT={this.handleSeleccionCUIT}  
+                changeNotificacionFecha={this.handleNotificacionFecha}              
                 finalizaCarga={this.handleFinalizaCarga}
             />
             {this.state.cuit !== 0 ?
@@ -87,6 +103,9 @@ class NuevoFormularioRGRL extends Component{
                     internoEstablecimiento={this.state.internoEstablecimiento}
                     razonSocial={this.state.razonSocial}
                     direccion={this.state.direccion}
+                    cantTrabajadores={this.state.cantTrabajadores}
+                    superficie={this.state.superficie}
+                    mostrarDatosEstablecimiento={true}
                     seleccionEstablecimiento={this.handleSeleccionEstablecimiento}
                 />                         
             :
@@ -108,6 +127,9 @@ class NuevoFormularioRGRL extends Component{
                     formularioRGRL={this.state.formularioRGRL}
                     internoEstablecimiento={this.state.internoEstablecimiento}
                     internoRespuestasFormulario={this.props.internoRespuestaFormulario}
+                    notificacionFecha={this.state.notificacionFecha}
+                    cantTrabajadores={this.state.cantTrabajadores}
+                    superficie={this.state.superficie}
                 />
             :
                 null

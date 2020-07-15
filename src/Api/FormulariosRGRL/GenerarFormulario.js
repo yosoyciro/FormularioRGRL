@@ -4,8 +4,9 @@ import Api from '../Api';
 export default async function GenerarFormulario(props) {
     //Fecha
     var today = new Date(), date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-    const fechaCreacion = moment(date).format('YYYY-MM-DDTHH:mm:ss')
-    const fechaCompletado = '1800-01-01T00:00:00'
+    const fechaCreacion = date //moment(date).format('YYYY-MM-DD')
+    const fechaCompletado = null //'1800-01-01T00:00:00'
+    const notificacionFecha = moment(props.notificacionFecha).format('YYYY-MM-DD')
 
     //RespuestasCuestionario        
     let RespuestasCuestionario = []
@@ -107,8 +108,9 @@ export default async function GenerarFormulario(props) {
         Interno: 0,
         InternoFormulario: props.internoFormulario,
         InternoEstablecimiento: props.internoEstablecimiento,
-        CreacionFechaHora: fechaCreacion,
-        CompletadoFechaHora: fechaCompletado,
+        CreacionFechaHora: null, //fechaCreacion,
+        CompletadoFechaHora: null, //fechaCompletado,
+        NotificacionFecha: notificacionFecha,
         RespuestasCuestionario,
         RespuestasGremio,
         RespuestasContratista,
@@ -116,8 +118,15 @@ export default async function GenerarFormulario(props) {
     } 
     
     console.log('[GenerarFormulario] RespuestaFormulario: ' + JSON.stringify(RespuestaFormulario))
+    console.log('props.refEstablecimientoActualizar: ' + JSON.stringify(props.refEstablecimientoActualizar))
 
     try {
+        await Api.put(`RefEstablecimiento/Actualizar?pInternoEstablecimiento=${props.internoEstablecimiento}`, props.refEstablecimientoActualizar, {
+            headers: {
+                'Content-Type': 'application/json',
+            }            
+        })
+
         const response = await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
             headers: {
                 'Content-Type': 'application/json',

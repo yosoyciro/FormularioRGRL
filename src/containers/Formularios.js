@@ -46,8 +46,12 @@ class Formulario extends Component{
         })
     }
 
+    handleReplica = (internoRespuestasFormulario) => {
+
+    }
+
     seleccionaRegistro = (internoRespuestaFormulario, cuit, internoFormulario, internoEstablecimiento, estado, razonSocial, direccion) => {
-        //console.log('[Formularios] - Direccion: ' + direccion)
+        console.log('[Formularios] - internoRespuestaFormulario: ' + internoRespuestaFormulario)
         this.setState({
             internoRespuestaFormulario,
             cuit,
@@ -94,6 +98,8 @@ class Formulario extends Component{
     }  
     render(){
         const disableEditar = this.state.estado === 'Confirmado' ? true : false
+        const disableReplicar = this.state.estado === 'Confirmado' ? false : true
+
         //console.log('[Formularios] loadingFormularios: ' + this.state.loadingFormularios)
         return <div>
             {this.state.cargarFormulario === false ?
@@ -115,6 +121,14 @@ class Formulario extends Component{
                         className="btn-consultaformulario"
                     >
                         Genera Formulario
+                    </Button>
+                    <Button 
+                        onClick={this.handleClick}
+                        className="btn-consultaformulario"
+                        disabled={true}
+                        hidden={true}
+                    >
+                        Replica Formulario
                     </Button>
                     <Button 
                         onClick={this.handleClickCerrar}

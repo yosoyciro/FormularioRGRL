@@ -17,6 +17,7 @@ import CargarRespuestas from '../Api/FormulariosRGRL/CargarRespuestas';
 import GenerarFormulario from '../Api/FormulariosRGRL/GenerarFormulario';
 import RenderizarGremios from '../components/Formulario/Gremios/RenderizarGremios';
 import RenderizarResponsables from '../components/Formulario/Responsables/RenderizarResponsables';
+import CargarFormulario from '../Api/FormulariosRGRL/CargarFormulario';
 
 export default class FormularioA extends Component{     
     constructor(props) {
@@ -89,7 +90,7 @@ export default class FormularioA extends Component{
             const preg = await Api.get(`Cuestionarios/ListarPorFormulario?pInternoFormulario=${this.props.formularioRGRL.value}`)
             this.setState({ preguntas: preg.data });      
 
-            console.log('(this.props.estado: ' + (this.props.formularioRGRL.estado))
+            //console.log('(this.props.estado: ' + (this.props.formularioRGRL.estado))
             if (this.props.formularioRGRL.estado === '(En proceso de carga)')
             {
                 this.setState({ loading: !this.state.saving })
@@ -98,7 +99,8 @@ export default class FormularioA extends Component{
                     this.setState({ loading: !this.state.saving })
                 )) */
                 CargarRespuestas({ internoRespuestasFormulario: this.props.internoRespuestasFormulario })  
-                .then(response => {                    
+                .then(response => {   
+                    //console.log('[FormularioA] - response: ' + JSON.stringify(response))                 
                     this.setState({ respuestasFormulario: response, 
                         respuestasCuestionario: response.RespuestasCuestionario,
                         respuestasGremio: response.RespuestasGremio,
@@ -145,7 +147,8 @@ export default class FormularioA extends Component{
             InternoFormulario: this.state.respuestasFormulario.InternoFormulario,
             InternoEstablecimiento: this.state.respuestasFormulario.InternoEstablecimiento,
             CreacionFechaHora: this.state.respuestasFormulario.CreacionFechaHora,
-            CompletadoFechaHora: "1800-01-01",
+            CompletadoFechaHora: null,
+            NotificacionFecha: this.state.respuestasFormulario.NotificacionFecha,
             RespuestasCuestionario,
             RespuestasGremio,
             RespuestasContratista,
@@ -153,7 +156,7 @@ export default class FormularioA extends Component{
         }
         //console.log('Responsables ' + JSON.stringify(RespuestasResponsable))
 
-        console.log('JSON: ' + JSON.stringify(RespuestaFormulario))
+        //console.log('[FormularioA] GrabarFormulario JSON: ' + JSON.stringify(RespuestaFormulario))
         try {
             //const resp = await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
             await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
@@ -187,7 +190,7 @@ export default class FormularioA extends Component{
     }
     //#endregion
 
-    //#region Generar
+    //#region Generar / Replicar
     handleGenerar(event) {
         this.setState({saving: !this.state.saving})        
         
@@ -197,32 +200,18 @@ export default class FormularioA extends Component{
                 GenerarFormulario({
                     internoFormulario: this.props.formularioRGRL.value,
                     internoEstablecimiento: this.props.internoEstablecimiento,
+                    notificacionFecha: this.props.notificacionFecha,
                     preguntas: this.state.preguntas,
                     gremios: this.props.formularioRGRL.gremios,
                     contratistas: this.props.formularioRGRL.contratistas,
-                    responsables: this.props.formularioRGRL.responsables
+                    responsables: this.props.formularioRGRL.responsables,
+                    refEstablecimientoActualizar: {
+                        Superficie: this.props.superficie,
+                        CantTrabajadores: this.props.cantTrabajadores
+                    }
                 })
                 .then(res => { 
-                    this.cargarRespuestas(res.InternoRespuestasFormulario)
-                    .then(res => {
-                        this.setState({
-                            saving: !this.state.saving
-                        });
-                    })                                                             
-                })
-                break;
-
-            case '(Nueva instancia)':
-                //Cuando es una Nueva Instancia, se cargan las respuestas del formulario confirmado
-                //Se replica el form enun juego de datos nuevo
-                //Se cargan las respuestas del nuevo formulario generado
-                CargarRespuestas({ internoRespuestasFormulario: this.props.internoRespuestasFormulario })
-                .then(response => {      
-                    //console.log('[FormularioA] response ' + JSON.stringify(response))               
-                    ReplicarFormulario({ RespuestaFormulario: response })
-                    .then(res => {    
-                        //console.log('[FormularioA] - res.InternoRespuestasFormulario ' + res.InternoRespuestasFormulario)                    
-                        CargarRespuestas({ internoRespuestasFormulario: res.InternoRespuestasFormulario })
+                    CargarRespuestas({ internoRespuestasFormulario: res })
                         .then(response => {
                             this.setState({ respuestasFormulario: response, 
                                 respuestasCuestionario: response.RespuestasCuestionario,
@@ -232,10 +221,49 @@ export default class FormularioA extends Component{
                                 generado: !this.state.generado,
                                 saving: false
                             })  
+                        })                                                         
+                })
+                break;
+
+            case '(Nueva instancia)':
+                //Cuando es una Nueva Instancia, se cargan las respuestas del formulario confirmado
+                //Se replica el form enun juego de datos nuevo
+                //Se cargan las respuestas del nuevo formulario generado
+                //Obtengo el Interno de la tabla RespuestasFormulario
+                CargarFormulario({ 
+                    internoEstablecimiento: this.props.internoEstablecimiento,
+                    internoFormulario: this.props.formularioRGRL.value
+                })
+                .then(respForm => {
+                    CargarRespuestas({ internoRespuestasFormulario: respForm.Interno })
+                    .then(response => {      
+                        //console.log('[FormularioA] response ' + JSON.stringify(response))               
+                        ReplicarFormulario({ 
+                            RespuestaFormulario: response,
+                            notificacionFecha: this.props.notificacionFecha,
+                            refEstablecimientoActualizar: {
+                                Superficie: this.props.superficie,
+                                CantTrabajadores: this.props.cantTrabajadores
+                            }
                         })
-                        
-                    })
-                })                                
+                        .then(res => {    
+                            //console.log('[FormularioA] - res: ' + JSON.stringify(res))                    
+                            CargarRespuestas({ internoRespuestasFormulario: res.Interno })
+                            .then(response => {
+                                this.setState({ respuestasFormulario: response, 
+                                    respuestasCuestionario: response.RespuestasCuestionario,
+                                    respuestasGremio: response.RespuestasGremio,
+                                    respuestasContratista: response.RespuestasContratista,
+                                    respuestasResponsable: response.RespuestasResponsable,
+                                    generado: !this.state.generado,
+                                    saving: false
+                                })  
+                            })
+                            
+                        })
+                    })        
+                })
+                                        
                 break;
 
             default:
@@ -280,7 +308,8 @@ export default class FormularioA extends Component{
             InternoFormulario: this.state.respuestasFormulario.InternoFormulario,
             InternoEstablecimiento: this.state.respuestasFormulario.InternoEstablecimiento,
             CreacionFechaHora: this.state.respuestasFormulario.CreacionFechaHora,
-            CompletadoFechaHora: "1800-01-01",
+            CompletadoFechaHora: null, //lo maneja el server
+            NotificacionFecha: this.state.respuestasFormulario.NotificacionFecha,
             RespuestasCuestionario,
             RespuestasGremio,
             RespuestasContratista,

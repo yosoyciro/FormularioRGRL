@@ -33,7 +33,8 @@ async function ValidarRespuestas(secciones, preguntas, respuestasCuestionario, r
                 }
 
                 if (respuesta.Respuesta === 'N' && fechaHoy > fechaRegularizacion)
-                {                    
+                {          
+                    console.log('fechaHoy: ' + fechaHoy + ' - fechaRegularizacion: ' + fechaRegularizacion)          
                     erroresRespuestas.push({InternoRespuestaCuestionario: respuesta.Interno, InternoCuestionario: preguntaAsociada.Interno, Pagina: seccionPregunta.Pagina})
                 }
                 break;

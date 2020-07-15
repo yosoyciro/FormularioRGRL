@@ -7,3 +7,11 @@
 .form {
     text-align: left;
 }
+
+.notificacionFecha-label {
+    margin-left: 1.5%;
+}
+
+.datepicker-formato {
+    margin-left: 1%;
+}

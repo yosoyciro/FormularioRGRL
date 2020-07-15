@@ -29,3 +29,13 @@
 .elegirestablecimiento-th {
     border: 0px transparent
 }
+
+.td-canttrabajadores {
+    border: 0px transparent;
+   
+}
+
+.table-datosEstablecimiento {
+    margin-left: 1%;
+    margin-bottom: 1%;
+}

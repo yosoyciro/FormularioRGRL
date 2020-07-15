@@ -1,7 +1,7 @@
 import Api from '../Api';
 
 async function CargarRespuestas(props) {
-    //console.log('[CargarRespuestas] props: ' + props.internoFormulario + ' ' + props.internoEstablecimiento)
+    //console.log('[CargarRespuestas] props.internoRespuestasFormulario: ' + props.internoRespuestasFormulario)
     try {
         const respForm = await Api.get(`RespuestasFormulario/TraerRespuestas?pInternoRespuestasFormulario=${props.internoRespuestasFormulario}`)
         
