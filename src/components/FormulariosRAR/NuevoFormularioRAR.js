@@ -13,19 +13,13 @@ class NuevoFormularioRAR extends Component{
         this.handleSeleccionCUIT = this.handleSeleccionCUIT.bind(this);
         this.state = {
             formularioRARGenerado: [],
-            cuit: 0,
-            razonSocial: '',
             internoEstablecimiento: 0,
-            direccion: ''
         }
     }
 
     componentDidMount() {
         this.setState({ 
-            cuit: parseInt(this.props.cuit),
-            razonSocial: this.props.razonSocial,
             internoEstablecimiento: parseInt(this.props.internoEstablecimiento),
-            direccion: this.props.direccion
         })
     }
     handleFormularioGenerado(formularioRARGenerado) { 
@@ -43,20 +37,19 @@ class NuevoFormularioRAR extends Component{
         //console.log('[NuevoFormularioRAR]-handleSeleccionEstablecimiento - internoEstablecimiento: ' + internoEstablecimiento + '- direccion: ' + direccion)
         this.setState({ 
             internoEstablecimiento: internoEstablecimiento,
-            direccion: direccion
         })
         //console.log('[NuevoFormularioRAR]-establecimiento: ' + this.state.internoEstablecimiento)
     }
 
     handleSeleccionCUIT(cuit, razonSocial) {
-        this.setState({ 
+        /*this.setState({ 
             cuit,
             razonSocial
-        })
+        })*/
     }
     
     render() {        
-        console.log('RENDER - formularioRARGenerador: ' + Object.values(this.state.formularioRARGenerado))
+        //console.log('RENDER - formularioRARGenerador: ' + Object.values(this.state.formularioRARGenerado))
         const disabled = this.state.formularioRARGenerado.length === 0 ? false : true
         //console.log('[NuevoFormularioRAR] cuit: ' + params.cuitSeleccionado)
         //console.log('[NuevoFormularioRAR] - internoEstablecimiento: ' + this.state.internoEstablecimiento)
@@ -67,12 +60,11 @@ class NuevoFormularioRAR extends Component{
                 seleccionCUIT={this.handleSeleccionCUIT}                
                 finalizaCarga={this.handleFinalizaCarga}
             />
-            {this.state.cuit !== 0 ?
+            {this.props.cuit !== 0 ?
                 <ElegirEstablecimientoRAR 
-                    cuit={this.state.cuit}
+                    cuit={this.props.cuit}
                     internoEstablecimiento={this.state.internoEstablecimiento}
-                    razonSocial={this.state.razonSocial}
-                    direccion={this.state.direccion}
+                    referenteDatos={this.props.referenteDatos}
                     seleccionEstablecimiento={this.handleSeleccionEstablecimiento}
                 />                         
             :

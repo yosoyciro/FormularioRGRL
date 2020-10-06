@@ -15,29 +15,26 @@ class NuevoFormularioRGRL extends Component{
         this.handleSeleccionFormulario = this.handleSeleccionFormulario.bind(this);
         this.handleSeleccionCUIT = this.handleSeleccionCUIT.bind(this);
         this.handleLoading = this.handleLoading.bind(this);
-        this.handleNotificacionFecha = this.handleNotificacionFecha.bind(this)
+        this.handleLoadingEstablecimientos = this.handleLoadingEstablecimientos.bind(this);
+        //this.handleNotificacionFecha = this.handleNotificacionFecha.bind(this)
         this.state = {
             formularioRGRL: [],
-            cuit: 0,
-            razonSocial: '',
             internoFormulario: 0,
             internoEstablecimiento: 0,
             cantTrabajadores: 0,
             superficie: 0,
             notificacionFecha: null,
-            direccion: '',
-            loading: false
+            loading: false,
+            loadingEstablecimientos: true
         }
     }
 
     componentDidMount() {
+        //console.log('[NuevoFormularioRGRL] referenteDatos: ' + this.props.referenteDatos)
         this.setState({ 
             cuit: parseInt(this.props.cuit),
-            razonSocial: this.props.razonSocial,
             internoFormulario: this.props.internoFormulario,
             internoEstablecimiento: parseInt(this.props.internoEstablecimiento),
-            direccion: this.props.direccion,
-            estado: this.props.estado
         })
     }
 
@@ -46,7 +43,7 @@ class NuevoFormularioRGRL extends Component{
     }
 
     handleSeleccionEstablecimiento(internoEstablecimiento, direccion, cantTrabajadores, superficie, loading) {
-        //console.log('[NuevoFormularioRAR]-handleSeleccionEstablecimiento - internoEstablecimiento: ' + internoEstablecimiento + '- direccion: ' + direccion)
+        //console.log('[NuevoFormularioRGRL]-handleSeleccionEstablecimiento - internoEstablecimiento: ' + internoEstablecimiento + '- direccion: ' + direccion)
         this.setState({ 
             internoEstablecimiento,
             direccion,
@@ -66,52 +63,61 @@ class NuevoFormularioRGRL extends Component{
     }
 
     handleSeleccionCUIT(cuit, razonSocial, notificacionFecha) {
-        this.setState({ 
+        /*this.setState({ 
             cuit,
-            razonSocial,
             notificacionFecha
-        })
+        })*/
     }
 
-    handleNotificacionFecha(notificacionFecha) {
+    /*handleNotificacionFecha(notificacionFecha) {
         console.log('notificacionFecha: ' + notificacionFecha)
         this.setState({ 
             notificacionFecha,
         })
-    }
+    }*/
 
     handleLoading(loading) {
         this.setState({
             loading
         })
     }
+
+    handleLoadingEstablecimientos(loadingEstablecimientos) {
+        this.setState({
+            loadingEstablecimientos
+        })
+    }
     
-    render() {        
+    render() {  
+        //console.log('[NuevoFormularioRGRL] cuit: ' + this.props.cuit) 
+        //console.log('[NuevoFormularioRGRL] referenteDatos: ' + this.props.referenteDatos)     
+        console.log('[NuevoFormularioRGRL] this.state.internoEstablecimiento: ' + this.state.internoEstablecimiento)   
         return <Fragment> 
             <h2>Formulario RGRL</h2>        
             <DatosGenerales
                 cuit={this.props.cuit}
+                referenteDatos={this.props.referenteDatos}
                 notificacionFecha={this.state.notificacionFecha}
                 seleccionCUIT={this.handleSeleccionCUIT}  
-                changeNotificacionFecha={this.handleNotificacionFecha}              
+                //changeNotificacionFecha={this.handleNotificacionFecha}              
                 finalizaCarga={this.handleFinalizaCarga}
             />
-            {this.state.cuit !== 0 ?
+            {this.props.cuit !== 0 ?
                 <ElegirEstablecimientoRAR
-                    cuit={this.state.cuit}
+                    cuit={this.props.cuit}
+                    referenteDatos={this.props.referenteDatos}
                     internoFormulario={this.state.internoFormulario}
                     internoEstablecimiento={this.state.internoEstablecimiento}
-                    razonSocial={this.state.razonSocial}
-                    direccion={this.state.direccion}
                     cantTrabajadores={this.state.cantTrabajadores}
                     superficie={this.state.superficie}
                     mostrarDatosEstablecimiento={true}
                     seleccionEstablecimiento={this.handleSeleccionEstablecimiento}
+                    loadingEstablecimientos={this.handleLoadingEstablecimientos}
                 />                         
             :
                 null
             } 
-            {this.state.internoEstablecimiento !== 0 ? 
+            {this.state.internoEstablecimiento !== 0 && this.state.loadingEstablecimientos !== true ? 
                 <ElegirTipoFormulario
                     internoEstablecimiento={this.state.internoEstablecimiento}
                     internoFormulario={this.state.internoFormulario}

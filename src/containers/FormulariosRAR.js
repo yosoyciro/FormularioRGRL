@@ -1,29 +1,39 @@
 import React, {Component} from 'react';
 import { Button } from 'react-bootstrap';
+import ReferenteDatos from '../Api/ReferenteDatos/ReferenteDatos';
 import ListaFormulariosRAR from '../components/FormulariosRAR/ListaFormulariosRAR';
 import NuevoFormularioRAR from '../components/FormulariosRAR/NuevoFormularioRAR';
+import Spinner from '../components/UI/Spinner';
 
 export class FormulariosRAR extends Component{
     constructor(props) {
         super(props)
         this.state = {
-            cuit: 0,
+            isLoading: true,
+            referenteDatos: [],
             internoEstablecimiento: 0,
-            razonSocial: '',
-            direccion: '',
-            cargarFormulario: false
+            cargarFormulario: false,
+            estado: '',
         }
         this.seleccionaRegistro = this.seleccionaRegistro.bind(this)
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this)
     }
 
+    componentDidMount() {
+        ReferenteDatos(this.props.match.params.CUIT)
+        .then(res => {
+            //console.log('[Formularios] - res: ' + JSON.stringify(res))
+            this.setState({
+                referenteDatos: res,
+                isLoading: !this.state.isLoading,
+            })
+        })
+    }  
+
     handleClick = () => {
         this.setState({ 
             cargarFormulario: true,
-            cuit: 0,
             internoEstablecimiento: 0,
-            razonSocial: null,
-            direccion: null,
             estado: ''
         })
     }
@@ -43,10 +53,7 @@ export class FormulariosRAR extends Component{
     seleccionaRegistro = (cuit, internoEstablecimiento, razonSocial, direccion, estado) => {
         //console.log('[FormulariosRAR] - direccion: ' + direccion)
         this.setState({
-            cuit,
             internoEstablecimiento,
-            razonSocial,
-            direccion,
             estado
         })
     }
@@ -54,7 +61,6 @@ export class FormulariosRAR extends Component{
     handleFinalizaCarga() {
         this.setState({ 
             cargarFormulario: !this.state.cargarFormulario,
-            cuit: 0,
             estado: ''
         })
     }
@@ -62,45 +68,51 @@ export class FormulariosRAR extends Component{
     render(){
         //console.log('[FormulariosRAR] - establecimiento: ' + Object.values(this.state.establecimiento))
         return <div>
-            {this.state.cargarFormulario === false ?
-                <div>
-                    <h1>Consulta de Formularios RAR</h1>
-                    {this.state.cuit !== 0 && this.state.estado !== 'Confirmado' ?
+            {this.state.isLoading === true ?
+                <Spinner />
+            :
+            <>
+                {this.state.cargarFormulario === false ?
+                    <div>
+                        <h1>Consulta de Formularios RAR</h1>
+                        {this.state.cuit !== 0 && this.state.estado !== 'Confirmado' ?
+                            <Button 
+                                onClick={this.handleEdita}
+                                className="btn-consultaformulario"
+                            >
+                                Edita Formulario
+                            </Button>
+                        :
+                            null
+                        }
                         <Button 
-                            onClick={this.handleEdita}
+                            onClick={this.handleClick}
                             className="btn-consultaformulario"
                         >
-                            Edita Formulario
+                            Genera Formulario
                         </Button>
-                    :
-                        null
-                    }
-                    <Button 
-                        onClick={this.handleClick}
-                        className="btn-consultaformulario"
-                    >
-                        Genera Formulario
-                    </Button>
-                    <Button 
-                        onClick={this.handleClickCerrar}
-                        className="btn-consultaformulario"
-                    >
-                        Finaliza
-                    </Button>
-                    <ListaFormulariosRAR
-                        seleccionaRegistro={this.seleccionaRegistro}
-                        cargarFormulario={this.state.cargarFormulario}
+                        <Button 
+                            onClick={this.handleClickCerrar}
+                            className="btn-consultaformulario"
+                        >
+                            Finaliza
+                        </Button>
+                        <ListaFormulariosRAR
+                            cuit={this.props.match.params.CUIT}
+                            seleccionaRegistro={this.seleccionaRegistro}
+                            cargarFormulario={this.state.cargarFormulario}
+                        />
+                    </div>       
+                :
+                    <NuevoFormularioRAR
+                        cuit={this.props.match.params.CUIT}
+                        internoEstablecimiento={this.state.internoEstablecimiento}
+                        referenteDatos={this.state.referenteDatos}
+                        finalizaCarga={this.handleFinalizaCarga}
                     />
-                </div>       
-            :
-                <NuevoFormularioRAR
-                    cuit={this.state.cuit}
-                    internoEstablecimiento={this.state.internoEstablecimiento}
-                    razonSocial={this.state.razonSocial}
-                    direccion={this.state.direccion}
-                    finalizaCarga={this.handleFinalizaCarga}
-                />
-            }               
+                }  
+            </>
+        }
         </div>
     }
 }

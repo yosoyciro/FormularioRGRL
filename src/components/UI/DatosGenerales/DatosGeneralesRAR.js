@@ -97,7 +97,7 @@ render() {
                 onChange={this.handleChange}
                 disabled={disable}
             ></input> 
-            <Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> 
+            {/*<Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> */}
             <Button onClick={this.handleFinalizaCarga} variant="primary">Finaliza</Button> 
         </fieldset>
     </form>       

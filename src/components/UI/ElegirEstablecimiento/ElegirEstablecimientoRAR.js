@@ -9,19 +9,28 @@ class ElegirEstablecimientoRAR extends Component{
         label: '',
         establecimientos: [],      
         cantTrabajadores: 0,
-        superficie: 0
+        superficie: 0,
+        isLoading: true,
     }
         
     componentDidMount() {        
-        //console.log('[ElegirEstablecimientoRAR] componendidmount - this.props.direccion: ' + this.props.direccion)
+        console.log('[ElegirEstablecimientoRAR] componendidmount - this.props.internoEstablecimiento: ' + this.props.internoEstablecimiento)
         switch(parseInt(this.props.internoEstablecimiento))
         {
             case 0:
                 this.cargarEstablecimientos(1)
+                .then(res => {
+                    this.setState({isLoading: !this.state.isLoading})
+                    this.props.loadingEstablecimientos(false)
+                })
                 break;
 
             default:
-                this.cargarEstablecimientos(2)                
+                this.cargarEstablecimientos(2) 
+                .then(res => {
+                    this.setState({isLoading: !this.state.isLoading})
+                    this.props.loadingEstablecimientos(false)
+                })               
                 break;
         }
         
@@ -98,10 +107,11 @@ class ElegirEstablecimientoRAR extends Component{
     
 
 render() {         
-    const internoEstablecimiento = parseInt(this.props.internoEstablecimiento)  
+    const internoEstablecimiento = parseInt(this.props.internoEstablecimiento) 
+    //console.log('[ElegirEstablecimientoRAR] referenteDatos: ' + JSON.stringify(this.props.referenteDatos)) 
 
     //Trabajadores y superficie
-        const cantTrabajadores = this.props.cantTrabajadores
+    const cantTrabajadores = this.props.cantTrabajadores
     const superficie = this.props.superficie
     
     //console.log('[ElegirEstablecimientoRAR] Nombre: ' + this.state.establecimientos.Nombre)
@@ -111,9 +121,9 @@ render() {
     const opciones = this.state.establecimientos.map(establecimiento => {
         return {
             value: establecimiento.Interno, 
-            label: establecimiento.Nombre + ' ' + establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro, 
+            label: establecimiento.Numero + ' - ' + establecimiento.Codigo + ' - ' + establecimiento.Nombre + ' ' + establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro + ' - ' + establecimiento.Provincia, 
             cuit: this.props.cuit, 
-            razonsocial: this.props.razonSocial,
+            razonsocial: this.props.referenteDatos.RazonSocial,
             cantTrabajadores: establecimiento.CantTrabajadores,
             superficie: establecimiento.Superficie
         }
@@ -124,7 +134,7 @@ render() {
     if (internoEstablecimiento !== 0)
         currentSelection = [
             {
-                label: 'Seleccione formulario para ' + this.props.cuit + ' - ' + this.props.razonSocial + ' - ' + this.props.direccion, 
+                label: 'Seleccione formulario para ' + this.props.cuit + ' - ' + this.props.referenteDatos[0].RazonSocial + ' - ' + this.props.referenteDatos[0].DomicilioCalle + ' ' + this.props.referenteDatos[0].DomicilioNro, 
                 value: parseInt(this.props.internoEstablecimiento),                
             }
         ];    
@@ -149,9 +159,10 @@ render() {
                             options={opciones}
                             isSearchable={false}
                             isDisabled={disable}
-                            placeholder={'Seleccione establecimiento dependiente de ' + this.props.cuit + ' ' + this.props.razonSocial}
+                            placeholder={'Seleccione establecimiento dependiente de ' + this.props.cuit + ' ' + this.props.referenteDatos[0].RazonSocial}
                             menuIsOpen={menuIsOpen}
                             formatCreateLabel={userInput => `Search for ${userInput}`}
+                            isLoading={this.state.isLoading}
                         />
                     </td>
                 </tbody>

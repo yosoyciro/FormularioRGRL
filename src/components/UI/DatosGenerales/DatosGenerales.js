@@ -13,7 +13,7 @@ class DatosGenerales extends Component{
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
         this.handleChangeNotificacionFecha = this.handleChangeNotificacionFecha.bind(this);
         this.state = {
-            cuit: 0,
+            cuit: this.props.cuit,
             cuitValido: false,
             razonSocial: '',
             showSnackBar: false,
@@ -91,7 +91,8 @@ class DatosGenerales extends Component{
         this.props.finalizaCarga()
     }
 
-    render() {       
+    render() {     
+        console.log('[DatosGenerales] cuit: ' + this.state.cuit)  
         const disable = this.state.cuitValido === false ? false : true  
         const notificacionFechaDisable = parseInt(this.props.cuit) !== 0 ? true : false  
         let handleCerrarSnackbar=() => this.setState({showSnackBar: false})
@@ -110,8 +111,6 @@ class DatosGenerales extends Component{
                     onChange={this.handleChange}
                     disabled={disable}
                 ></input> 
-                <Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> 
-                <Button onClick={this.handleFinalizaCarga} variant="primary">Finaliza</Button> 
                 <label className="notificacionFecha-label">Notificación Fecha:</label>
                 <DatePicker
                         //locale="es"
@@ -123,6 +122,9 @@ class DatosGenerales extends Component{
                         disabled={notificacionFechaDisable}
                         placeholderText="Seleccione una fecha"
                 /> 
+                {/*<Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button>*/}
+                <Button onClick={this.handleFinalizaCarga} variant="primary">Finaliza</Button> 
+                
             </fieldset>
         </form>       
         {this.state.showSnackBar === true ?

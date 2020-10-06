@@ -35,15 +35,20 @@ export class ListaFormularios extends Component{
         }
     }
 
-    componentDidMount() {        
-        CargarConsultaFormularios()
-        .then(response => {
-            //console.log('traigo los datos')
+    async componentDidMount() {  
+        console.log('[ListaFormularios] cuit: ' + this.props.cuit)      
+        const formulariosCargados = await CargarConsultaFormularios(this.props.cuit)
+        /*.then(response => {
+            //console.log('[ListaFormularios] response: ' + response)
             this.setState({
                 formulariosCargados: response,
                 loadingFormularios: !this.state.loadingFormularios
             });
-        })       
+        })       */
+        this.setState({
+            formulariosCargados: formulariosCargados,
+            loadingFormularios: !this.state.loadingFormularios
+        });
     }
 
     handleClick (e, row, rowIndex) {
@@ -153,7 +158,7 @@ export class ListaFormularios extends Component{
             sizePerPage: 5,
             hideSizePerPage: true,
             hidePageListOnlyOnePage: true,
-            totalSize: this.state.formulariosCargados.length,
+            totalSize: this.state.formulariosCargados ? this.state.formulariosCargados.length : 0,
             onClick: (e) => {
                 //console.log('click en pagina')
             },

@@ -42,7 +42,7 @@ class BotonesFormulario extends Component {
                         Confirma Formulario
                 </Button> : null
             }
-            {this.props.disabledCancelar === false ? 
+            {/*this.props.disabledCancelar === false ? 
                 <Button
                     className="botonesformulario"
                     variant="primary" 
@@ -51,7 +51,7 @@ class BotonesFormulario extends Component {
                 >
                     Finaliza
                 </Button> : null
-            }      
+            */}      
         </div>
     }
 

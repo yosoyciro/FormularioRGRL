@@ -1,8 +1,8 @@
 import Api from './Api';
 
-async function CargarConsultaFormularios() {
+async function CargarConsultaFormularios(props) {
     try {
-        const response = await Api.get(`FormulariosCargados/Consultar`)
+        const response = await Api.get(`FormulariosCargados/Consultar?pCuit=${props}`)
         //console.log('response.data: ' + response.data)
         return response.data
     }

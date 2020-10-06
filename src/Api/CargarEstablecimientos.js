@@ -8,14 +8,15 @@ async function CargarEstablecimientos(props) {
             case 0:
                 //console.log('[CargarEstablecimientos] 0')
                 const responseCUIT = await Api.get(`RefEstablecimiento/ListarPorCuit?pCuit=${props.cuit}`)
-                responseCUIT.data.map(establecimiento => {
+                /*responseCUIT.data.map(establecimiento => {
                     //console.log('response.data: ' + formulario.Descripcion) 
                     const isDisabled = false //formulario.Estado === '(Confirmado)' ? true : false
                     respuestaEstablecimientos.push({value: establecimiento.Interno, label: establecimiento.Nombre , isDisabled: isDisabled })
         
                     return respuestaEstablecimientos
-                })                
-                break;
+                })    */
+                return responseCUIT.data;            
+                //break;
 
             case 1:
                 //console.log('[CargarEstablecimientos] 1')
@@ -24,7 +25,7 @@ async function CargarEstablecimientos(props) {
                 const isDisabled = false //formulario.Estado === '(Confirmado)' ? true : false
                 respuestaEstablecimientos.push({value: responseInterno.data.Interno, label: responseInterno.data.Nombre , isDisabled: isDisabled })
                 
-                return respuestaEstablecimientos                
+                return responseInterno.data; //respuestaEstablecimientos                
 
             default:
                 break;

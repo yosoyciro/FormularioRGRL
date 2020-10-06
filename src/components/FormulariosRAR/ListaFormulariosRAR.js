@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {Spinner} from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory, { PaginationProvider, PaginationListStandalone } from 'react-bootstrap-table2-paginator';
-import filterFactory, { textFilter ,selectFilter } from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit';
 import FormatearFechaCelda from '../Utiles/FormatearFechaCelda'
 import './ListarFormulariosRAR.css'
 import CargarConsultaFormulariosRAR from '../../Api/FormulariosRAR/CargarConsultaFormulariosRAR';
+import Spinner from '../UI/Spinner';
 
 export class ListaFormulariosRAR extends Component{
     constructor(props) {
@@ -23,7 +23,7 @@ export class ListaFormulariosRAR extends Component{
     componentDidMount() {        
         this.setState({ loading: true })
 
-        CargarConsultaFormulariosRAR()
+        CargarConsultaFormulariosRAR(this.props.cuit)
         .then(response => {
             switch (response)
             {

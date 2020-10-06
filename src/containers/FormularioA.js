@@ -24,6 +24,7 @@ export default class FormularioA extends Component{
         super(props);
         this.handleGenerar = this.handleGenerar.bind(this);        
         this.handleRespuesta = this.handleRespuesta.bind(this);
+        this.handleRespuestaColumna = this.handleRespuestaColumna.bind(this);
         this.handleFechaRegularizacion = this.handleFechaRegularizacion.bind(this);
 
         this.handleCambioGremio = this.handleCambioGremio.bind(this);
@@ -386,7 +387,10 @@ export default class FormularioA extends Component{
                             <tr>
                                 <th className="cabecera-codigo">Nro</th>
                                 <th className="cabecera-pregunta">{seccion.Descripcion}</th>
-                                <th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>Sí</th>
+                                *<th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>Sí</th>
+                                {/*<th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>
+                                    <button type="button" onClick={() => this.handleRespuestaColumna(preguntasSeccion)}>Sí</button>
+                                </th>*/}
                                 <th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>No</th>
                                 <th className="cabecera-select">No Aplica</th>
                                 <th className="cabecera-fecha">Fecha de Regularización</th>
@@ -480,8 +484,8 @@ export default class FormularioA extends Component{
     }
 
     handleRespuesta(respuesta, interno) {
-        //console.log('internoRespuestaCuestionario: ' + interno)
-        //console.log('respuesta: ' + respuesta)
+        console.log('internoRespuestaCuestionario: ' + interno)
+        console.log('respuesta: ' + respuesta)
 
         const respuestasCuestionario = this.state.respuestasCuestionario
         //console.log('respuestasCuestionario: ' + JSON.stringify(respuestasCuestionario))
@@ -498,6 +502,20 @@ export default class FormularioA extends Component{
         /*this.setState({
             respuestasCuestionario: update(this.state.respuestasCuestionario, {: {Respuesta: {$set: respuesta}}})
         })*/
+    }
+
+    handleRespuestaColumna(preguntasSeccion, columna) {
+        //const respuestasCuestionario = this.state.respuestasCuestionario
+        //console.log('respuestasCuestionario: ' + JSON.stringify(respuestasCuestionario))
+        //var respuestasSeccion = respuestasCuestionario.filter(respuesta => respuesta.Seccion === seccion.Interno)
+        console.log('preguntasSeccion: ' + JSON.stringify(preguntasSeccion))
+        preguntasSeccion.map(pregunta => this.handleRespuesta('S', pregunta.Interno))
+        
+        /*var updateRespuesta = update(respuestasCuestionario[commentIndex], {Respuesta: {$set: respuesta}})
+        var newData = update(respuestasCuestionario, {
+            $splice: [[commentIndex, 1, updateRespuesta]]
+        });      
+        this.setState({respuestasCuestionario: newData})*/
     }
     //#endregion
 
