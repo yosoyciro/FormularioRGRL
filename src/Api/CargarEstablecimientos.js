@@ -1,6 +1,6 @@
 import Api from './Api';
 
-async function CargarEstablecimientos(props) {
+export async function CargarEstablecimientos(props) {
     let respuestaEstablecimientos = []
     //console.log('[CargarEstablecimientos] opcion: ' + props.opcion + ' - cuit: ' + props.cuit + ' - internoEstbalecimiento: ' + props.internoEstablecimiento)
     try {
@@ -40,4 +40,17 @@ async function CargarEstablecimientos(props) {
     return respuestaEstablecimientos
 }
 
-export default CargarEstablecimientos;
+export async function CargarEstablecimientosReplica(props) {
+    //console.log('[CargarEstablecimientos] opcion: ' + props.opcion + ' - cuit: ' + props.cuit + ' - internoEstbalecimiento: ' + props.internoEstablecimiento)
+    try {
+            //console.log('[CargarEstablecimientos] 0')
+            const response = await Api.get(`RefEstablecimiento/ListarParaReplica?pCuit=${props.cuit}&?pInternoEstablecimiento=${props.internoEstablecimiento}`)
+            return response.data;                        
+                      
+    }
+    catch (error) {
+        console.log('[CargarEstablecimientos]: ' + error);
+    } 
+}
+
+//export default CargarEstablecimientos;

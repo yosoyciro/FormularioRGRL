@@ -1,7 +1,7 @@
 {
   "name": "rgrl-app",
   "version": "0.1.0",
-  "homepage": "artmutualrural.com.ar:9090/",
+  "homepage": "http://un-paraprobar:9090/",
   "private": true,
   "dependencies": {
     "@babel/core": "7.7.4",
@@ -89,7 +89,7 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
+    "build": "node ./update-build.js && node scripts/build.js",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
@@ -168,5 +168,6 @@
     "presets": [
       "react-app"
     ]
-  }
+  },
+  "buildDate": 1602772939801
 }

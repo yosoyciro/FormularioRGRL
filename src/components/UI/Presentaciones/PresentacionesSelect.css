@@ -1,0 +1,69 @@
+.table-establecimiento {
+    width: 40%;
+    text-align: left;
+    /*margin-bottom: 1%;
+    margin-top: 1%;*/
+    margin: 1%;
+}
+
+.elegirestablecimiento-th {
+    width: 4%;
+    /*margin-right: 2px;*/
+}
+
+.selectestablecimiento-th {
+    border: 0px transparent;
+    width: 30%;
+    text-align: 'left';
+}
+
+.generapresentacion-th {
+    border: 0px transparent;
+    text-align: 'left';
+    width: 4%;
+}
+
+.elegirestablecimiento-td {
+    border: 0px transparent;
+    /*width: 4%;*/
+    text-align: 'left';
+    margin-right: 1%;
+}
+
+.selectestablecimiento-td {
+    border: 0px transparent;
+    /*width: 10%;*/
+    text-align: 'left';
+    margin-right: 1%;
+}
+
+.generapresentacion-td {
+    border: 0px transparent;
+    width: 4%;
+    text-align: 'left';
+    margin-left: 1%;
+}
+
+.elegirestablecimiento-thead {
+    border: 0px transparent;
+    text-align: 'left';
+    /*width: 5%;*/
+}
+
+.elegirestablecimiento-tbody {
+    border: 0px transparent
+}
+
+.elegirestablecimiento-th {
+    border: 0px transparent
+}
+
+.td-canttrabajadores {
+    border: 0px transparent;
+   
+}
+
+.table-datosEstablecimiento {
+    margin-left: 1%;
+    margin-bottom: 1%;
+}

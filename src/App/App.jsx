@@ -4,30 +4,35 @@ import {BrowserRouter, Route, Switch, Router } from 'react-router-dom';
 import { history } from '../components/Utiles/history';
 import './App.css';
 import FormulariosRAR from '../containers/FormulariosRAR';
-//import NuevoFormularioRAR from '../components/FormulariosRAR/NuevoFormularioRAR';
-//import NuevoFormularioRGRL from '../components/FormulariosRGRL/NuevoFormularioRGRL';
+import packageJson from "../../package.json";
+import { getBuildDate } from "../components/Utiles/getBuildDate";
+import withClearCache from "../ClearCache";
 
-class App extends React.Component {    
+const ClearCacheComponent = withClearCache(MainApp);
 
-    render() {
-      
-      return (
-        <Router history={history}>    
-          <BrowserRouter>
-            <div className="App">                 
-                <Switch>
-                  <Route path='/ConsultaFormulariosRGRL/:CUIT' component={Formularios}/>
-                  <Route path='/ConsultaFormulariosRAR/:CUIT' component={FormulariosRAR}/>
-                </Switch>   
-            </div>
-          </BrowserRouter>
-        </Router>       
-      );
-  }
+function App() {    
+  return <ClearCacheComponent />;
 }
 
-/*<Route path='/NuevoFormularioRGRL/:handle' component={NuevoFormularioRGRL}/>
-<Route path='/NuevoFormularioRGRL' component={NuevoFormularioRGRL }/>                  
-<Route path='/NuevoFormularioRAR' component={NuevoFormularioRAR}/>
-<Route path='/NuevoFormularioRAR/:cuitSeleccionado' component={NuevoFormularioRAR}/>*/
+function MainApp()  {
+    return (
+      <Router history={history}>    
+        <BrowserRouter>
+          <div className="App">           
+              <Switch>
+                <Route path='/ConsultaFormulariosRGRL/:Param' component={Formularios}/>
+                <Route path='/ConsultaFormulariosRAR/:Param' component={FormulariosRAR}/>
+              </Switch> 
+              <footer className="App-footer">
+                <p>Versión: {getBuildDate(packageJson.buildDate)}</p>
+              </footer>  
+          </div>
+        </BrowserRouter>
+      </Router>       
+    );
+  
+}
+
+
+
 export default App;

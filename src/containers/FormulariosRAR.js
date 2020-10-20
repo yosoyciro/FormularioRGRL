@@ -4,11 +4,13 @@ import ReferenteDatos from '../Api/ReferenteDatos/ReferenteDatos';
 import ListaFormulariosRAR from '../components/FormulariosRAR/ListaFormulariosRAR';
 import NuevoFormularioRAR from '../components/FormulariosRAR/NuevoFormularioRAR';
 import Spinner from '../components/UI/Spinner';
+import BuscarParametro from '../Api/AutParametro';
 
 export class FormulariosRAR extends Component{
     constructor(props) {
         super(props)
         this.state = {
+            cuit: 0,
             isLoading: true,
             referenteDatos: [],
             internoEstablecimiento: 0,
@@ -17,16 +19,30 @@ export class FormulariosRAR extends Component{
         }
         this.seleccionaRegistro = this.seleccionaRegistro.bind(this)
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this)
+        this.handleClickCerrar = this.handleClickCerrar.bind(this)
     }
 
     componentDidMount() {
-        ReferenteDatos(this.props.match.params.CUIT)
+        BuscarParametro(this.props.match.params.Param)
         .then(res => {
-            //console.log('[Formularios] - res: ' + JSON.stringify(res))
-            this.setState({
-                referenteDatos: res,
-                isLoading: !this.state.isLoading,
-            })
+            switch (res) {
+                case null:
+                    console.log('No se encontro parametro ' + this.props.match.params.Param);
+                    this.handleClickCerrar();
+                    break;
+            
+                default:
+                    this.setState({cuit: res.CUIT})
+                    ReferenteDatos(this.state.cuit)
+                    .then(res => {
+                        //console.log('[Formularios] - res: ' + JSON.stringify(res))
+                        this.setState({
+                            referenteDatos: res,
+                            isLoading: !this.state.isLoading,
+                        })
+                    })
+                    break;
+            }          
         })
     }  
 
@@ -40,6 +56,7 @@ export class FormulariosRAR extends Component{
 
     handleClickCerrar() {       
         window.history.back();
+        window.close();
         //console.log('cerrar')
     }
 
@@ -67,6 +84,8 @@ export class FormulariosRAR extends Component{
  
     render(){
         //console.log('[FormulariosRAR] - establecimiento: ' + Object.values(this.state.establecimiento))
+        const disableEdita = this.state.cuit === 99999999999 ? true : false
+        const disableGenera = this.state.cuit === 99999999999 ? true : false
         return <div>
             {this.state.isLoading === true ?
                 <Spinner />
@@ -79,6 +98,7 @@ export class FormulariosRAR extends Component{
                             <Button 
                                 onClick={this.handleEdita}
                                 className="btn-consultaformulario"
+                                disabled={disableEdita}
                             >
                                 Edita Formulario
                             </Button>
@@ -88,6 +108,7 @@ export class FormulariosRAR extends Component{
                         <Button 
                             onClick={this.handleClick}
                             className="btn-consultaformulario"
+                            disabled={disableGenera}
                         >
                             Genera Formulario
                         </Button>
@@ -98,14 +119,14 @@ export class FormulariosRAR extends Component{
                             Finaliza
                         </Button>
                         <ListaFormulariosRAR
-                            cuit={this.props.match.params.CUIT}
+                            cuit={this.state.cuit}
                             seleccionaRegistro={this.seleccionaRegistro}
                             cargarFormulario={this.state.cargarFormulario}
                         />
                     </div>       
                 :
                     <NuevoFormularioRAR
-                        cuit={this.props.match.params.CUIT}
+                        cuit={this.state.cuit}
                         internoEstablecimiento={this.state.internoEstablecimiento}
                         referenteDatos={this.state.referenteDatos}
                         finalizaCarga={this.handleFinalizaCarga}

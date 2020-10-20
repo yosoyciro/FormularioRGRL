@@ -31,13 +31,17 @@ export class ListaFormularios extends Component{
             respuestasResponsable: [],
             paginas: [],
             loadingRespuestas: false,
-            loadingFormularios: true
+            loadingFormularios: true,
         }
     }
 
     async componentDidMount() {  
-        console.log('[ListaFormularios] cuit: ' + this.props.cuit)      
-        const formulariosCargados = await CargarConsultaFormularios(this.props.cuit)
+        console.log('[ListaFormularios] cuit: ' + this.props.cuit) 
+        const props = {
+            CUIT: this.props.cuit,
+            InternoPresentacion: this.props.internoPresentacion
+        }     
+        const formulariosCargados = await CargarConsultaFormularios(props)
         /*.then(response => {
             //console.log('[ListaFormularios] response: ' + response)
             this.setState({
@@ -62,7 +66,7 @@ export class ListaFormularios extends Component{
         })
         this.cargarDatos(row.InternoFormulario, row.InternoEstablecimiento, row.Interno)
         .then(resp => {
-            this.props.seleccionaRegistro(row.Interno, row.CUIT, row.InternoFormulario, row.InternoEstablecimiento, row.Estado, row.RazonSocial, row.Direccion)
+            this.props.seleccionaRegistro(row.Interno, row.CUIT, row.InternoFormulario, row.InternoEstablecimiento, row.Estado, row.RazonSocial, row.Direccion, row.Descripcion)
             this.setState({ loadingRespuestas: !this.state.loadingRespuestas })
         })        
     }
@@ -178,7 +182,11 @@ export class ListaFormularios extends Component{
             hideSelectColumn: true,
           };
 
-        const columns = [
+        //#region  Columnas
+        console.log('[ListaFormularios] cuit: ' + this.props.cuit)
+        const columns = 
+        this.props.cuit === 99999999999 ?
+        [
             {
                 dataField: 'Interno',
                 text: '#',
@@ -187,11 +195,11 @@ export class ListaFormularios extends Component{
             {
                 dataField: 'CUIT',
                 text: 'CUIT',
-                sort: true,  
+                sort: true,                  
                 filter: textFilter({
                     placeholder: 'Ingrese CUIT...',
                     className: 'test1'
-                })              
+                })             
             },
             {
                 dataField: 'RazonSocial',
@@ -242,8 +250,68 @@ export class ListaFormularios extends Component{
                 text: 'InternoEstablecimiento',
                 hidden: true
             }
+        ]
+        :
+        [
+            {
+                dataField: 'Interno',
+                text: '#',
+                hidden: true
+            }, 
+            {
+                dataField: 'CUIT',
+                text: 'CUIT',
+                sort: true,                            
+            },
+            {
+                dataField: 'RazonSocial',
+                text: 'Razon Social',
+                sort: true
+            }, 
+            {
+                dataField: 'Direccion',
+                text: 'Establecimiento'
+            },
+            {
+                dataField: 'Descripcion',
+                text: 'Formulario'
+            },
+            {
+                dataField: 'Estado',
+                text: 'Estado   ',
+                sort: true,
+                formatter: cell => selectOptions[cell],
+                filter: selectFilter({
+                    options: selectOptions,
+                    placeholder: 'Todos',
+                    className: 'test1',
+                })
+            },
+            {
+                dataField: 'CreacionFechaHora',
+                text: 'Fecha Hora Creacion',
+                formatter: FormatearFechaCelda,
+                sort: true           
+            },
+            {
+                dataField: 'CompletadoFechaHora',
+                text: 'Fecha Hora Confirmado',
+                formatter: FormatearFechaCelda
+            },
+            {
+                dataField: 'InternoFormulario',
+                text: 'InternoFormulario',
+                hidden: true
+            },
+            {
+                dataField: 'InternoEstablecimiento',
+                text: 'InternoEstablecimiento',
+                hidden: true
+            }
         ];
+        //#endregion
 
+        //#region Tabla
         const contentTable = ({ paginationProps, paginationTableProps }) => (
             <div>
                 <PaginationListStandalone 
@@ -258,11 +326,14 @@ export class ListaFormularios extends Component{
                 {
                   toolkitprops => (
                     <div>
-                        <SearchBar { ...toolkitprops.searchProps } 
-                            { ...toolkitprops.searchProps }
-                            className="search"
-                            placeholder="Ingrese parte de CUIT, Razón Social, Establecimiento..."
-                        />
+                        {this.props.cuit === 99999999999 ?
+                            <SearchBar { ...toolkitprops.searchProps } 
+                                { ...toolkitprops.searchProps }
+                                className="search"
+                                placeholder="Ingrese parte de CUIT, Razón Social, Establecimiento..."
+                        />:
+                            null    
+                        }
                         <BootstrapTable
                             rowEvents={ rowEvents }   
                             selectRow={ selectRow }         
@@ -280,12 +351,14 @@ export class ListaFormularios extends Component{
               </ToolkitProvider>
             </div>
         );
+        //#endregion
         
+        //#region Return
         return <div>
                 {this.state.loadingFormularios === true ?
                     <Spinner />
                 :
-                <>
+                <>                    
                     <PaginationProvider
                         className="paginacion"
                         pagination={
@@ -326,6 +399,7 @@ export class ListaFormularios extends Component{
                 </>
                 }
         </div>
+        //#endregion
     }
 }
 

@@ -111,7 +111,10 @@ export class ListaFormulariosRAR extends Component{
             hideSelectColumn: true,
           };
 
-        const columns = [
+        //#region Columnas
+        const columns = 
+        this.props.cuit === 99999999999 ?
+        [
             {
                 dataField: 'Interno',
                 text: '#',
@@ -167,7 +170,58 @@ export class ListaFormulariosRAR extends Component{
                 text: 'InternoEstablecimiento',
                 hidden: true
             }            
+        ]
+        :
+        [
+            {
+                dataField: 'Interno',
+                text: '#',
+                hidden: true
+            }, 
+            {
+                dataField: 'CUIT',
+                text: 'CUIT',
+                sort: true    
+            },
+            {
+                dataField: 'RazonSocial',
+                text: 'Razon Social',
+                sort: true
+            }, 
+            {
+                dataField: 'Direccion',
+                text: 'Establecimiento'
+            },
+            {
+                dataField: 'CantTrabajadoresExpuestos',
+                text: 'Cant. Trabajadores Expuestos',
+            },
+            {
+                dataField: 'CantTrabajadoresNoExpuestos',
+                text: 'Cant. Trabajadores NO Expuestos',
+            },
+            {
+                dataField: 'Estado',
+                text: 'Estado'
+            },            
+            {
+                dataField: 'FechaCreacion',
+                text: 'Fecha Hora Creacion',
+                formatter: FormatearFechaCelda,
+                sort: true           
+            },
+            {
+                dataField: 'FechaPresentacion',
+                text: 'Fecha Hora Confirmado',
+                formatter: FormatearFechaCelda
+            },            
+            {
+                dataField: 'InternoEstablecimiento',
+                text: 'InternoEstablecimiento',
+                hidden: true
+            }            
         ];
+        //#endregion
 
         const contentTable = ({ paginationProps, paginationTableProps }) => (
             <div>
@@ -183,11 +237,15 @@ export class ListaFormulariosRAR extends Component{
                 {
                   toolkitprops => (
                     <div>
-                        <SearchBar { ...toolkitprops.searchProps } 
-                            { ...toolkitprops.searchProps }
-                            className="search"
-                            placeholder="Ingrese parte de CUIT, Razón Social, Establecimiento..."
-                        />
+                        {this.props.cuit === 99999999999 ?
+                            <SearchBar { ...toolkitprops.searchProps } 
+                                { ...toolkitprops.searchProps }
+                                className="search"
+                                placeholder="Ingrese parte de CUIT, Razón Social, Establecimiento..."
+                            />
+                        :
+                            null
+                        }
                         <BootstrapTable
                             rowEvents={ rowEvents }   
                             selectRow={ selectRow }         
