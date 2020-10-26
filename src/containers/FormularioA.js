@@ -24,7 +24,7 @@ export default class FormularioA extends Component{
         super(props);
         this.handleGenerar = this.handleGenerar.bind(this);        
         this.handleRespuesta = this.handleRespuesta.bind(this);
-        this.handleRespuestaColumna = this.handleRespuestaColumna.bind(this);
+        this.handleRespuestaSeccion = this.handleRespuestaSeccion.bind(this);
         this.handleFechaRegularizacion = this.handleFechaRegularizacion.bind(this);
 
         this.handleCambioGremio = this.handleCambioGremio.bind(this);
@@ -150,16 +150,29 @@ export default class FormularioA extends Component{
             CreacionFechaHora: this.state.respuestasFormulario.CreacionFechaHora,
             CompletadoFechaHora: null,
             NotificacionFecha: this.state.respuestasFormulario.NotificacionFecha,
+            InternoPresentacion: 0,
             RespuestasCuestionario,
             RespuestasGremio,
             RespuestasContratista,
             RespuestasResponsable
         }
-        //console.log('Responsables ' + JSON.stringify(RespuestasResponsable))
+
+        //Datos del establecimiento
+        const refEstablecimientoActualizar = {
+            Superficie: this.props.superficie,
+            CantTrabajadores: this.props.cantTrabajadores
+        }
+        //console.log('refEstablecimientoActualizar ' + JSON.stringify(refEstablecimientoActualizar))
 
         //console.log('[FormularioA] GrabarFormulario JSON: ' + JSON.stringify(RespuestaFormulario))
         try {
-            //const resp = await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
+            
+            await Api.put(`RefEstablecimiento/Actualizar?pInternoEstablecimiento=${this.state.respuestasFormulario.InternoEstablecimiento}`, refEstablecimientoActualizar, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }            
+            })                
+
             await Api.post(`RespuestasFormulario/GrabarRespuestasFormularios`, RespuestaFormulario, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -376,7 +389,7 @@ export default class FormularioA extends Component{
     }
     
     renderPreguntas = (seccion) => {
-        const preguntasSeccion = this.state.preguntas.filter(pregunta => pregunta.InternoSeccion === seccion.Interno)                
+        const preguntasSeccion = this.state.preguntas.filter(pregunta => pregunta.InternoSeccion === seccion.Interno && pregunta.BajaFecha === 0)                
 
         let preguntasRender = null
         switch (parseInt(seccion.TieneNoAplica)) {
@@ -387,12 +400,18 @@ export default class FormularioA extends Component{
                             <tr>
                                 <th className="cabecera-codigo">Nro</th>
                                 <th className="cabecera-pregunta">{seccion.Descripcion}</th>
-                                *<th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>Sí</th>
-                                {/*<th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>
-                                    <button type="button" onClick={() => this.handleRespuestaColumna(preguntasSeccion)}>Sí</button>
-                                </th>*/}
-                                <th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>No</th>
-                                <th className="cabecera-select">No Aplica</th>
+                                {/*<th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>Sí</th>*/}
+                                <th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>
+                                    <button type="button" onClick={() => this.handleRespuestaSeccion(preguntasSeccion, 'S')}>Sí</button>
+                                </th>
+                                {/*<th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>No</th>*/}
+                                <th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>
+                                    <button type="button" onClick={() => this.handleRespuestaSeccion(preguntasSeccion, 'N')}>No</button>
+                                </th>
+                                {/*<th className="cabecera-select">No Aplica</th>*/}
+                                <th className="cabecera-select" style={{'border-inline-end-style': 'none'}}>
+                                    <button type="button" onClick={() => this.handleRespuestaSeccion(preguntasSeccion, 'A')}>No Aplica</button>
+                                </th>
                                 <th className="cabecera-fecha">Fecha de Regularización</th>
                                 <th className="cabecera-comentario">Norma Vigente</th>                                                
                             </tr>
@@ -425,14 +444,14 @@ export default class FormularioA extends Component{
                             <tr>
                                 <th className="cabecera-codigo">Código</th>
                                 <th className="cabecera-pregunta">{seccion.Descripcion}</th>
-                                <th className="cabecera-select">Sí/No</th>
+                                <th className="cabecera-select">Sí (Indicar si corresponde)</th>
                                 <th className="cabecera-comentario">Norma Vigente</th>                                                
                             </tr>
                         :
                             <tr>
                                 <th className="cabecera-codigo">Código</th>
                                 <th className="cabecera-pregunta">{seccion.Descripcion}</th>
-                                <th className="cabecera-select">Sí/No</th>                                         
+                                <th className="cabecera-select">Sí (Indicar si corresponde)</th>                                         
                             </tr>
                         }
                         </thead>
@@ -484,8 +503,8 @@ export default class FormularioA extends Component{
     }
 
     handleRespuesta(respuesta, interno) {
-        console.log('internoRespuestaCuestionario: ' + interno)
-        console.log('respuesta: ' + respuesta)
+        //console.log('internoRespuestaCuestionario: ' + interno)
+        //console.log('respuesta: ' + respuesta)
 
         const respuestasCuestionario = this.state.respuestasCuestionario
         //console.log('respuestasCuestionario: ' + JSON.stringify(respuestasCuestionario))
@@ -504,23 +523,29 @@ export default class FormularioA extends Component{
         })*/
     }
 
-    handleRespuestaColumna(preguntasSeccion, columna) {
-        //const respuestasCuestionario = this.state.respuestasCuestionario
-        //console.log('respuestasCuestionario: ' + JSON.stringify(respuestasCuestionario))
-        //var respuestasSeccion = respuestasCuestionario.filter(respuesta => respuesta.Seccion === seccion.Interno)
-        console.log('preguntasSeccion: ' + JSON.stringify(preguntasSeccion))
-        preguntasSeccion.map(pregunta => this.handleRespuesta('S', pregunta.Interno))
+    handleRespuestaSeccion(preguntasSeccion, valor) {
+        let respuestasCuestionario = this.state.respuestasCuestionario
+        preguntasSeccion.map(pregunta => {
+            console.log('[handleRespuestaSeccion] pregunta: ' + JSON.stringify(pregunta))
+            var commentIndex = respuestasCuestionario.findIndex(function(c) { 
+                return c.InternoCuestionario === pregunta.Interno; 
+            });
+            var updateRespuesta = update(respuestasCuestionario[commentIndex], {Respuesta: {$set: valor}})
+            var newData = update(respuestasCuestionario, {
+                $splice: [[commentIndex, 1, updateRespuesta]]
+            });
+            console.log('newData: ' + JSON.stringify(newData))
+            respuestasCuestionario = newData;
+            this.setState({respuestasCuestionario: newData})
+            //return newData;
+        })
         
-        /*var updateRespuesta = update(respuestasCuestionario[commentIndex], {Respuesta: {$set: respuesta}})
-        var newData = update(respuestasCuestionario, {
-            $splice: [[commentIndex, 1, updateRespuesta]]
-        });      
-        this.setState({respuestasCuestionario: newData})*/
     }
     //#endregion
 
     //#region handles Gremios, Contratistas y Responsables
-    handleCambioGremio(gremio) {            
+    handleCambioGremio(gremio) {
+        //console.log('[FormularoA] handleCambioGremio ' + JSON.stringify(gremio))            
         this.setState({respuestasGremio: gremio})
     }
 

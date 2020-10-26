@@ -9,7 +9,7 @@ export async function BuscarParametro(props) {
             return null
         }
         else {
-            const esValido = await ValidarAutParametro(res.data.Fecha)
+            /*const esValido = await ValidarAutParametro(res.data.Fecha)
             switch (esValido) {
                 case true:
                     return res.data
@@ -20,7 +20,8 @@ export async function BuscarParametro(props) {
 
                 default:
                     break;
-            }     
+            } */  
+            return res.data  
         }
            
     }

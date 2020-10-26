@@ -4,7 +4,7 @@ import './Gremio.css';
 //Componente que se conecta al web api y trae todas las preguntas
 class GremioConsulta extends Component{     
 render() {        
-    const legajo = this.props.gremio.Legajo
+    const legajo = this.props.gremio.Legajo === 0 ? '' : this.props.gremio.Legajo
     const nombre = this.props.gremio.Nombre
 
     return <Fragment>

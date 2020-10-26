@@ -6,7 +6,8 @@ class Gremio extends Component{
     handleChange = (event) => {
         switch(event.target.name) {
             case 'legajo':
-                this.props.cambioGremio(event.target.value, this.props.gremio.Gremio, this.props.gremio.Interno)   
+                const legajo = event.target.value === '' ? 0 : event.target.value
+                this.props.cambioGremio(legajo, this.props.gremio.Gremio, this.props.gremio.Interno)   
                 break;
 
             case 'nombre':
@@ -19,7 +20,7 @@ class Gremio extends Component{
 
 
     render() {        
-        const legajo = this.props.gremio.Legajo
+        const legajo = this.props.gremio.Legajo === 0 ? '' : this.props.gremio.Legajo
         const nombre = this.props.gremio.Nombre
 
         return <Fragment>

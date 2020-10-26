@@ -1,23 +1,23 @@
 import Api from '../Api';
 
 async function ReplicarFormulario(props) {      
-    const RespuestaFormulario = props.RespuestaFormulario
+    //const RespuestaFormulario = props.RespuestaFormulario
     //console.log('[ReplicarFormulario] RespuestaFormulario: ' + JSON.stringify(RespuestaFormulario)) 
 
     try {
-        await Api.put(`RefEstablecimiento/Actualizar?pInternoEstablecimiento=${RespuestaFormulario.InternoEstablecimiento}`, props.refEstablecimientoActualizar, {
+        /*await Api.put(`RefEstablecimiento/Actualizar?pInternoEstablecimiento=${RespuestaFormulario.InternoEstablecimiento}`, props.refEstablecimientoActualizar, {
             headers: {
                 'Content-Type': 'application/json',
             }            
-        })
+        })*/
 
-        const response = await Api.post(`RespuestasFormulario/ReplicarFormulario`, RespuestaFormulario, {
+        const response = await Api.post(`RespuestasFormulario/ReplicarFormulario?pInternoRespuestaFormulario=${props.InternoRespuestaFormulario}&pInternoEstablecimientoDestino=${props.InternoEstablecimientoDestino}`, {
             headers: {
                 'Content-Type': 'application/json',
             }            
         }) 
 
-        return response.data
+        return response
     }
     catch (error) {
         console.log('[ReplicarFormulario] ' + error)

@@ -25,6 +25,7 @@ class Formulario extends Component{
             accion: '',
             presentaciones: [],
             internoPresentacion: 0,
+            estadoPresentacion: '',
         }
         this.seleccionaRegistro = this.seleccionaRegistro.bind(this)
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this)
@@ -65,8 +66,19 @@ class Formulario extends Component{
         })
     }    
 
-    handleSeleccionaPresentacion = (internoPresentacion) => {
-        this.setState({internoPresentacion})
+    handleSeleccionaPresentacion = (internoPresentacion, estadoPresentacion, nuevaPresentacion) => {
+        this.setState({
+            internoPresentacion,
+            estadoPresentacion
+        })
+
+        if (nuevaPresentacion === true)
+        {
+            PresentacionesListar(this.state.cuit)
+            .then(presentaciones => {
+                this.setState({presentaciones})
+            })
+        }
     }
 
     seleccionaRegistro = (internoRespuestaFormulario, cuit, internoFormulario, internoEstablecimiento, estado, razonSocial, direccion, formulario) => {
@@ -88,6 +100,7 @@ class Formulario extends Component{
             internoFormulario: 0,
             internoEstablecimiento: 0,
             estado: '',
+            accion: ''
         })
     }
 
@@ -114,6 +127,7 @@ class Formulario extends Component{
             switch (res) {
                 case null:
                     console.log('No se encontro parametro ' + this.props.match.params.Param);
+                    alert(`El parametro ${this.props.match.params.Param} venció o no existe`)
                     this.handleClickCerrar();
                     break;
             
@@ -140,14 +154,26 @@ class Formulario extends Component{
         
     }
     
+    //#region  renders
     formularioMostrar() {
         switch (this.state.accion) {
             case 'replicar':
-                
-                break;
+                return (
+                    <ReplicarFormularioRGRL 
+                        cuit={this.state.cuit}
+                        referenteDatos={this.state.referenteDatos}
+                        internoRespuestaFormulario={this.state.internoRespuestaFormulario}
+                        internoFormulario={this.state.internoFormulario}
+                        internoEstablecimiento={this.state.internoEstablecimiento}
+                        establecimiento={this.state.direccion}
+                        formulario={this.state.formulario}
+                        finalizaCarga={this.handleFinalizaCarga}
+                    />
+                )
+
             case 'generapresentacion':
                 break;
-            default:
+            default: //generar
                 return (
                     <NuevoFormularioRGRL
                         internoRespuestaFormulario={this.state.internoRespuestaFormulario}
@@ -161,11 +187,46 @@ class Formulario extends Component{
                 )
         }
     }
-    
+
+    botonesMostrar(disableGenera, disableReplicar, disableEditar) {
+        return (
+            <>
+                <Button  
+                    onClick={this.handleEdita}
+                    className="btn-consultaformulario"
+                    disabled={disableEditar}
+                >
+                    Edita Formulario
+                </Button>
+                <Button 
+                    onClick={this.handleClick}
+                    className="btn-consultaformulario"
+                    disabled={disableGenera}
+                >
+                    Genera Formulario
+                </Button>
+                <Button 
+                    onClick={this.handleReplica}
+                    className="btn-consultaformulario"
+                    disabled={disableReplicar}
+                >
+                    Replica Formulario
+                </Button>
+                <Button 
+                    onClick={this.handleClickCerrar}
+                    className="btn-consultaformulario"
+                >
+                    Finaliza
+                </Button>
+            </>
+        )
+    }
+    //#endregion
+
     render(){
         const disableEditar = this.state.estado !== 'Confirmado' && this.state.internoRespuestaFormulario ? false : true
         const disableGenera = this.state.cuit === 99999999999 ? true : false
-        const disableReplicar = true //this.state.estado === 'Confirmado' ? false : true
+        const disableReplicar = this.state.internoRespuestaFormulario ? false : true //this.state.estado === 'Confirmado' ? true : false
         //console.log('[Formularios] estado: ' + this.state.estado + ' - interno: ' + this.state.internoRespuestaFormulario)
         //console.log('[Formularios] loadingFormularios: ' + this.state.loadingFormularios)
         //console.log('[Formularios] isLoading: ' + this.state.isLoading)
@@ -176,36 +237,14 @@ class Formulario extends Component{
                 {this.state.cargarFormulario === false ?
                     <div>
                         <h1>Consulta de Formularios RGRL</h1>
-                        <Button  
-                            onClick={this.handleEdita}
-                            className="btn-consultaformulario"
-                            disabled={disableEditar}
-                        >
-                            Edita Formulario
-                        </Button>
-                        <Button 
-                            onClick={this.handleClick}
-                            className="btn-consultaformulario"
-                            disabled={disableGenera}
-                        >
-                            Genera Formulario
-                        </Button>
-                        <Button 
-                            onClick={this.handleReplica}
-                            className="btn-consultaformulario"
-                            disabled={disableReplicar}
-                        >
-                            Replica Formulario
-                        </Button>
-                        <Button 
-                            onClick={this.handleClickCerrar}
-                            className="btn-consultaformulario"
-                        >
-                            Finaliza
-                        </Button>
+                        {this.botonesMostrar(disableGenera, disableReplicar, disableEditar)}
                         <PresentacionesSelect 
                             presentaciones={this.state.presentaciones}
                             seleccionaPresentacion={this.handleSeleccionaPresentacion}
+                            cuit={this.state.cuit}
+                            internoPresentacion={this.state.internoPresentacion}
+                            tipo={'RGRL'}
+                            estadoPresentacion={this.state.estadoPresentacion}
                         />
                         {this.state.loadingFormularios === false && this.state.isLoading === false ?
                             <ListaFormularios

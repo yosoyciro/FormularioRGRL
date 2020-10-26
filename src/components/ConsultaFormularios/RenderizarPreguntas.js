@@ -10,7 +10,7 @@ function respuestaPregunta(respuestasCuestionario, internoCuestionario) {
 }
 
 function RenderizarPreguntas(props) {     
-    const preguntasSeccion = props.preguntas.filter(pregunta => pregunta.InternoSeccion === props.seccion.Interno)                
+    const preguntasSeccion = props.preguntas.filter(pregunta => pregunta.InternoSeccion === props.seccion.Interno && pregunta.BajaFecha === 0)                
 
     let preguntasRender = null
     //console.log('Seccion ' + props.seccion.Interno + ' ' + props.seccion.Descripcion)

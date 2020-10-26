@@ -52,6 +52,7 @@ export default class RenderizarGremios extends Component {
                         <Contratista 
                             key={contratista.Interno}                     
                             contratista={contratista}
+                            contratistas={this.props.contratistas}
                             cambioContratista={this.handleCambioContratista}
                         />)}
                     </tbody>

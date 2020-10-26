@@ -14,7 +14,6 @@ class ElegirEstablecimientoRAR extends Component{
     }
         
     componentDidMount() {        
-        console.log('[ElegirEstablecimientoRAR] componendidmount - this.props.internoEstablecimiento: ' + this.props.internoEstablecimiento)
         switch(parseInt(this.props.internoEstablecimiento))
         {
             case 0:
@@ -37,7 +36,7 @@ class ElegirEstablecimientoRAR extends Component{
     }
 
     handleChange = (selectedOption) => {
-        //console.log('selectedoption: ' + selectedOption.cantTrabajadores + '-' + selectedOption.superficie)
+        console.log('selectedoption: ' + selectedOption.cantTrabajadores + '-' + selectedOption.superficie)
         this.setState({ 
             selectedOption: selectedOption.value,
             label: selectedOption.label,
@@ -48,22 +47,24 @@ class ElegirEstablecimientoRAR extends Component{
     }  
     
     handleChangeCantTrabajadores = (event) => {
+        console.log('[ElegirEstableciminetoRAR] internoEstablecimiento: ' + this.props.internoEstablecimiento)
         this.setState({
             cantTrabajadores: event.target.value,
         })
-        this.props.seleccionEstablecimiento(this.state.selectedOption, this.state.label, event.target.value, this.state.superficie, false)
+        this.props.seleccionEstablecimiento(this.props.internoEstablecimiento, this.state.label, event.target.value, this.state.superficie, false)
     }
 
     handleChangeSuperficie = (event) => {
         this.setState({
             superficie: event.target.value,
         })   
-        this.props.seleccionEstablecimiento(this.state.selectedOption, this.state.label, this.state.cantTrabajadores, event.target.value, false)
+        this.props.seleccionEstablecimiento(this.props.internoEstablecimiento, this.state.label, this.state.cantTrabajadores, event.target.value, false)
     }
 
     cargarEstablecimientos = async opcion => {
         switch (opcion) {
             case 1:
+                console.log('opcion1')
                 try {
                     const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorCuit?pCuit=${this.props.cuit}`)             
                     //console.log(JSON.stringify(refEstablecimientos.data))
@@ -75,9 +76,10 @@ class ElegirEstablecimientoRAR extends Component{
                 break;
         
             case 2:
+                console.log('opcion2')
                 try {
                     const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorInterno?pInternoEstablecimiento=${this.props.internoEstablecimiento}`) 
-                    //console.log('Nombre estabelcimiento: ' + refEstablecimientos.data.Nombre)
+                    //console.log('Nombre estabelcimiento: ' + JSON.stringify(refEstablecimientos.data))
 
                     // Create a new array based on current state:
                     let establecimientos = [...this.state.establecimientos];
@@ -85,14 +87,24 @@ class ElegirEstablecimientoRAR extends Component{
                     // Add item to it
                     establecimientos.push({ 
                         Interno: refEstablecimientos.data.Interno,
+                        Numero: refEstablecimientos.data.Numero,
+                        Codigo: refEstablecimientos.data.Codigo,
                         Nombre: refEstablecimientos.data.Nombre,
-                        DomicilioCalle: refEstablecimientos.data.DomicilioCalle + ' ' + refEstablecimientos.data.DomicilioNro,
-                        Superficie: refEstablecimientos.Superficie,
-                        CantTrabajadores: refEstablecimientos.CantTrabajadores
+                        DomicilioCalle: refEstablecimientos.data.DomicilioCalle,
+                        DomicilioNro: refEstablecimientos.data.DomicilioNro,
+                        Localidad: refEstablecimientos.data.Localidad,
+                        Provincia: refEstablecimientos.data.Provincia,
+                        Superficie: refEstablecimientos.data.Superficie,
+                        CantTrabajadores: refEstablecimientos.data.CantTrabajadores
                     });
 
-                    this.setState({establecimientos})
-                    this.props.seleccionEstablecimiento(parseInt(this.props.internoEstablecimiento), refEstablecimientos.data.Nombre, this.state.cantTrabajadores, this.state.superficie, false)
+                    this.setState({
+                        establecimientos,
+                        cantTrabajadores: refEstablecimientos.data.CantTrabajadores,
+                        superficie: refEstablecimientos.data.Superficie                    
+                        //selectedOption: this.props.internoEstablecimiento
+                    })
+                    this.props.seleccionEstablecimiento(parseInt(this.props.internoEstablecimiento), refEstablecimientos.data.Nombre, refEstablecimientos.data.CantTrabajadores, refEstablecimientos.data.Superficie, false)
 
                 } catch (error) {
                     console.log(error);
@@ -109,7 +121,8 @@ class ElegirEstablecimientoRAR extends Component{
 render() {         
     const internoEstablecimiento = parseInt(this.props.internoEstablecimiento) 
     //console.log('[ElegirEstablecimientoRAR] referenteDatos: ' + JSON.stringify(this.props.referenteDatos)) 
-
+    //console.log('[ElegirEstableciminetoRAR] render - internoEstablecimiento: ' + this.state.selectedOption)
+    //console.log('[ElegirEstableciminetoRAR] render - internoEstablecimiento: ' + this.props.internoEstablecimiento)
     //Trabajadores y superficie
     const cantTrabajadores = this.props.cantTrabajadores
     const superficie = this.props.superficie
@@ -121,7 +134,7 @@ render() {
     const opciones = this.state.establecimientos.map(establecimiento => {
         return {
             value: establecimiento.Interno, 
-            label: establecimiento.Numero + ' - ' + establecimiento.Codigo + ' - ' + establecimiento.Nombre + ' ' + establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro + ' - ' + establecimiento.Provincia, 
+            label: establecimiento.Numero + ' - ' + establecimiento.Codigo + ' - ' + establecimiento.Nombre + ' ' + establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro + ' - ' + establecimiento.Localidad + ' - ' + establecimiento.Provincia, 
             cuit: this.props.cuit, 
             razonsocial: this.props.referenteDatos.RazonSocial,
             cantTrabajadores: establecimiento.CantTrabajadores,
@@ -129,18 +142,10 @@ render() {
         }
     })
 
-    //Cuando elijo, armo el label nuevo
-    var currentSelection = []
-    if (internoEstablecimiento !== 0)
-        currentSelection = [
-            {
-                label: 'Seleccione formulario para ' + this.props.cuit + ' - ' + this.props.referenteDatos[0].RazonSocial + ' - ' + this.props.referenteDatos[0].DomicilioCalle + ' ' + this.props.referenteDatos[0].DomicilioNro, 
-                value: parseInt(this.props.internoEstablecimiento),                
-            }
-        ];    
-    
+    var currentSelection = opciones.find(establecimiento => establecimiento.value === internoEstablecimiento)
+   
     return <>
-            <table className="table-establecimiento">
+            <table className="tbl-establecimiento">
                 <thead className="elegirestablecimiento-thead">
                     <tr className="elegirestablecimiento-tr">
                         <th className="elegirestablecimiento-th"></th>
@@ -151,15 +156,16 @@ render() {
                     <td className="elegirestablecimiento-td">
                         <label>Establecimiento: </label>
                     </td>
-                    <td className="elegirestablecimiento-td">
+                    <td className="selecestablecimiento-td">
                         <Select 
+                            //defaultValue={currentSelection[0]}
                             value={currentSelection}
                             name="form-field-name"
                             onChange={this.handleChange}                     
                             options={opciones}
                             isSearchable={false}
                             isDisabled={disable}
-                            placeholder={'Seleccione establecimiento dependiente de ' + this.props.cuit + ' ' + this.props.referenteDatos[0].RazonSocial}
+                            placeholder='Seleccione establecimiento...'
                             menuIsOpen={menuIsOpen}
                             formatCreateLabel={userInput => `Search for ${userInput}`}
                             isLoading={this.state.isLoading}

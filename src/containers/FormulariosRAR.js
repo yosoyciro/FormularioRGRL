@@ -7,12 +7,13 @@ import Spinner from '../components/UI/Spinner';
 import BuscarParametro from '../Api/AutParametro';
 
 export class FormulariosRAR extends Component{
-    constructor(props) {
-        super(props)
+    constructor() {
+        super()
         this.state = {
             cuit: 0,
             isLoading: true,
             referenteDatos: [],
+            internoFormularioRAR: 0,
             internoEstablecimiento: 0,
             cargarFormulario: false,
             estado: '',
@@ -49,6 +50,7 @@ export class FormulariosRAR extends Component{
     handleClick = () => {
         this.setState({ 
             cargarFormulario: true,
+            internoFormularioRAR: 0,
             internoEstablecimiento: 0,
             estado: ''
         })
@@ -67,9 +69,10 @@ export class FormulariosRAR extends Component{
         })
     }
 
-    seleccionaRegistro = (cuit, internoEstablecimiento, razonSocial, direccion, estado) => {
+    seleccionaRegistro = (internoFormularioRAR, internoEstablecimiento, estado) => {
         //console.log('[FormulariosRAR] - direccion: ' + direccion)
         this.setState({
+            internoFormularioRAR,
             internoEstablecimiento,
             estado
         })
@@ -83,8 +86,8 @@ export class FormulariosRAR extends Component{
     }
  
     render(){
-        //console.log('[FormulariosRAR] - establecimiento: ' + Object.values(this.state.establecimiento))
-        const disableEdita = this.state.cuit === 99999999999 ? true : false
+        console.log('[FormulariosRAR] - internoFormulariorRAR: ' + this.state.internoFormularioRAR)
+        const disableEdita = this.state.cuit !== 99999999999 && this.state.internoFormularioRAR !== 0 ? false : true
         const disableGenera = this.state.cuit === 99999999999 ? true : false
         return <div>
             {this.state.isLoading === true ?

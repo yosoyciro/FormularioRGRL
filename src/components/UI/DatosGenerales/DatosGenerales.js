@@ -92,12 +92,13 @@ class DatosGenerales extends Component{
     }
 
     render() {     
-        console.log('[DatosGenerales] cuit: ' + this.state.cuit)  
+        //console.log('[DatosGenerales] referenteDatos: ' + JSON.stringify(this.props.referenteDatos))
+        //console.log('[DatosGenerales] NotificacionRGRL: ' + this.props.referenteDatos[0].NotificacionRGRL) 
         const disable = this.state.cuitValido === false ? false : true  
         const notificacionFechaDisable = parseInt(this.props.cuit) !== 0 ? true : false  
         let handleCerrarSnackbar=() => this.setState({showSnackBar: false})
-        var notificacionFecha = this.props.notificacionFecha == null ? new Date() : new Date(this.props.notificacionFecha)
-        notificacionFecha = this.props.notificacionFecha === null ? notificacionFecha : notificacionFecha.setDate(notificacionFecha.getDate() + 1)
+        var notificacionFecha = this.props.referenteDatos[0].NotificacionRGRL === null ? new Date() : new Date(this.props.referenteDatos[0].NotificacionRGRL)
+        //notificacionFecha = this.props.notificacionFecha === null ? notificacionFecha : notificacionFecha.setDate(notificacionFecha.getDate() + 1)
         
         return <Fragment>
         <form className="form" onSubmit={this.handleSubmit}>
@@ -111,21 +112,25 @@ class DatosGenerales extends Component{
                     onChange={this.handleChange}
                     disabled={disable}
                 ></input> 
-                <label className="notificacionFecha-label">Notificación Fecha:</label>
-                <DatePicker
-                        //locale="es"
-                        className="datepicker-formato"
-                        todayButton="Hoy"
-                        dateFormat="dd/MM/yyyy"
-                        selected={notificacionFecha}
-                        onChange={this.handleChangeNotificacionFecha}
-                        disabled={notificacionFechaDisable}
-                        placeholderText="Seleccione una fecha"
-                /> 
+                <label>{this.props.referenteDatos[0].RazonSocial}</label>                                
                 {/*<Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button>*/}
                 <Button onClick={this.handleFinalizaCarga} variant="primary">Finaliza</Button> 
                 
             </fieldset>
+            <fieldset>
+                <label className="notificacionFecha-label">Notificación Fecha:</label>
+                <DatePicker
+                    //locale="es"
+                    className="datepicker-formato"
+                    todayButton="Hoy"
+                    dateFormat="dd/MM/yyyy"
+                    selected={notificacionFecha}
+                    onChange={this.handleChangeNotificacionFecha}
+                    disabled={notificacionFechaDisable}
+                    placeholderText="Seleccione una fecha"
+                /> 
+            </fieldset>
+                
         </form>       
         {this.state.showSnackBar === true ?
             <CustomizedSnackbars 

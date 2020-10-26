@@ -32,27 +32,47 @@ export class ListaFormularios extends Component{
             paginas: [],
             loadingRespuestas: false,
             loadingFormularios: true,
+            internoPresentacion: 0
         }
     }
 
     async componentDidMount() {  
-        console.log('[ListaFormularios] cuit: ' + this.props.cuit) 
+        //console.log('[ListaFormularios] cuit: ' + this.props.cuit)
+        this.setState({internoPresentacion: this.props.internoPresentacion}) 
         const props = {
             CUIT: this.props.cuit,
             InternoPresentacion: this.props.internoPresentacion
         }     
         const formulariosCargados = await CargarConsultaFormularios(props)
-        /*.then(response => {
-            //console.log('[ListaFormularios] response: ' + response)
-            this.setState({
-                formulariosCargados: response,
-                loadingFormularios: !this.state.loadingFormularios
-            });
-        })       */
         this.setState({
             formulariosCargados: formulariosCargados,
             loadingFormularios: !this.state.loadingFormularios
         });
+    }
+
+    componentDidUpdate() {
+        if (this.state.internoPresentacion !== this.props.internoPresentacion)
+        {
+            this.setState({
+                internoPresentacion: this.props.internoPresentacion,
+                loadingFormularios: !this.state.loadingFormularios
+            }) 
+
+            console.log('[ListaFormularios] componentDidUpdate')
+            const props = {
+                CUIT: this.props.cuit,
+                InternoPresentacion: this.props.internoPresentacion
+            }     
+            CargarConsultaFormularios(props)
+            .then(res => {
+                this.setState({
+                    formulariosCargados: res,
+                    loadingFormularios: !this.state.loadingFormularios
+                });
+            })
+        }
+        
+        
     }
 
     handleClick (e, row, rowIndex) {

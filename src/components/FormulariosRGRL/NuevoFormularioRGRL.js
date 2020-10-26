@@ -23,7 +23,6 @@ class NuevoFormularioRGRL extends Component{
             internoEstablecimiento: 0,
             cantTrabajadores: 0,
             superficie: 0,
-            notificacionFecha: null,
             loading: false,
             loadingEstablecimientos: true
         }
@@ -43,7 +42,7 @@ class NuevoFormularioRGRL extends Component{
     }
 
     handleSeleccionEstablecimiento(internoEstablecimiento, direccion, cantTrabajadores, superficie, loading) {
-        //console.log('[NuevoFormularioRGRL]-handleSeleccionEstablecimiento - internoEstablecimiento: ' + internoEstablecimiento + '- direccion: ' + direccion)
+        console.log('[NuevoFormularioRGRL]-handleSeleccionEstablecimiento - cantTrabajadores: ' + cantTrabajadores + '- direccion: ' + direccion)
         this.setState({ 
             internoEstablecimiento,
             direccion,
@@ -89,15 +88,14 @@ class NuevoFormularioRGRL extends Component{
     }
     
     render() {  
-        //console.log('[NuevoFormularioRGRL] cuit: ' + this.props.cuit) 
+        //console.log('[NuevoFormularioRGRL] internoEstablecimiento: ' + this.state.internoEstablecimiento) 
         //console.log('[NuevoFormularioRGRL] referenteDatos: ' + this.props.referenteDatos)     
-        console.log('[NuevoFormularioRGRL] this.state.internoEstablecimiento: ' + this.state.internoEstablecimiento)   
+        //console.log('[NuevoFormularioRGRL] this.state.referenteDatos: ' + JSON.stringify(this.props.referenteDatos))   
         return <Fragment> 
             <h2>Formulario RGRL</h2>        
             <DatosGenerales
                 cuit={this.props.cuit}
                 referenteDatos={this.props.referenteDatos}
-                notificacionFecha={this.state.notificacionFecha}
                 seleccionCUIT={this.handleSeleccionCUIT}  
                 //changeNotificacionFecha={this.handleNotificacionFecha}              
                 finalizaCarga={this.handleFinalizaCarga}
@@ -107,7 +105,7 @@ class NuevoFormularioRGRL extends Component{
                     cuit={this.props.cuit}
                     referenteDatos={this.props.referenteDatos}
                     internoFormulario={this.state.internoFormulario}
-                    internoEstablecimiento={this.state.internoEstablecimiento}
+                    internoEstablecimiento={this.props.internoEstablecimiento}
                     cantTrabajadores={this.state.cantTrabajadores}
                     superficie={this.state.superficie}
                     mostrarDatosEstablecimiento={true}
@@ -133,7 +131,7 @@ class NuevoFormularioRGRL extends Component{
                     formularioRGRL={this.state.formularioRGRL}
                     internoEstablecimiento={this.state.internoEstablecimiento}
                     internoRespuestasFormulario={this.props.internoRespuestaFormulario}
-                    notificacionFecha={this.state.notificacionFecha}
+                    notificacionFecha={this.props.referenteDatos.NotificacionRGRL}
                     cantTrabajadores={this.state.cantTrabajadores}
                     superficie={this.state.superficie}
                 />

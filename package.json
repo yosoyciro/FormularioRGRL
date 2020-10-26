@@ -1,7 +1,7 @@
 {
   "name": "rgrl-app",
   "version": "0.1.0",
-  "homepage": "http://un-paraprobar:9090/",
+  "homepage": "artmutualrural.com.ar:9090/",
   "private": true,
   "dependencies": {
     "@babel/core": "7.7.4",
@@ -68,6 +68,7 @@
     "react-dom": "^16.12.0",
     "react-loader-spinner": "^3.1.5",
     "react-material-snackbar": "^3.0.1",
+    "react-modal": "^3.11.2",
     "react-moment": "^0.9.7",
     "react-redux": "^7.1.3",
     "react-router-dom": "^5.1.2",
@@ -169,5 +170,5 @@
       "react-app"
     ]
   },
-  "buildDate": 1602772939801
+  "buildDate": 1603473340165
 }

@@ -48,7 +48,7 @@ export class ListaFormulariosRAR extends Component{
             internoEstablecimiento: row.internoEstablecimiento,
         })
         //this.cargarDatos(row.Interno)
-        this.props.seleccionaRegistro(row.CUIT, row.InternoEstablecimiento, row.RazonSocial, row.Direccion, row.Estado)
+        this.props.seleccionaRegistro(row.Interno, row.InternoEstablecimiento, row.Estado)
     }
 
     cargarDatos = async (internoFormulario, internoEstablecimiento) => {
@@ -57,7 +57,7 @@ export class ListaFormulariosRAR extends Component{
 
     handleCambioPagina = (pagina) => {
         this.setState({pagina: parseInt(pagina)})
-        this.props.seleccionaRegistro(0, 0, '', '', '')
+        this.props.seleccionaRegistro(0, 0, '')
     }
 
     handleDataChange = ({ dataSize }) => {
@@ -65,7 +65,7 @@ export class ListaFormulariosRAR extends Component{
             internoFormulariosRAR: 0,
             internoEstablecimiento: 0
         })
-        this.props.seleccionaRegistro(0, 0, '', '', '')
+        this.props.seleccionaRegistro(0, 0, '')
     }  
 
     handlePagChange = () => {
@@ -74,7 +74,7 @@ export class ListaFormulariosRAR extends Component{
             internoFormulariosRAR: 0,
             internoEstablecimiento: 0
         })
-        this.props.seleccionaRegistro(0, 0, '', '', '')
+        this.props.seleccionaRegistro(0, 0, '')
     } 
     
 

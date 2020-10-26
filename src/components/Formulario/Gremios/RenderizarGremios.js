@@ -52,7 +52,7 @@ export default class RenderizarGremios extends Component {
                         {this.props.gremios.map(gremio =>
                             <Gremio 
                                 key={gremio.Interno} 
-                                gremio={gremio}
+                                gremio={gremio}                                
                                 cambioGremio={this.handleCambioGremio}
                             />
                         )}                    

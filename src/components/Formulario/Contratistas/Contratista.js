@@ -30,6 +30,18 @@ class Contratista extends Component{
     }
 
     handleAFIP = async event => {  
+        const cuitRepetido = this.props.contratistas.find(contratista => contratista.CUIT === this.props.contratista.CUIT && contratista.Interno !== this.props.contratista.Interno )
+        //console.log('cuitRepetido: ' + JSON.stringify(cuitRepetido))
+        switch (cuitRepetido) {
+            case undefined:
+                
+                break;
+        
+            default:
+                alert('CUIT repetido')
+                this.props.cambioContratista(this.props.contratista.Interno, 0, '')
+                break;
+        }
         this.setState({ loading: !this.state.loading })      
         const param = {
             CUIT: this.props.contratista.CUIT,
@@ -39,7 +51,7 @@ class Contratista extends Component{
         const respuesta = await BuscarPersona(param);               
         //console.log('respuesta: ' + respuesta[0].razonSocial);
         this.props.cambioContratista(this.props.contratista.Interno, this.props.contratista.CUIT, respuesta[0].razonSocial)
-        this.setState({ loading: !this.state.loading })      
+        this.setState({ loading: !this.state.loading })
     }
     
 render() {
@@ -63,7 +75,8 @@ render() {
                     value={cuit}>
                 </input>   
                 <Button 
-                    onClick={() => {this.setState({ loading: !this.state.loading }); this.handleAFIP()}}
+                    //onClick={() => {this.setState({ loading: !this.state.loading }); this.handleAFIP()}}
+                    onClick={this.handleAFIP}
                     variant="primary" 
                     size="sm"
                 >

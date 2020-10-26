@@ -1,5 +1,5 @@
 .table-establecimiento {
-    width: 40%;
+    width: 60%;
     text-align: left;
     /*margin-bottom: 1%;
     margin-top: 1%;*/
@@ -27,21 +27,21 @@
     border: 0px transparent;
     /*width: 4%;*/
     text-align: 'left';
-    margin-right: 1%;
+    /*margin-right: 1%;*/
 }
 
 .selectestablecimiento-td {
     border: 0px transparent;
     /*width: 10%;*/
     text-align: 'left';
-    margin-right: 1%;
+    /*margin-right: 1%;*/
 }
 
 .generapresentacion-td {
     border: 0px transparent;
     width: 4%;
     text-align: 'left';
-    margin-left: 1%;
+    /*margin-left: 1%;*/
 }
 
 .elegirestablecimiento-thead {

@@ -82,6 +82,7 @@ class DatosGeneralesRAR extends Component{
     }
 
 render() {       
+    //console.log('[DatosgeneralesRAR] referenteDatos: ' + JSON.stringify(this.props.referenteDatos))
     const disable = this.state.cuitValido === false ? false : true    
     let handleCerrarSnackbar=() => this.setState({showSnackBar: false})
 
@@ -97,6 +98,8 @@ render() {
                 onChange={this.handleChange}
                 disabled={disable}
             ></input> 
+            <label>Razón Social:</label>
+            <label>{this.props.referenteDatos[0].RazonSocial}</label>            
             {/*<Button variant="primary" type="submit" disabled={disable}>Verifica empleador</Button> */}
             <Button onClick={this.handleFinalizaCarga} variant="primary">Finaliza</Button> 
         </fieldset>

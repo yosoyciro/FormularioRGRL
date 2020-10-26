@@ -1,35 +1,165 @@
+import Select from 'react-select';
 import React, { Component } from 'react';
-import { CargarEstablecimientosReplica } from '../../Api/CargarEstablecimientos';
+import Spinner from '../UI/Spinner';
+import { CargarEstablecimientos } from '../../Api/CargarEstablecimientos';
+import { Button } from 'react-bootstrap';
+import ReplicarFormulario from '../../Api/FormulariosRGRL/ReplicarFormulario';
+import CustomizedSnackbars from '../UI/Snackbar/Snackbar';
 
 class ReplicarFormularioRGRL extends Component {
-    constructor(props) {
-        super(props)
-        //this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
+    constructor() {
+        super()
+        this.handleChange = this.handleChange.bind(this);
+        this.handleConfirmar = this.handleConfirmar.bind(this)
+        this.handleFinaliza = this.handleFinaliza.bind(this)
         this.state = {            
-            loading: true,            
+            loading: true,  
+            loadingEstablecimientos: true,
+            establecimientos: [], 
+            establecimientoSeleccionado: null,    
+            showSnackBar: false,
+            mensajeSnackbar: '',
+            showSnackbarErrores: false,   
         }
     }
 
     componentDidMount() {
-        CargarEstablecimientosReplica({
+        CargarEstablecimientos({
             cuit: this.props.cuit,
-            internoEstablecimiento: this.props.internoEstablecimiento
+            opcion: 0
+        })
+        .then(establecimientos => {
+            this.setState({ 
+                establecimientos,
+                loading: !this.state.loading,
+                loadingEstablecimientos: !this.state.loadingEstablecimientos
+            })
         })
     }
 
+    handleChange(establecimientoSeleccionado) {
+        this.setState({ 
+            establecimientoSeleccionado,            
+        })
+    }
+
+    handleConfirmar() {
+        this.setState({ loading: !this.state.loading, })
+
+        const data = {
+            InternoRespuestaFormulario: this.props.internoRespuestaFormulario,
+            InternoEstablecimientoDestino: this.state.establecimientoSeleccionado.value
+        }
+        console.log('data: ' + JSON.stringify(data))
+        ReplicarFormulario(data)
+        .then(res => {
+            this.setState({ loading: !this.state.loading, })
+
+            console.log('[ReplicarFormularioRGRL] res: ' + res)
+            switch (res.data) {
+                case null:
+                    console.log('Error')
+                    this.setState({
+                        showSnackBar: !this.state.showSnackBar,
+                        severitySnackbar: "error",
+                        mensajeSnackbar: 'Formulario no replicado!'
+                    }) 
+                    break;
+            
+                default:
+                    this.setState(
+                        {
+                            showSnackBar: !this.state.showSnackBar,
+                            severitySnackbar: "success",
+                            mensajeSnackbar: 'Formulario replicado!'
+                        }
+                    )
+                    break;
+            }            
+        })
+    }
+
+    handleFinaliza() {
+        this.props.finalizaCarga()        
+    }
+
     render() {
-        //console.log('replicar')
-        const formulario = 'Formulario a replicar ' + this.props.formulario
+        let handleCerrarSnackbar=() => this.setState({showSnackBar: false})
+
+        const customStyles = {
+            select : {
+              width: '50%',
+              marginBottom: '2%',
+            }
+        };
+        if (!this.state.loading)
+        {
+            var establecimientos = this.state.establecimientos.map(establecimiento => {
+                //console.log('[ReplicarFormularioRGRL] establecimiento: ' + JSON.stringify(establecimiento))
+                return {
+                    value: establecimiento.Interno,
+                    label: establecimiento.Numero + ' - ' + establecimiento.Codigo + ' - ' + establecimiento.Nombre + ' ' + establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro + ' - ' + establecimiento.Provincia, 
+                    isDisabled: this.props.internoEstablecimiento === establecimiento.Interno ? true : false
+                }
+            })
+        }
+        
+
+        //console.log('Establecimientos: ' + JSON.stringify(this.state.establecimientoSeleccionado))
+        const disabled = this.state.establecimientoSeleccionado !== null ? false : true
+        const formulario = 'Formulario a replicar: ' + this.props.formulario
         const establecimientoOrigen = 'Establecimiento origen: ' + this.props.establecimiento
         return (
             <div>
+                <h1>Replicar Formulario RGRL</h1>
                 <div>
-                    <label>{formulario}</label>
+                    <h3>{formulario}</h3>
                 </div>            
                 <div>
-                    <label>{establecimientoOrigen}</label>
+                    <h3>{establecimientoOrigen}</h3>
                 </div>
-                
+                {!this.state.loading ?
+                <>    
+                    {this.state.showSnackBar ?
+                        <CustomizedSnackbars 
+                            show={this.state.showSnackBar}
+                            mensaje={this.state.mensajeSnackbar}
+                            onClose={handleCerrarSnackbar}
+                            severity={this.state.severitySnackbar}
+                            vertical="bottom"
+                            horizontal="center"
+                            timer={5000}
+                        />
+                    :
+                        null
+                    }                 
+                    <form style={customStyles.select}>
+                        <label>Establecimiento: </label>
+                        <Select                         
+                            name="form-field-name"
+                            onChange={this.handleChange}                     
+                            options={establecimientos}
+                            placeholder={'Seleccione establecimiento'}
+                            isLoading={this.state.loadingEstablecimientos}
+                        />
+                    </form>
+                    <div>
+                        <Button 
+                            onClick={this.handleConfirmar}
+                            disabled={disabled}
+                        >Confirma
+                        </Button>
+
+                        <Button 
+                            onClick={this.handleFinaliza}
+                        >Finaliza
+                        </Button>
+                    </div>
+                    
+                </>
+                :
+                    <Spinner />
+                }
             </div>
         )
     }
