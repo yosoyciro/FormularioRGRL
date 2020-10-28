@@ -24,21 +24,22 @@ async function ValidarRespuestas(secciones, preguntas, respuestasCuestionario, r
         const fechaRegularizacion = moment(respuesta.FechaRegularizacionNormal).format('YYYY-MM-DD')
         switch (parseInt(seccionPregunta.TieneNoAplica)) {
             case 1:
-                /*if (respuesta.Respuesta === 'N')
-                    console.log('fechaHoy: ' + fechaHoy + ' fechaRegularizacion: ' + fechaRegularizacion)*/
-
-                if (respuesta.Respuesta === '')
+                if (preguntaAsociada.BajaFecha === 0)
                 {
-                    erroresRespuestas.push({InternoRespuestaCuestionario: respuesta.Interno, InternoCuestionario: preguntaAsociada.Interno, Pagina: seccionPregunta.Pagina})
-                }
+                    if (respuesta.Respuesta === '')
+                    {
+                        erroresRespuestas.push({InternoRespuestaCuestionario: respuesta.Interno, InternoCuestionario: preguntaAsociada.Interno, Pagina: seccionPregunta.Pagina})
+                    }
 
-                if (respuesta.Respuesta === 'N' && fechaHoy > fechaRegularizacion)
-                {          
-                    console.log('fechaHoy: ' + fechaHoy + ' - fechaRegularizacion: ' + fechaRegularizacion)          
-                    erroresRespuestas.push({InternoRespuestaCuestionario: respuesta.Interno, InternoCuestionario: preguntaAsociada.Interno, Pagina: seccionPregunta.Pagina})
+                    if (respuesta.Respuesta === 'N' && fechaHoy > fechaRegularizacion)
+                    {          
+                        console.log('fechaHoy: ' + fechaHoy + ' - fechaRegularizacion: ' + fechaRegularizacion)          
+                        erroresRespuestas.push({InternoRespuestaCuestionario: respuesta.Interno, InternoCuestionario: preguntaAsociada.Interno, Pagina: seccionPregunta.Pagina})
+                    }
                 }
+                
                 break;
-        
+                
             default:
                 break;
         } 

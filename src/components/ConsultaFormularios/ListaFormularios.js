@@ -179,7 +179,7 @@ export class ListaFormularios extends Component{
 
         const options = {           
             custom: true,
-            sizePerPage: 5,
+            sizePerPage: 25,
             hideSizePerPage: true,
             hidePageListOnlyOnePage: true,
             totalSize: this.state.formulariosCargados ? this.state.formulariosCargados.length : 0,
@@ -232,7 +232,8 @@ export class ListaFormularios extends Component{
             }, 
             {
                 dataField: 'Direccion',
-                text: 'Establecimiento'
+                text: 'Establecimiento',
+                sort: true,
             },
             {
                 dataField: 'Descripcion',
@@ -290,7 +291,8 @@ export class ListaFormularios extends Component{
             }, 
             {
                 dataField: 'Direccion',
-                text: 'Establecimiento'
+                text: 'Establecimiento',
+                sort: true
             },
             {
                 dataField: 'Descripcion',

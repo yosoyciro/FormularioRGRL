@@ -23,7 +23,11 @@ export class ListaFormulariosRAR extends Component{
     componentDidMount() {        
         this.setState({ loading: true })
 
-        CargarConsultaFormulariosRAR(this.props.cuit)
+        const data = {
+            CUIT: this.props.cuit,
+            InternoPresentacion: this.props.internoPresentacion
+        }
+        CargarConsultaFormulariosRAR(data)
         .then(response => {
             switch (response)
             {
@@ -88,7 +92,7 @@ export class ListaFormulariosRAR extends Component{
 
         const options = {           
             custom: true,
-            sizePerPage: 5,
+            sizePerPage: 25,
             hideSizePerPage: true,
             hidePageListOnlyOnePage: true,
             totalSize: this.state.formulariosRAR.length,
@@ -140,7 +144,8 @@ export class ListaFormulariosRAR extends Component{
             }, 
             {
                 dataField: 'Direccion',
-                text: 'Establecimiento'
+                text: 'Establecimiento',
+                sort: true,
             },
             {
                 dataField: 'CantTrabajadoresExpuestos',
@@ -190,7 +195,8 @@ export class ListaFormulariosRAR extends Component{
             }, 
             {
                 dataField: 'Direccion',
-                text: 'Establecimiento'
+                text: 'Establecimiento',
+                sort: true,
             },
             {
                 dataField: 'CantTrabajadoresExpuestos',
@@ -223,6 +229,7 @@ export class ListaFormulariosRAR extends Component{
         ];
         //#endregion
 
+        //#region definicion Tabla
         const contentTable = ({ paginationProps, paginationTableProps }) => (
             <div>
                 <PaginationListStandalone 
@@ -263,6 +270,7 @@ export class ListaFormulariosRAR extends Component{
               </ToolkitProvider>
             </div>
         );
+        //#endregion
         
         return <div>
             {this.state.loading === true ?

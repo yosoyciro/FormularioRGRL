@@ -5,6 +5,7 @@ import { CargarEstablecimientos } from '../../Api/CargarEstablecimientos';
 import { Button } from 'react-bootstrap';
 import ReplicarFormulario from '../../Api/FormulariosRGRL/ReplicarFormulario';
 import CustomizedSnackbars from '../UI/Snackbar/Snackbar';
+import FormulariosVerificarDuplicado from '../../Api/FormulariosRGRL/VerificarDuplicado';
 
 class ReplicarFormularioRGRL extends Component {
     constructor() {
@@ -46,37 +47,57 @@ class ReplicarFormularioRGRL extends Component {
     handleConfirmar() {
         this.setState({ loading: !this.state.loading, })
 
-        const data = {
-            InternoRespuestaFormulario: this.props.internoRespuestaFormulario,
-            InternoEstablecimientoDestino: this.state.establecimientoSeleccionado.value
-        }
-        console.log('data: ' + JSON.stringify(data))
-        ReplicarFormulario(data)
-        .then(res => {
-            this.setState({ loading: !this.state.loading, })
-
-            console.log('[ReplicarFormularioRGRL] res: ' + res)
-            switch (res.data) {
-                case null:
-                    console.log('Error')
-                    this.setState({
-                        showSnackBar: !this.state.showSnackBar,
-                        severitySnackbar: "error",
-                        mensajeSnackbar: 'Formulario no replicado!'
-                    }) 
-                    break;
-            
-                default:
-                    this.setState(
-                        {
-                            showSnackBar: !this.state.showSnackBar,
-                            severitySnackbar: "success",
-                            mensajeSnackbar: 'Formulario replicado!'
-                        }
-                    )
-                    break;
-            }            
+        //Verifico que no exista ya el formulario para el estabelcimiento
+        FormulariosVerificarDuplicado({ 
+            internoEstablecimiento: this.state.establecimientoSeleccionado.value,
+            internoFormulario: this.props.internoFormulario,
         })
+        .then(res => {
+            switch (res) {
+                case null:
+                    //todo ok
+                    const data = {
+                        InternoRespuestaFormulario: this.props.internoRespuestaFormulario,
+                        InternoEstablecimientoDestino: this.state.establecimientoSeleccionado.value
+                    }
+                    console.log('data: ' + JSON.stringify(data))
+                    ReplicarFormulario(data)
+                    .then(res => {
+                        this.setState({ loading: !this.state.loading, })
+
+                        console.log('[ReplicarFormularioRGRL] res: ' + res)
+                        switch (res.data) {
+                            case null:
+                                console.log('Error')
+                                this.setState({
+                                    showSnackBar: !this.state.showSnackBar,
+                                    severitySnackbar: "error",
+                                    mensajeSnackbar: 'Formulario no replicado!'
+                                }) 
+                                break;
+                        
+                            default:
+                                this.setState(
+                                    {
+                                        showSnackBar: !this.state.showSnackBar,
+                                        severitySnackbar: "success",
+                                        mensajeSnackbar: 'Formulario replicado!'
+                                    }
+                                )
+                                break;
+                        }            
+                    })
+                    break;
+
+                default:
+                    //existe
+                    this.setState({ loading: !this.state.loading, })
+                    alert('Ya hay un formulario existente para el establecimineto')
+                    break;
+            }
+        })
+
+        
     }
 
     handleFinaliza() {

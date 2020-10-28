@@ -18,6 +18,7 @@ import GenerarFormulario from '../Api/FormulariosRGRL/GenerarFormulario';
 import RenderizarGremios from '../components/Formulario/Gremios/RenderizarGremios';
 import RenderizarResponsables from '../components/Formulario/Responsables/RenderizarResponsables';
 import CargarFormulario from '../Api/FormulariosRGRL/CargarFormulario';
+import FormulariosVerificarDuplicado from '../Api/FormulariosRGRL/VerificarDuplicado';
 
 export default class FormularioA extends Component{     
     constructor(props) {
@@ -205,84 +206,103 @@ export default class FormularioA extends Component{
     //#endregion
 
     //#region Generar / Replicar
-    handleGenerar(event) {
+    handleGenerar(event) {    
         this.setState({saving: !this.state.saving})        
-        
-        switch (this.props.formularioRGRL.estado)
-        {
-            case '(No generado)':
-                GenerarFormulario({
-                    internoFormulario: this.props.formularioRGRL.value,
-                    internoEstablecimiento: this.props.internoEstablecimiento,
-                    notificacionFecha: this.props.notificacionFecha,
-                    preguntas: this.state.preguntas,
-                    gremios: this.props.formularioRGRL.gremios,
-                    contratistas: this.props.formularioRGRL.contratistas,
-                    responsables: this.props.formularioRGRL.responsables,
-                    refEstablecimientoActualizar: {
-                        Superficie: this.props.superficie,
-                        CantTrabajadores: this.props.cantTrabajadores
-                    }
-                })
-                .then(res => { 
-                    CargarRespuestas({ internoRespuestasFormulario: res })
-                        .then(response => {
-                            this.setState({ respuestasFormulario: response, 
-                                respuestasCuestionario: response.RespuestasCuestionario,
-                                respuestasGremio: response.RespuestasGremio,
-                                respuestasContratista: response.RespuestasContratista,
-                                respuestasResponsable: response.RespuestasResponsable,
-                                generado: !this.state.generado,
-                                saving: false
-                            })  
-                        })                                                         
-                })
-                break;
-
-            case '(Nueva instancia)':
-                //Cuando es una Nueva Instancia, se cargan las respuestas del formulario confirmado
-                //Se replica el form enun juego de datos nuevo
-                //Se cargan las respuestas del nuevo formulario generado
-                //Obtengo el Interno de la tabla RespuestasFormulario
-                CargarFormulario({ 
-                    internoEstablecimiento: this.props.internoEstablecimiento,
-                    internoFormulario: this.props.formularioRGRL.value
-                })
-                .then(respForm => {
-                    CargarRespuestas({ internoRespuestasFormulario: respForm.Interno })
-                    .then(response => {      
-                        //console.log('[FormularioA] response ' + JSON.stringify(response))               
-                        ReplicarFormulario({ 
-                            RespuestaFormulario: response,
-                            notificacionFecha: this.props.notificacionFecha,
-                            refEstablecimientoActualizar: {
-                                Superficie: this.props.superficie,
-                                CantTrabajadores: this.props.cantTrabajadores
-                            }
-                        })
-                        .then(res => {    
-                            //console.log('[FormularioA] - res: ' + JSON.stringify(res))                    
-                            CargarRespuestas({ internoRespuestasFormulario: res.Interno })
-                            .then(response => {
-                                this.setState({ respuestasFormulario: response, 
-                                    respuestasCuestionario: response.RespuestasCuestionario,
-                                    respuestasGremio: response.RespuestasGremio,
-                                    respuestasContratista: response.RespuestasContratista,
-                                    respuestasResponsable: response.RespuestasResponsable,
-                                    generado: !this.state.generado,
-                                    saving: false
-                                })  
+        //Verifico que no exista ya el formulario para el estabelcimiento
+        FormulariosVerificarDuplicado({ 
+            internoEstablecimiento: this.props.internoEstablecimiento,
+            internoFormulario: this.props.formularioRGRL.value,
+        })
+        .then(res => {
+            switch (res) {
+                case null:
+                    //todo ok
+                    switch (this.props.formularioRGRL.estado)
+                    {
+                        case '(No generado)':
+                            GenerarFormulario({
+                                internoFormulario: this.props.formularioRGRL.value,
+                                internoEstablecimiento: this.props.internoEstablecimiento,
+                                notificacionFecha: this.props.notificacionFecha,
+                                preguntas: this.state.preguntas,
+                                gremios: this.props.formularioRGRL.gremios,
+                                contratistas: this.props.formularioRGRL.contratistas,
+                                responsables: this.props.formularioRGRL.responsables,
+                                refEstablecimientoActualizar: {
+                                    Superficie: this.props.superficie,
+                                    CantTrabajadores: this.props.cantTrabajadores
+                                }
                             })
-                            
-                        })
-                    })        
-                })
-                                        
-                break;
+                            .then(res => { 
+                                CargarRespuestas({ internoRespuestasFormulario: res })
+                                    .then(response => {
+                                        this.setState({ respuestasFormulario: response, 
+                                            respuestasCuestionario: response.RespuestasCuestionario,
+                                            respuestasGremio: response.RespuestasGremio,
+                                            respuestasContratista: response.RespuestasContratista,
+                                            respuestasResponsable: response.RespuestasResponsable,
+                                            generado: !this.state.generado,
+                                            saving: false
+                                        })  
+                                    })                                                         
+                            })
+                            break;
 
-            default:
-                break;
-        }                
+                        case '(Nueva instancia)':
+                            //Cuando es una Nueva Instancia, se cargan las respuestas del formulario confirmado
+                            //Se replica el form enun juego de datos nuevo
+                            //Se cargan las respuestas del nuevo formulario generado
+                            //Obtengo el Interno de la tabla RespuestasFormulario
+                            CargarFormulario({ 
+                                internoEstablecimiento: this.props.internoEstablecimiento,
+                                internoFormulario: this.props.formularioRGRL.value
+                            })
+                            .then(respForm => {
+                                CargarRespuestas({ internoRespuestasFormulario: respForm.Interno })
+                                .then(response => {      
+                                    //console.log('[FormularioA] response ' + JSON.stringify(response))               
+                                    ReplicarFormulario({ 
+                                        RespuestaFormulario: response,
+                                        notificacionFecha: this.props.notificacionFecha,
+                                        refEstablecimientoActualizar: {
+                                            Superficie: this.props.superficie,
+                                            CantTrabajadores: this.props.cantTrabajadores
+                                        }
+                                    })
+                                    .then(res => {    
+                                        //console.log('[FormularioA] - res: ' + JSON.stringify(res))                    
+                                        CargarRespuestas({ internoRespuestasFormulario: res.Interno })
+                                        .then(response => {
+                                            this.setState({ respuestasFormulario: response, 
+                                                respuestasCuestionario: response.RespuestasCuestionario,
+                                                respuestasGremio: response.RespuestasGremio,
+                                                respuestasContratista: response.RespuestasContratista,
+                                                respuestasResponsable: response.RespuestasResponsable,
+                                                generado: !this.state.generado,
+                                                saving: false
+                                            })  
+                                        })
+                                        
+                                    })
+                                })        
+                            })
+                                                    
+                            break;
+
+                        default:
+                            break;
+                    }   
+                    break;
+            
+                default:
+                    //existe
+                    this.setState({saving: !this.state.saving}) 
+                    alert('Ya hay un formulario existente para el establecimineto')
+                    break;
+            }
+        })
+
+                    
     }
 
     //#endregion
@@ -293,14 +313,15 @@ export default class FormularioA extends Component{
         this.setState({
             saving: true,
             hayErrores: false,
-            confirmado: true
+            confirmado: true,
+            erroresRespuestas: [],
         });        
 
         //Grabo el formulario
         await this.grabarFormulario()
 
         const erroresRespuestas = await ValidarRespuestas(this.state.secciones, this.state.preguntas, this.state.respuestasCuestionario, this.state.respuestasGremio, this.state.respuestasContratista, this.state.respuestasResponsable)
-        this.setState({ erroresRespuestas: erroresRespuestas })
+        this.setState({ erroresRespuestas })
         if (this.state.erroresRespuestas.length > 0)
         {
             this.setState({
@@ -512,7 +533,7 @@ export default class FormularioA extends Component{
             return c.Interno == interno; 
         });
         //console.log('commentIndex: ' + commentIndex)
-        
+                
         var updateRespuesta = update(respuestasCuestionario[commentIndex], {Respuesta: {$set: respuesta}})
         var newData = update(respuestasCuestionario, {
             $splice: [[commentIndex, 1, updateRespuesta]]
@@ -530,7 +551,15 @@ export default class FormularioA extends Component{
             var commentIndex = respuestasCuestionario.findIndex(function(c) { 
                 return c.InternoCuestionario === pregunta.Interno; 
             });
-            var updateRespuesta = update(respuestasCuestionario[commentIndex], {Respuesta: {$set: valor}})
+            var fecha = new Date(2000,1,1)
+
+            if (valor === 'N')
+            {
+                fecha = new Date();                   
+                fecha.setDate(fecha.getDate() + 90);
+            }
+            
+            var updateRespuesta = update(respuestasCuestionario[commentIndex], {Respuesta: {$set: valor}, FechaRegularizacionNormal: {$set: fecha}})
             var newData = update(respuestasCuestionario, {
                 $splice: [[commentIndex, 1, updateRespuesta]]
             });

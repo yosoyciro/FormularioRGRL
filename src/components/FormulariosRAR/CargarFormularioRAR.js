@@ -467,6 +467,7 @@ export class CargarFormularioRAR extends Component{
 
     
     render(){      
+        //console.log('[CargarFormularioRAR] formularioRARGenerado: ' + JSON.stringify(this.props.formularioRARGenerado))
         //campos a cargar
         const CUIL = this.state.cuil === null ? '' : this.state.cuil
         const Nombre = this.state.nombre === null ? '' : this.state.nombre
@@ -584,50 +585,74 @@ export class CargarFormularioRAR extends Component{
             <div>
                 {this.state.loading === true ?
                     <Spinner/>
-                :
+                :                    
                     <>
-                    <h3>Datos del Trabajador Expuesto</h3>
-                    <form autoComplete="off" onSubmit={this.handleSubmit} className="form-datostrabajador">
-                        <div>
-                            {this.state.cuilValido === true ?
+                    {this.props.formularioRARGenerado[0].CantTrabajadoresExpuestos === 0 ?
+                        <h3>Sin Trabajadores Expuestos</h3>
+                    :
+                        <>
+                        <h3>Datos del Trabajador Expuesto</h3>
+                        <form autoComplete="off" onSubmit={this.handleSubmit} className="form-datostrabajador">
+                            <div>
+                                {this.state.cuilValido === true ?
+                                    <TextField
+                                        required
+                                        type="number"
+                                        id="cuil"
+                                        label="CUIL"
+                                        defaultValue=""
+                                        value={CUIL}
+                                        variant="outlined"
+                                        onChange={this.handleChangeCampos}                            
+                                        margin="dense"
+                                        disabled={this.state.trabajadorExiste}
+                                        style={{ width: "10%", fontFamily: "sans-serif" }}  
+                                        InputProps={{
+                                            style: {fontSize: "12px"} 
+                                        }}                              
+                                        InputLabelProps={{ 
+                                            shrink: true,                                       
+                                            style: {
+                                                fontSize: "14px",
+                                                color: "blue",
+                                            }
+                                        }}
+                                    />
+                                :
+                                    <TextField
+                                        error
+                                        required
+                                        type="number"
+                                        id="cuil"
+                                        label="CUIL"
+                                        defaultValue=""
+                                        value={CUIL}
+                                        variant="outlined"
+                                        onChange={this.handleChangeCampos}                            
+                                        margin="dense"
+                                        disabled={this.state.trabajadorExiste}
+                                        helperText="CUIL incorrecto/inexistente"
+                                        style={{ width: "10%", fontFamily: "sans-serif"}}
+                                        InputProps={{
+                                            style: {fontSize: "12px"} 
+                                        }}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            style: {
+                                                fontSize: "14px",
+                                            }
+                                        }}
+                                    />
+                                }                        
                                 <TextField
-                                    required
-                                    type="number"
-                                    id="cuil"
-                                    label="CUIL"
+                                    disabled
+                                    id="nombre"
+                                    label="Nombre"
+                                    value={Nombre}
                                     defaultValue=""
-                                    value={CUIL}
-                                    variant="outlined"
-                                    onChange={this.handleChangeCampos}                            
+                                    variant="outlined"                            
                                     margin="dense"
-                                    disabled={this.state.trabajadorExiste}
-                                    style={{ width: "10%", fontFamily: "sans-serif" }}  
-                                    InputProps={{
-                                        style: {fontSize: "12px"} 
-                                    }}                              
-                                    InputLabelProps={{ 
-                                        shrink: true,                                       
-                                        style: {
-                                            fontSize: "14px",
-                                            color: "blue",
-                                        }
-                                    }}
-                                />
-                            :
-                                <TextField
-                                    error
-                                    required
-                                    type="number"
-                                    id="cuil"
-                                    label="CUIL"
-                                    defaultValue=""
-                                    value={CUIL}
-                                    variant="outlined"
-                                    onChange={this.handleChangeCampos}                            
-                                    margin="dense"
-                                    disabled={this.state.trabajadorExiste}
-                                    helperText="CUIL incorrecto/inexistente"
-                                    style={{ width: "10%", fontFamily: "sans-serif"}}
+                                    style={{ width: "15%", fontFamily: "sans-serif"}}  
                                     InputProps={{
                                         style: {fontSize: "12px"} 
                                     }}
@@ -635,134 +660,87 @@ export class CargarFormularioRAR extends Component{
                                         shrink: true,
                                         style: {
                                             fontSize: "14px",
+                                            color: "blue",
+                                            borderColor: "blue"
                                         }
                                     }}
                                 />
-                            }                        
-                            <TextField
-                                disabled
-                                id="nombre"
-                                label="Nombre"
-                                value={Nombre}
-                                defaultValue=""
-                                variant="outlined"                            
-                                margin="dense"
-                                style={{ width: "15%", fontFamily: "sans-serif"}}  
-                                InputProps={{
-                                    style: {fontSize: "12px"} 
-                                }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                    style: {
-                                        fontSize: "14px",
-                                        color: "blue",
-                                        borderColor: "blue"
-                                    }
-                                }}
-                            />
-                            <TextField
-                                required
-                                id="sectortarea"
-                                label="Sector/Tarea"
-                                value={SectorTarea}
-                                defaultValue=""
-                                variant="outlined"
-                                onChange={this.handleChangeCampos}                                
-                                margin="dense"      
-                                style={{ width: "11%", fontFamily: "sans-serif" }} 
-                                InputProps={{
-                                    style: {fontSize: "12px"} 
-                                }}  
-                                InputLabelProps={{
-                                    shrink: true,
-                                    style: {
-                                        fontSize: "14px",
-                                        color: "blue",
-                                    }
-                                }}             
-                            />
-                            <TextField
-                                required
-                                type="date"
-                                id="fechaingreso"  
-                                label="Ingreso"                          
-                                value={FechaIngreso}
-                                defaultValue=""
-                                variant="outlined"
-                                onChange={this.handleChangeCampos}
-                                InputLabelProps={{
-                                    shrink: true,
-                                    style: {
-                                        fontSize: "14px",
-                                        color: "blue",
-                                        borderColor: "blue"
-                                    }
-                                }}
-                                disabled={this.state.trabajadorExiste}
-                                margin="dense"
-                                style={{ width: "11%", fontFamily: "sans-serif" }}
-                                InputProps={{
-                                    style: {fontSize: "12px"} 
-                                }}
-                            />
-                            <TextField
-                                required
-                                type="number"
-                                id="horasexposicion"
-                                label="Exposición"
-                                helperText="Horas"
-                                value={HorasExposicion}
-                                variant="outlined"
-                                onChange={this.handleChangeCampos}    
-                                margin="dense"                              
-                                style={{ width: "7%", fontFamily: "sans-serif"}}
-                                InputProps={{
-                                    style: {fontSize: "12px"} 
-                                }}
-                                InputLabelProps={{
-                                    shrink: true,
-                                    style: {
-                                        fontSize: "14px",
-                                        color: "blue",
-                                        borderColor: "blue"
-                                    }
-                                }}  
-                            />
-                            <TextField
-                                required
-                                type="date"
-                                id="fechaultimoexamenmedico"   
-                                label="Ult. Examen Médico"                         
-                                value={FechaUltimoExamenMedico}
-                                variant="outlined"
-                                onChange={this.handleChangeCampos}
-                                InputLabelProps={{
-                                    shrink: true,
-                                    style: {
-                                        fontSize: "14px",
-                                        color: "blue",
-                                        borderColor: "blue"
-                                    }
-                                }}  
-                                margin="dense"
-                                disabled={this.state.trabajadorExiste}
-                                style={{ width: "11%", fontFamily: "sans-serif" }}
-                                InputProps={{
-                                    style: {fontSize: "12px"} 
-                                }}
-                            />
-                            {this.state.errorAgente === false ?
                                 <TextField
                                     required
-                                    select
-                                    id="codigoagente"
-                                    value={CodigoAgente}
-                                    SelectProps={{
-                                        native: true,
-                                    }}
-                                    label="Codigo Agente Riesgo"
+                                    id="sectortarea"
+                                    label="Sector/Tarea"
+                                    value={SectorTarea}
+                                    defaultValue=""
                                     variant="outlined"
-                                    onChange={event => this.handleChangeAgente(event.target)}
+                                    onChange={this.handleChangeCampos}                                
+                                    margin="dense"      
+                                    style={{ width: "11%", fontFamily: "sans-serif" }} 
+                                    InputProps={{
+                                        style: {fontSize: "12px"} 
+                                    }}  
+                                    InputLabelProps={{
+                                        shrink: true,
+                                        style: {
+                                            fontSize: "14px",
+                                            color: "blue",
+                                        }
+                                    }}             
+                                />
+                                <TextField
+                                    required
+                                    type="date"
+                                    id="fechaingreso"  
+                                    label="Ingreso"                          
+                                    value={FechaIngreso}
+                                    defaultValue=""
+                                    variant="outlined"
+                                    onChange={this.handleChangeCampos}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                        style: {
+                                            fontSize: "14px",
+                                            color: "blue",
+                                            borderColor: "blue"
+                                        }
+                                    }}
+                                    disabled={this.state.trabajadorExiste}
+                                    margin="dense"
+                                    style={{ width: "11%", fontFamily: "sans-serif" }}
+                                    InputProps={{
+                                        style: {fontSize: "12px"} 
+                                    }}
+                                />
+                                <TextField
+                                    required
+                                    type="number"
+                                    id="horasexposicion"
+                                    label="Exposición"
+                                    helperText="Horas"
+                                    value={HorasExposicion}
+                                    variant="outlined"
+                                    onChange={this.handleChangeCampos}    
+                                    margin="dense"                              
+                                    style={{ width: "7%", fontFamily: "sans-serif"}}
+                                    InputProps={{
+                                        style: {fontSize: "12px"} 
+                                    }}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                        style: {
+                                            fontSize: "14px",
+                                            color: "blue",
+                                            borderColor: "blue"
+                                        }
+                                    }}  
+                                />
+                                <TextField
+                                    required
+                                    type="date"
+                                    id="fechaultimoexamenmedico"   
+                                    label="Ult. Examen Médico"                         
+                                    value={FechaUltimoExamenMedico}
+                                    variant="outlined"
+                                    onChange={this.handleChangeCampos}
                                     InputLabelProps={{
                                         shrink: true,
                                         style: {
@@ -772,64 +750,93 @@ export class CargarFormularioRAR extends Component{
                                         }
                                     }}  
                                     margin="dense"
-                                    style={{ width: "25%", fontFamily: "sans-serif" }}
+                                    disabled={this.state.trabajadorExiste}
+                                    style={{ width: "11%", fontFamily: "sans-serif" }}
                                     InputProps={{
                                         style: {fontSize: "12px"} 
                                     }}
-                                >                                            
-                                    {this.state.refAgenteCausante.map(agente => {        
-                                        return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.Descripcion}</option>
-                                    })}
-                                </TextField>
-                            :
-                                <TextField
-                                    error
-                                    required
-                                    select
-                                    id="codigoagente"
-                                    value={CodigoAgente}
-                                    SelectProps={{
-                                        native: true,
-                                    }}
-                                    label="Codigo Agente Riesgo"
-                                    variant="outlined"
-                                    onChange={event => this.handleChangeAgente(event.target)}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                        style: {
-                                            fontSize: "14px",                                            
-                                        }
-                                    }}  
-                                    margin="dense"
-                                    style={{ width: "25%", fontFamily: "sans-serif" }}
-                                    InputProps={{
-                                        style: {fontSize: "12px"} 
-                                    }}
-                                    helperText="Ya se cargó el Codigo de Agente al trabajador"
-                                    FormHelperTextProps={{
-                                        style: {
-                                            fontSize: "10px",
-                                        }
-                                    }}
-                                >                                            
-                                    {this.state.refAgenteCausante.map(agente => {        
-                                        return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.Descripcion}</option>
-                                    })}
-                                </TextField>
-                            }
-                        </div>
-                    <Button variant="primary" type="submit" disabled={false}>Carga</Button>  
-                    <Button variant="danger" onClick={this.handleBorrar} disabled={disableBorrar}>Borra</Button>
-                    <Button variant="light" onClick={this.handleLimpiar} disabled={false}>Limpia</Button>
-                    </form>
-                    <BootstrapTable
-                        keyField="Interno"
-                        caption={<CaptionElement />}
-                        data={ this.state.formulariosRARDetalle }
-                        columns={ columns }                    
-                        rowEvents={ rowEvents } 
-                        selectRow={ selectRow }
-                    />
+                                />
+                                {this.state.errorAgente === false ?
+                                    <TextField
+                                        required
+                                        select
+                                        id="codigoagente"
+                                        value={CodigoAgente}
+                                        SelectProps={{
+                                            native: true,
+                                        }}
+                                        label="Codigo Agente Riesgo"
+                                        variant="outlined"
+                                        onChange={event => this.handleChangeAgente(event.target)}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            style: {
+                                                fontSize: "14px",
+                                                color: "blue",
+                                                borderColor: "blue"
+                                            }
+                                        }}  
+                                        margin="dense"
+                                        style={{ width: "25%", fontFamily: "sans-serif" }}
+                                        InputProps={{
+                                            style: {fontSize: "12px"} 
+                                        }}
+                                    >                                            
+                                        {this.state.refAgenteCausante.map(agente => {        
+                                            return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.Descripcion}</option>
+                                        })}
+                                    </TextField>
+                                :
+                                    <TextField
+                                        error
+                                        required
+                                        select
+                                        id="codigoagente"
+                                        value={CodigoAgente}
+                                        SelectProps={{
+                                            native: true,
+                                        }}
+                                        label="Codigo Agente Riesgo"
+                                        variant="outlined"
+                                        onChange={event => this.handleChangeAgente(event.target)}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                            style: {
+                                                fontSize: "14px",                                            
+                                            }
+                                        }}  
+                                        margin="dense"
+                                        style={{ width: "25%", fontFamily: "sans-serif" }}
+                                        InputProps={{
+                                            style: {fontSize: "12px"} 
+                                        }}
+                                        helperText="Ya se cargó el Codigo de Agente al trabajador"
+                                        FormHelperTextProps={{
+                                            style: {
+                                                fontSize: "10px",
+                                            }
+                                        }}
+                                    >                                            
+                                        {this.state.refAgenteCausante.map(agente => {        
+                                            return <option key={agente.Interno} value={agente.Codigo}>{agente.Codigo + ' - ' + agente.Descripcion}</option>
+                                        })}
+                                    </TextField>
+                                }
+                            </div>
+                        <Button variant="primary" type="submit" disabled={false}>Carga</Button>  
+                        <Button variant="danger" onClick={this.handleBorrar} disabled={disableBorrar}>Borra</Button>
+                        <Button variant="light" onClick={this.handleLimpiar} disabled={false}>Limpia</Button>
+                        </form>
+                        <BootstrapTable
+                            keyField="Interno"
+                            caption={<CaptionElement />}
+                            data={ this.state.formulariosRARDetalle }
+                            columns={ columns }                    
+                            rowEvents={ rowEvents } 
+                            selectRow={ selectRow }
+                        />                                                
+                        </>                
+                    }
                     <Button variant="primary" onClick={this.handleConfirmar} disabled={disableConfirma}>Confirma</Button>  
                     </>
                 }

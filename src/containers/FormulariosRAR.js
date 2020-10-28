@@ -5,6 +5,8 @@ import ListaFormulariosRAR from '../components/FormulariosRAR/ListaFormulariosRA
 import NuevoFormularioRAR from '../components/FormulariosRAR/NuevoFormularioRAR';
 import Spinner from '../components/UI/Spinner';
 import BuscarParametro from '../Api/AutParametro';
+import PresentacionesSelect from '../components/UI/Presentaciones/PresentacionesSelect'
+import { PresentacionesListar } from '../Api/Presentaciones/Presentaciones';
 
 export class FormulariosRAR extends Component{
     constructor() {
@@ -15,12 +17,16 @@ export class FormulariosRAR extends Component{
             referenteDatos: [],
             internoFormularioRAR: 0,
             internoEstablecimiento: 0,
-            cargarFormulario: false,
+            cargarFormulario: false,            
             estado: '',
+            presentaciones: [],
+            internoPresentacion: 0,
+            estadoPresentacion: '',
         }
         this.seleccionaRegistro = this.seleccionaRegistro.bind(this)
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this)
         this.handleClickCerrar = this.handleClickCerrar.bind(this)
+        this.handleSeleccionaPresentacion = this.handleSeleccionaPresentacion.bind(this)
     }
 
     componentDidMount() {
@@ -34,14 +40,20 @@ export class FormulariosRAR extends Component{
             
                 default:
                     this.setState({cuit: res.CUIT})
-                    ReferenteDatos(this.state.cuit)
-                    .then(res => {
-                        //console.log('[Formularios] - res: ' + JSON.stringify(res))
-                        this.setState({
-                            referenteDatos: res,
-                            isLoading: !this.state.isLoading,
+                    PresentacionesListar(this.state.cuit)
+                    .then(presentaciones => {
+                        this.setState({presentaciones})
+
+                        ReferenteDatos(this.state.cuit)
+                        .then(res => {
+                            //console.log('[Formularios] - res: ' + JSON.stringify(res))
+                            this.setState({
+                                referenteDatos: res,
+                                isLoading: !this.state.isLoading,
+                            })
                         })
                     })
+                    
                     break;
             }          
         })
@@ -84,9 +96,24 @@ export class FormulariosRAR extends Component{
             estado: ''
         })
     }
+
+    handleSeleccionaPresentacion = (internoPresentacion, estadoPresentacion, nuevaPresentacion) => {
+        this.setState({
+            internoPresentacion,
+            estadoPresentacion
+        })
+
+        if (nuevaPresentacion === true)
+        {
+            PresentacionesListar(this.state.cuit)
+            .then(presentaciones => {
+                this.setState({presentaciones})
+            })
+        }
+    }
  
     render(){
-        console.log('[FormulariosRAR] - internoFormulariorRAR: ' + this.state.internoFormularioRAR)
+        //console.log('[FormulariosRAR] - internoFormulariorRAR: ' + this.state.internoFormularioRAR)
         const disableEdita = this.state.cuit !== 99999999999 && this.state.internoFormularioRAR !== 0 ? false : true
         const disableGenera = this.state.cuit === 99999999999 ? true : false
         return <div>
@@ -121,8 +148,17 @@ export class FormulariosRAR extends Component{
                         >
                             Finaliza
                         </Button>
+                        <PresentacionesSelect 
+                            presentaciones={this.state.presentaciones}
+                            seleccionaPresentacion={this.handleSeleccionaPresentacion}
+                            cuit={this.state.cuit}
+                            internoPresentacion={this.state.internoPresentacion}
+                            tipo={'RAR'}
+                            estadoPresentacion={this.state.estadoPresentacion}
+                        />
                         <ListaFormulariosRAR
                             cuit={this.state.cuit}
+                            internoPresentacion={this.state.internoPresentacion}
                             seleccionaRegistro={this.seleccionaRegistro}
                             cargarFormulario={this.state.cargarFormulario}
                         />

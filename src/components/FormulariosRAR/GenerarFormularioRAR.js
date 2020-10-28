@@ -55,11 +55,11 @@ export class GenerarFormularioRAR extends Component{
         switch (event.target.name)
         {
             case 'cantTrabajadoresExpuestos':
-                this.setState({ cantTrabajadoresExpuestos: event.target.value });
+                this.setState({ cantTrabajadoresExpuestos: parseInt(event.target.value) });
                 break;
 
             case 'cantTrabajadoresNoExpuestos':
-                this.setState({ cantTrabajadoresNoExpuestos: event.target.value });
+                this.setState({ cantTrabajadoresNoExpuestos: parseInt(event.target.value) });
                 break;
 
             default:
@@ -68,7 +68,7 @@ export class GenerarFormularioRAR extends Component{
     }
 
     handleSubmit = async event => {
-        event.preventDefault();                
+        event.preventDefault();            
         this.setState({
             guardando: !this.state.guardando,
         })
@@ -108,7 +108,12 @@ export class GenerarFormularioRAR extends Component{
     }    
 
     render(){
-        const disabled = this.props.disabled
+        //console.log('[GenerarFormularioRAR] this.props.formularioRARGenerado.length: ' + this.props.formularioRARGenerado.length)
+        const disabled = this.props.formularioRARGenerado.length === 0 ? false : true
+        //console.log('[GenerarFormularioRAR] expuestos; ' + this.state.cantTrabajadoresExpuestos + ' - no expuestos: ' + this.state.cantTrabajadoresNoExpuestos)
+        //console.log('[GenerarFormularioRAR] disabled ' + disabled)
+        const disableGenerar = (this.state.cantTrabajadoresExpuestos === 0 && this.state.cantTrabajadoresNoExpuestos === 0) || this.props.formularioRARGenerado.length !== 0  ? true : false
+        //console.log('[GenerarFormularioRAR] disableGenerar ' + disableGenerar)
         return <Fragment>
             {this.state.guardando === true ?
                 <Spinner />
@@ -133,7 +138,7 @@ export class GenerarFormularioRAR extends Component{
                             onChange={this.handleChange}
                             disabled={disabled}
                         ></input> 
-                        <Button variant="primary" type="submit" disabled={disabled}>Genera</Button>                          
+                        <Button variant="primary" type="submit" disabled={disableGenerar}>Genera</Button>                          
                     </fieldset> 
                 </form>       
             }

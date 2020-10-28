@@ -10,6 +10,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.39",
     "@material-ui/pickers": "^3.2.10",
+    "@react-pdf/renderer": "^1.6.11",
     "@svgr/webpack": "4.3.3",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -170,5 +171,5 @@
       "react-app"
     ]
   },
-  "buildDate": 1603473340165
+  "buildDate": 1603882376673
 }

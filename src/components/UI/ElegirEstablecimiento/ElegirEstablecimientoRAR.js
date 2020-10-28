@@ -88,7 +88,7 @@ class ElegirEstablecimientoRAR extends Component{
                     establecimientos.push({ 
                         Interno: refEstablecimientos.data.Interno,
                         Numero: refEstablecimientos.data.Numero,
-                        Codigo: refEstablecimientos.data.Codigo,
+                        CodEstabEmpresa: refEstablecimientos.data.CodEstabEmpresa,
                         Nombre: refEstablecimientos.data.Nombre,
                         DomicilioCalle: refEstablecimientos.data.DomicilioCalle,
                         DomicilioNro: refEstablecimientos.data.DomicilioNro,
@@ -134,7 +134,7 @@ render() {
     const opciones = this.state.establecimientos.map(establecimiento => {
         return {
             value: establecimiento.Interno, 
-            label: establecimiento.Numero + ' - ' + establecimiento.Codigo + ' - ' + establecimiento.Nombre + ' ' + establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro + ' - ' + establecimiento.Localidad + ' - ' + establecimiento.Provincia, 
+            label: establecimiento.Numero + ' - ' + establecimiento.CodEstabEmpresa + ' - ' + establecimiento.Nombre + ' ' + establecimiento.DomicilioCalle + ' ' + establecimiento.DomicilioNro + ' - ' + establecimiento.Localidad + ' - ' + establecimiento.Provincia, 
             cuit: this.props.cuit, 
             razonsocial: this.props.referenteDatos.RazonSocial,
             cantTrabajadores: establecimiento.CantTrabajadores,

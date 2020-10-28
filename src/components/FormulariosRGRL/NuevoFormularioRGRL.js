@@ -19,6 +19,7 @@ class NuevoFormularioRGRL extends Component{
         //this.handleNotificacionFecha = this.handleNotificacionFecha.bind(this)
         this.state = {
             formularioRGRL: [],
+            renderEstablecimientos: false,
             internoFormulario: 0,
             internoEstablecimiento: 0,
             cantTrabajadores: 0,
@@ -31,9 +32,9 @@ class NuevoFormularioRGRL extends Component{
     componentDidMount() {
         //console.log('[NuevoFormularioRGRL] referenteDatos: ' + this.props.referenteDatos)
         this.setState({ 
-            cuit: parseInt(this.props.cuit),
+            cuit: this.props.cuit,
             internoFormulario: this.props.internoFormulario,
-            internoEstablecimiento: parseInt(this.props.internoEstablecimiento),
+            internoEstablecimiento: this.props.internoEstablecimiento,
         })
     }
 
@@ -62,10 +63,9 @@ class NuevoFormularioRGRL extends Component{
     }
 
     handleSeleccionCUIT(cuit, razonSocial, notificacionFecha) {
-        /*this.setState({ 
-            cuit,
-            notificacionFecha
-        })*/
+        this.setState({ 
+            renderEstablecimientos: true
+        })
     }
 
     /*handleNotificacionFecha(notificacionFecha) {
@@ -100,12 +100,12 @@ class NuevoFormularioRGRL extends Component{
                 //changeNotificacionFecha={this.handleNotificacionFecha}              
                 finalizaCarga={this.handleFinalizaCarga}
             />
-            {this.props.cuit !== 0 ?
+            {this.state.renderEstablecimientos ?
                 <ElegirEstablecimientoRAR
                     cuit={this.props.cuit}
                     referenteDatos={this.props.referenteDatos}
                     internoFormulario={this.state.internoFormulario}
-                    internoEstablecimiento={this.props.internoEstablecimiento}
+                    internoEstablecimiento={this.state.internoEstablecimiento}
                     cantTrabajadores={this.state.cantTrabajadores}
                     superficie={this.state.superficie}
                     mostrarDatosEstablecimiento={true}

@@ -4,15 +4,28 @@ import './Responsable.css'
 import BuscarPersona from '../../../Api/BuscarPersona'
 
 //Componente que se conecta al web api y trae todas las preguntas
-class Responsable extends Component{   
+class Responsable extends Component{  
+    constructor(props){
+        super(props)
+        this.handleBuscarPersona = this.handleBuscarPersona.bind(this)
+        this.BuscarPersona = this.BuscarPersona.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.state = {
+            loading: false,
+            cuit: this.props.responsable.CUIT === 0 ? '' : this.props.responsable.CUIT,
+        }
+    } 
+    
 
     handleChange = (event) => {
         //console.log('event.target.value: ' + event.target.value)
-        switch(event.target.name) {
+        //#region oldcode   
+        /*switch(event) {                     
             case 'cuit':
                 //this.setState({cuit: event.target.value})
                 //this.props.actualizarResponsable(this.props.responsable.Interno, event.target.value, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo)                                
-                this.props.cambioResponsable(this.props.responsable.Interno, event.target.value, '', 'R', 1, 0, '', '', '')                                
+                const cuit = event.target.value === '' ? 0 : event.target.value
+                this.props.cambioResponsable(this.props.responsable.Interno, cuit, '', 'R', 1, 0, '', '', '')                                
                 break;
 
             case 'responsable':
@@ -54,24 +67,53 @@ class Responsable extends Component{
 
             default:
                 break;
-        }        
+            
+            
+        }    */
+        //#endregion 
+        const cuit = event.target.value === '' ? 0 : event.target.value
+        this.setState({ cuit })  
+        
+        if (cuit === 0)
+        {
+            this.props.cambioResponsable(this.props.responsable.Interno, cuit, '')
+        }   
     }
-
-    handleBuscarPersona = async event => {      
+    
+    BuscarPersona = async event => {
+        this.setState({ loading: !this.state.loading })      
         const param = {
-            CUIT: this.props.responsable.CUIT,
+            CUIT: this.state.cuit,
             BuscarEnAFIP: true
         }
 
         const respuesta = await BuscarPersona(param);               
-        //console.log('respuesta: ' + respuesta[0].razonSocial);
-        this.props.cambioResponsable(this.props.responsable.Interno, this.props.responsable.CUIT, respuesta[0].razonSocial, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
+        this.props.cambioResponsable(this.props.responsable.Interno, this.state.cuit, respuesta[0].razonSocial)
+        this.setState({ loading: !this.state.loading })
+    }
+
+    handleBuscarPersona = async event => {    
+        console.log('responsables: ' + JSON.stringify(this.props.responsables))
+        const cuitRepetido = this.props.responsables.find(responsable => parseInt(responsable.CUIT) === parseInt(this.state.cuit))
+        console.log('cuitRepetido: ' + JSON.stringify(cuitRepetido))
+        switch (cuitRepetido) {
+            case undefined:
+                await this.BuscarPersona()
+                break;
+        
+            default:
+                alert('CUIT repetido ' + cuitRepetido.CUIT)
+                this.setState({ cuit: 0 })
+                this.props.cambioResponsable(this.props.responsable.Interno, 0, '')
+                break;
+        }      
     }
 
     render() {      
-        const isDisable = this.props.responsable.CUIT === 0 ? true : false
+        const isDisable = this.state.cuit === 0 ? true : false
 
-        const cuit = this.props.responsable.CUIT
+        const cuit = this.state.cuit === 0 ? '' : this.state.cuit
+        const disableVerificar = cuit === '' ? true : false
         const responsable = this.props.responsable.Responsable
         const cargo = this.props.responsable.Cargo
         const representacion = this.props.responsable.Representacion
@@ -93,6 +135,7 @@ class Responsable extends Component{
                             onClick={this.handleBuscarPersona}
                             variant="primary" 
                             size="sm"
+                            disabled={disableVerificar}
                         >
                             Verifica
                         </Button>

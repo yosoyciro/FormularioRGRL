@@ -4,6 +4,8 @@ import Select from 'react-select';
 import Modal from 'react-modal';
 import './PresentacionesSelect.css'
 import { PresentacionesGenerar, PresentacionesValidar, PresentacionesVerificarCompletados } from '../../../Api/Presentaciones/Presentaciones';
+import { PDFViewer } from '@react-pdf/renderer';
+import ComprobantePresentacion from '../../Presentaciones/ComprobantePresentacion';
 
 class ElegirEstablecimientoRAR extends Component{ 
     constructor() {
@@ -235,9 +237,12 @@ render() {
                 isOpen={this.state.modalPDFIsOpen}
                 //onAfterOpen={afterOpenModal}
                 onRequestClose={this.handleModalPDF}
-                style={customStyles}
+                //style={customStyles}
                 contentLabel="Presentaciones"
             >
+                <PDFViewer>
+                    <ComprobantePresentacion />
+                </PDFViewer>
             </Modal>          
         </>                                                                                                      
     }

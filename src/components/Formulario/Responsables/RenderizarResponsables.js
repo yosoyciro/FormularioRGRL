@@ -62,6 +62,7 @@ export default class RenderizarResponsables extends Component {
                             key={responsable.Interno} 
                             id={responsable.Interno}
                             responsable={responsable}
+                            responsables={this.props.responsables}
                             entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
                         />)}
                     </tbody>
@@ -72,6 +73,7 @@ export default class RenderizarResponsables extends Component {
                             key={responsable.Interno} 
                             id={responsable.Interno}
                             responsable={responsable}
+                            responsables={this.props.responsables}
                             entidadOtorganteTitulo={responsable.EntidadOtorganteTitulo}
                             cambioResponsable={this.handleCambioResponsable}
                         />)}

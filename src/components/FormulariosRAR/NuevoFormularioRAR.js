@@ -14,6 +14,7 @@ class NuevoFormularioRAR extends Component{
         this.handleLoadingEstablecimientos = this.handleLoadingEstablecimientos.bind(this);
         this.state = {
             formularioRARGenerado: [],
+            renderEstablecimientos: false,
             internoEstablecimiento: this.props.internoEstablecimiento,
             loadingEstablecimientos: true,
         }
@@ -44,10 +45,9 @@ class NuevoFormularioRAR extends Component{
     }
 
     handleSeleccionCUIT(cuit, razonSocial) {
-        /*this.setState({ 
-            cuit,
-            razonSocial
-        })*/
+        this.setState({ 
+            renderEstablecimientos: true
+        })
     }
 
     handleLoadingEstablecimientos(loadingEstablecimientos) {
@@ -60,7 +60,9 @@ class NuevoFormularioRAR extends Component{
         //console.log('RENDER - formularioRARGenerador: ' + Object.values(this.state.formularioRARGenerado))
         const disabled = this.state.formularioRARGenerado.length === 0 ? false : true
         //console.log('[NuevoFormularioRAR] cuit: ' + params.cuitSeleccionado)
-        console.log('[NuevoFormularioRAR] - internoEstablecimiento: ' + this.state.internoEstablecimiento)
+        //console.log('[NuevoFormularioRAR] - internoEstablecimiento: ' + this.state.internoEstablecimiento)
+        //console.log('[NuevoFormularioRAR] this.state.formularioRARGenerado.CantTrabajadoresExpuestos: ' + this.state.formularioRARGenerado.CantTrabajadoresExpuestos)
+        //console.log('[NuevoFormularioRAR] this.state.formularioRARGenerado: ' + JSON.stringify(this.state.formularioRARGenerado))
         return <Fragment>
             <h2>Formulario RAR</h2>
             <DatosGeneralesRAR 
@@ -69,7 +71,7 @@ class NuevoFormularioRAR extends Component{
                 seleccionCUIT={this.handleSeleccionCUIT}                
                 finalizaCarga={this.handleFinalizaCarga}
             />
-            {this.props.cuit !== 0 ?
+            {this.state.renderEstablecimientos ?
                 <ElegirEstablecimientoRAR 
                     cuit={this.props.cuit}
                     internoEstablecimiento={this.state.internoEstablecimiento}
@@ -83,21 +85,23 @@ class NuevoFormularioRAR extends Component{
             {this.state.internoEstablecimiento !== 0 && !this.state.loadingEstablecimientos ? /*{this.state.establecimiento.internoEstablecimiento !== 0 ? /*{this.props.establecimientoSeleccionado !== 0 ?*/            
                 <GenerarFormularioRAR 
                     internoEstablecimiento={this.state.internoEstablecimiento}
+                    formularioRARGenerado={this.state.formularioRARGenerado}
                     formularioGenerado={this.handleFormularioGenerado}
                     disabled={disabled}
                 />
             :
                 null
             }
-
+            <>
             {this.state.formularioRARGenerado.length !== 0 && !this.state.loadingEstablecimientos !== 0 ?
                 <CargarFormularioRAR 
                     formularioRARGenerado={this.state.formularioRARGenerado}   
                     finalizaCarga={this.handleFinalizaCarga} 
                 />
             :
-                null
-            }
+                null            
+            }            
+            </>
         </Fragment>
     }
 }
