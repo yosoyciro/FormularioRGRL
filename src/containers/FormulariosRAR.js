@@ -40,7 +40,11 @@ export class FormulariosRAR extends Component{
             
                 default:
                     this.setState({cuit: res.CUIT})
-                    PresentacionesListar(this.state.cuit)
+                    const data = {
+                        cuit: this.state.cuit,
+                        tipo: 'A',
+                    }
+                    PresentacionesListar(data)
                     .then(presentaciones => {
                         this.setState({presentaciones})
 
@@ -114,6 +118,7 @@ export class FormulariosRAR extends Component{
  
     render(){
         //console.log('[FormulariosRAR] - internoFormulariorRAR: ' + this.state.internoFormularioRAR)
+        console.log('[FormulariosRAR] - internoPresentacion: ' + this.state.internoPresentacion)
         const disableEdita = this.state.cuit !== 99999999999 && this.state.internoFormularioRAR !== 0 ? false : true
         const disableGenera = this.state.cuit === 99999999999 ? true : false
         return <div>

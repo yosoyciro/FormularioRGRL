@@ -16,7 +16,8 @@ export class ListaFormulariosRAR extends Component{
             formulariosRAR: [],
             formulariosRARDetalle: [],
             internoFormulariosRAR: 0,
-            internoEstablecimiento: 0
+            internoEstablecimiento: 0,
+            internoPresentacion: 0
         }
     }
 
@@ -35,7 +36,7 @@ export class ListaFormulariosRAR extends Component{
                     break;
 
                 default:
-                    console.log('response: ' + response)
+                    //console.log('response: ' + response)
                     this.setState({
                         loading: !this.state.loading,
                         formulariosRAR: response
@@ -43,6 +44,37 @@ export class ListaFormulariosRAR extends Component{
             }        
         })
         //console.log('JSON: ' + JSON.stringify(response))        
+    }
+
+    componentDidUpdate() {
+        if (this.state.internoPresentacion !== this.props.internoPresentacion)
+        {
+            this.setState({
+                internoPresentacion: this.props.internoPresentacion,
+                loading: !this.state.loading
+            }) 
+
+            //console.log('[ListaFormulariosRAR] componentDidUpdate')
+            const data = {
+                CUIT: this.props.cuit,
+                InternoPresentacion: this.props.internoPresentacion
+            }
+            CargarConsultaFormulariosRAR(data)
+            .then(response => {
+                switch (response)
+                {
+                    case undefined:
+                        break;
+    
+                    default:
+                        //console.log('response: ' + response)
+                        this.setState({
+                            loading: !this.state.loading,
+                            formulariosRAR: response
+                        })
+                }        
+            })
+        }   
     }
 
     handleClick (e, row, rowIndex) {

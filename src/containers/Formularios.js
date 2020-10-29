@@ -134,7 +134,11 @@ class Formulario extends Component{
                 default:
                     //Busco las presentaciones del CUIT y luego los datos
                     this.setState({cuit: res.CUIT})
-                    PresentacionesListar(this.state.cuit)
+                    const data = {
+                        cuit: this.state.cuit,
+                        tipo: 'R',
+                    }
+                    PresentacionesListar(data)
                     .then(presentaciones => {
                         this.setState({presentaciones})
 

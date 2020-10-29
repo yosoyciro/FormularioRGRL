@@ -2,7 +2,7 @@ import Api from '../Api';
 
 export async function PresentacionesListar(data) {    
     try {
-        const response = await Api.get(`Presentaciones/Listar?pCUIT=${data}`)
+        const response = await Api.get(`Presentaciones/Listar?pCUIT=${data.cuit}&pTipo=${data.tipo}`)
         return response.data
     }
     catch (error) {

@@ -22,6 +22,7 @@ class ElegirEstablecimientoRAR extends Component{
             modalIsOpen: false,
             modalPDFIsOpen: false,
             mensajeError: '',
+            presentacion: []
         }            
     }
 
@@ -43,8 +44,9 @@ class ElegirEstablecimientoRAR extends Component{
     }
 
     handleChange(selectedOption) {
-        console.log('selectedoption: ' + selectedOption.value)
+        //console.log('selectedoption: ' + selectedOption.value)
         this.setState({ 
+            presentacion: selectedOption,
             selectedOption: selectedOption.value,
         }) 
         this.props.seleccionaPresentacion(selectedOption.value, selectedOption.estado, false);
@@ -70,9 +72,9 @@ class ElegirEstablecimientoRAR extends Component{
 
         //Llamo los metodos para validar
         const resValidarPresentacion = await PresentacionesValidar(presentacion)
-        console.log('[PresentacionesSelect] resValidarPresentacion: ' + resValidarPresentacion)
+        //console.log('[PresentacionesSelect] resValidarPresentacion: ' + resValidarPresentacion)
         const resVerificarCompletados = await PresentacionesVerificarCompletados(presentacion) 
-        console.log('[PresentacionesSelect] resVerificarCompletados: ' + resVerificarCompletados)
+        //console.log('[PresentacionesSelect] resVerificarCompletados: ' + resVerificarCompletados)
 
         if (resValidarPresentacion)
         {
@@ -106,12 +108,15 @@ class ElegirEstablecimientoRAR extends Component{
 render() {      
     console.log('[PresentacionesSelect] internoPresentacion: ' + this.props.internoPresentacion)
     const disableGenera = this.props.cuit === 99999999999 ? true : false   
-    const disableComprobante = false //this.props.cuit !== 99999999999 && this.props.internoPresentacion === 0 ? true : false       
+    const disableComprobante = this.props.cuit === 99999999999 || this.props.internoPresentacion === 0 ? true : false       
     const presentaciones = this.props.presentaciones.map(presentacion => {
         return {
             value: presentacion.Interno,
             label: presentacion.Nombre,
-            estado: presentacion.Estado
+            estado: presentacion.Estado,
+            tipo: presentacion.Tipo,
+            cuit: presentacion.CUIT,
+            fechaHoraGeneracion: presentacion.FechaHoraGeneracion
         }
     })
 
@@ -134,19 +139,36 @@ render() {
     //#region Estilos
     const customStyles = {
         content : {
-            height: '40%',
-            width: '50%',
+            height: '30%',
+            width: '40%',
             top: '50%',
             left: '50%',
             right: 'auto',
             bottom: 'auto',
             marginRight: '-50%',
             transform: 'translate(-50%, -50%)'
-        },
+        },                
+      };
+
+      const errorText = {
         error: {
             color: 'red',
         }
-      };
+      }
+
+      const pdfStyle = {
+        content : {
+            height: '57%',
+            width: '47%',
+            top: '60%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)'
+        },
+      } 
+      
     //#endregion
 
     //console.log('[PresentacionesSelect] currentSelection: ' + JSON.stringify(currentSelection))
@@ -225,7 +247,7 @@ render() {
                 </div>
                 {this.state.mensajeError ?
                     <div>
-                        <label style={customStyles.error}>{this.state.mensajeError}</label>
+                        <label style={errorText.error}>{this.state.mensajeError}</label>
                     </div>
                 :
                     null
@@ -237,11 +259,14 @@ render() {
                 isOpen={this.state.modalPDFIsOpen}
                 //onAfterOpen={afterOpenModal}
                 onRequestClose={this.handleModalPDF}
-                //style={customStyles}
+                style={pdfStyle}
                 contentLabel="Presentaciones"
             >
-                <PDFViewer>
-                    <ComprobantePresentacion />
+                <PDFViewer style={{display: "inline", height: "300px", width: "600px"}}>
+                    <ComprobantePresentacion 
+                        presentacion={this.state.presentacion}
+                        cuit={this.props.cuit}
+                    />
                 </PDFViewer>
             </Modal>          
         </>                                                                                                      

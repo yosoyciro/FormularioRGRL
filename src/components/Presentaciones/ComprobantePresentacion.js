@@ -1,32 +1,65 @@
-import React from 'react';
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import React, { Component } from 'react';
+import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
+import logo from '../../images/Header.png'
+import moment from 'moment';
 
 // Create styles
 const styles = StyleSheet.create({
   page: {
-    //flexDirection: 'row',
-    height: '100%',
-    backgroundColor: '#E4E4E4'
+    backgroundColor: 'white',
   },
   section: {
     margin: 5,
-    padding: 5,
-    //flexGrow: 1
+    textAlign: 'center',
+  },
+  sectionImage: {
+    alignContent: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  imagen: {
+    height: 80,
+    width: 200,
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+    left: 160,
+  },
+  texto: {
+    fontSize: 12,
+    textAlign: 'center'
   }
 });
 
-// Create Document Component
-const ComprobantePresentacion = () => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Text>Section #1</Text>
-      </View>
-      <View style={styles.section}>
-        <Text>Section #2</Text>
-      </View>
-    </Page>
-  </Document>
-);
-
+class ComprobantePresentacion extends Component { 
+  componentDidMount() {
+    //cantidad de establecimientos
+  }
+  render() {
+    console.log('[ComprobantePresentacion] presentacion: ' + JSON.stringify(this.props.presentacion))
+    console.log('[ComprobantePresentacion] props: ' + JSON.stringify(this.props))
+    const tipo = this.props.presentacion.tipo === 'R' ? 'RGRL' : 'RAR'
+    return (
+      <Document>
+        <Page size={[500,200]} style={styles.page}>
+          <View style={styles.sectionImage}>
+            <Image source={logo} style={styles.imagen} />
+          </View>        
+          <View style={styles.section}>          
+          <Text style={styles.texto}>Formulario: {tipo}</Text>
+          </View>
+          <View style={styles.section}>
+            <Text style={styles.texto}>CUIT: {this.props.cuit}</Text>
+          </View>
+          <View style={styles.section}>
+            <Text style={styles.texto}>Periodo: {this.props.presentacion.label}</Text>
+          </View>
+          <View style={styles.section}>
+            <Text style={styles.texto}>Fecha de Presentación: {moment(this.props.presentacion.fechaHoraGeneracion).format('DD/MM/YYYY HH:mm')}</Text>
+          </View>
+        </Page>
+      </Document>
+    )
+  }
+}
 export default ComprobantePresentacion;
