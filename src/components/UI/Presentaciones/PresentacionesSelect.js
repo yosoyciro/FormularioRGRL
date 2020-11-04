@@ -49,7 +49,7 @@ class ElegirEstablecimientoRAR extends Component{
             presentacion: selectedOption,
             selectedOption: selectedOption.value,
         }) 
-        this.props.seleccionaPresentacion(selectedOption.value, selectedOption.estado, false);
+        this.props.seleccionaPresentacion(selectedOption, false);
     }  
 
     handleChangeEstado(estado) {
@@ -57,26 +57,30 @@ class ElegirEstablecimientoRAR extends Component{
     }
 
     async handleConfirmar() {
-        //Valido que la presentacion no exista
-
-        //Valido que todos los establecimientos del CUIT tengan 1 formulario completo sin presentacion
-
+        switch (this.props.internoPresentacion) {
+            case 0:
+                this.setState({ estado: 'A'});
+                break;
+        
+            default:
+                break;
+        }
         const presentacion = {
             Interno: this.props.internoPresentacion,
             CUIT: this.props.cuit,
             Nombre: `${new Date().getFullYear()}`,
-            Estado: this.state.estado,
+            Estado: 'A', //this.state.estado,
             Tipo: this.props.tipo === 'RGRL' ? 'R' : 'A',
         }
-        //console.log('[PresentacionesSelect] presentacion: ' + JSON.stringify(presentacion))
+        console.log('[PresentacionesSelect] presentacion: ' + JSON.stringify(presentacion))
 
         //Llamo los metodos para validar
         const resValidarPresentacion = await PresentacionesValidar(presentacion)
-        //console.log('[PresentacionesSelect] resValidarPresentacion: ' + resValidarPresentacion)
+        console.log('[PresentacionesSelect] resValidarPresentacion: ' + resValidarPresentacion)
         const resVerificarCompletados = await PresentacionesVerificarCompletados(presentacion) 
-        //console.log('[PresentacionesSelect] resVerificarCompletados: ' + resVerificarCompletados)
+        console.log('[PresentacionesSelect] resVerificarCompletados: ' + resVerificarCompletados)
 
-        if (resValidarPresentacion)
+        if (!resValidarPresentacion)
         {
             this.setState({ mensajeError: 'La presentación ya existe' })
             return
@@ -89,15 +93,22 @@ class ElegirEstablecimientoRAR extends Component{
         }
 
         //Paso todas las validaciones
-        if (!resValidarPresentacion && !resVerificarCompletados)
+        if (resValidarPresentacion && resVerificarCompletados)
         {
-            PresentacionesGenerar(presentacion)
-            .then(res => {
-                //console.log('[PresentacionesSelect] res: ' + res)
-                this.handleModal();
-                this.props.seleccionaPresentacion(res.Interno, res.Estado, true);
-            })
-        }        
+            const res = await PresentacionesGenerar(presentacion)
+            switch (res) {
+                case null:
+                    
+                    break;
+            
+                default:
+                    //console.log('[PresentacionesSelect] res: ' + JSON.stringify(res))
+                    this.handleModal();
+                    this.props.seleccionaPresentacion(res, true);
+                    break;
+            }
+                
+        } 
     }
 
     handleComprobante() {
@@ -106,7 +117,8 @@ class ElegirEstablecimientoRAR extends Component{
             
 
 render() {      
-    console.log('[PresentacionesSelect] internoPresentacion: ' + this.props.internoPresentacion)
+    //console.log('[PresentacionesSelect] internoPresentacion: ' + this.props.internoPresentacion)
+    
     const disableGenera = this.props.cuit === 99999999999 ? true : false   
     const disableComprobante = this.props.cuit === 99999999999 || this.props.internoPresentacion === 0 ? true : false       
     const presentaciones = this.props.presentaciones.map(presentacion => {
@@ -120,6 +132,8 @@ render() {
         }
     })
 
+    var currentSelection = presentaciones.find(presentacion => presentacion.value === this.props.internoPresentacion)
+    console.log('[PresentacionesSelect] currenSelection ' + JSON.stringify(currentSelection))
     var estadoPresentacion = []
     if (this.props.internoPresentacion === 0)
     {
@@ -188,8 +202,8 @@ render() {
                     </td>
                     <td className="selectestablecimiento-td">
                         <Select 
-                            //value={currentSelection.Interno}
-                            defaultValue={presentaciones[0]}
+                            value={currentSelection}
+                            //defaultValue={presentaciones[seleccion]}
                             name="form-field-name"
                             onChange={this.handleChange}                     
                             options={presentaciones}
@@ -237,7 +251,7 @@ render() {
                 </div>
                 <div>
                     <label>Estado: </label>
-                    <Select 
+                    <Select                         
                         defaultValue={estadoPresentacion[0]}
                         name="form-field-name"
                         onChange={this.handleChangeEstado}                     

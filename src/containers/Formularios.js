@@ -66,17 +66,36 @@ class Formulario extends Component{
         })
     }    
 
-    handleSeleccionaPresentacion = (internoPresentacion, estadoPresentacion, nuevaPresentacion) => {
-        this.setState({
-            internoPresentacion,
-            estadoPresentacion
-        })
+    handleSeleccionaPresentacion = async (presentacion, nuevaPresentacion) => {
+        console.log('[Formularios] handleSeleccionaPresentacion nuevaPresentacion ' + JSON.stringify(presentacion))
+        
 
         if (nuevaPresentacion === true)
         {
-            PresentacionesListar(this.state.cuit)
-            .then(presentaciones => {
-                this.setState({presentaciones})
+            const nuevaPresentacion = {
+                $id: this.state.presentaciones.length + 1,
+                Interno: presentacion.Interno,
+                CUIT: this.state.cuit,
+                Nombre: presentacion.Nombre,
+                Estado: presentacion.Estado,
+                Tipo: presentacion.Tipo,
+                FechaHoraGeneracion: presentacion.FechaHoraGeneracion
+
+            }
+            this.setState(prevState => ({
+                presentaciones: [...prevState.presentaciones, nuevaPresentacion]
+              }))
+            
+            this.setState({
+                internoPresentacion: presentacion.Interno,
+                estadoPresentacion: presentacion.Estado
+            })
+        }
+        else
+        {
+            this.setState({
+                internoPresentacion: presentacion.value,
+                estadoPresentacion: presentacion.estado
             })
         }
     }
@@ -140,6 +159,7 @@ class Formulario extends Component{
                     }
                     PresentacionesListar(data)
                     .then(presentaciones => {
+                        console.log('[Formularios] presentaciones: ' + JSON.stringify(presentaciones))
                         this.setState({presentaciones})
 
                         ReferenteDatos(this.state.cuit)
@@ -230,7 +250,7 @@ class Formulario extends Component{
     render(){
         const disableEditar = this.state.estado !== 'Confirmado' && this.state.internoRespuestaFormulario ? false : true
         const disableGenera = this.state.cuit === 99999999999 ? true : false
-        const disableReplicar = this.state.internoRespuestaFormulario ? false : true //this.state.estado === 'Confirmado' ? true : false
+        const disableReplicar =this.state.cuit === 99999999999 || this.state.internoRespuestaFormulario === 0 || this.state.internoPresentacion !== 0 ? true : false //this.state.estado === 'Confirmado' ? true : false
         //console.log('[Formularios] estado: ' + this.state.estado + ' - interno: ' + this.state.internoRespuestaFormulario)
         //console.log('[Formularios] loadingFormularios: ' + this.state.loadingFormularios)
         //console.log('[Formularios] isLoading: ' + this.state.isLoading)

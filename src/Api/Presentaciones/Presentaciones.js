@@ -28,7 +28,7 @@ export async function PresentacionesGenerar(data) {
 
 export async function PresentacionesValidar(data) {
     try {
-        const response = await Api.get(`Presentaciones/VerificarPresentacion?pCUIT=${data.CUIT}&pNombre=${data.Nombre}`, {
+        const response = await Api.get(`Presentaciones/VerificarPresentacion?pCUIT=${data.CUIT}&pNombre=${data.Nombre}&pTipo=${data.Tipo}`, {
             headers: {
                 'Content-Type': 'application/json',
             }            
