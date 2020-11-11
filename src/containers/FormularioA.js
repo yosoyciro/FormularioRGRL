@@ -217,7 +217,7 @@ export default class FormularioA extends Component{
             switch (res) {
                 case null:
                     //todo ok
-                    switch (this.props.formularioRGRL.estado)
+                    /*switch (this.props.formularioRGRL.estado)
                     {
                         case '(No generado)':
                             GenerarFormulario({
@@ -248,7 +248,7 @@ export default class FormularioA extends Component{
                             })
                             break;
 
-                        case '(Nueva instancia)':
+                        case '(Nueva presentación)':
                             //Cuando es una Nueva Instancia, se cargan las respuestas del formulario confirmado
                             //Se replica el form enun juego de datos nuevo
                             //Se cargan las respuestas del nuevo formulario generado
@@ -291,7 +291,33 @@ export default class FormularioA extends Component{
 
                         default:
                             break;
-                    }   
+                    }   */
+                    GenerarFormulario({
+                        internoFormulario: this.props.formularioRGRL.value,
+                        internoEstablecimiento: this.props.internoEstablecimiento,
+                        notificacionFecha: this.props.notificacionFecha,
+                        preguntas: this.state.preguntas,
+                        gremios: this.props.formularioRGRL.gremios,
+                        contratistas: this.props.formularioRGRL.contratistas,
+                        responsables: this.props.formularioRGRL.responsables,
+                        refEstablecimientoActualizar: {
+                            Superficie: this.props.superficie,
+                            CantTrabajadores: this.props.cantTrabajadores
+                        }
+                    })
+                    .then(res => { 
+                        CargarRespuestas({ internoRespuestasFormulario: res })
+                            .then(response => {
+                                this.setState({ respuestasFormulario: response, 
+                                    respuestasCuestionario: response.RespuestasCuestionario,
+                                    respuestasGremio: response.RespuestasGremio,
+                                    respuestasContratista: response.RespuestasContratista,
+                                    respuestasResponsable: response.RespuestasResponsable,
+                                    generado: !this.state.generado,
+                                    saving: false
+                                })  
+                            })                                                         
+                    })
                     break;
             
                 default:

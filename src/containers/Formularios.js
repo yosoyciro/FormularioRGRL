@@ -67,7 +67,7 @@ class Formulario extends Component{
     }    
 
     handleSeleccionaPresentacion = async (presentacion, nuevaPresentacion) => {
-        console.log('[Formularios] handleSeleccionaPresentacion nuevaPresentacion ' + JSON.stringify(presentacion))
+        //console.log('[Formularios] handleSeleccionaPresentacion nuevaPresentacion ' + JSON.stringify(presentacion))
         
 
         if (nuevaPresentacion === true)
@@ -79,7 +79,8 @@ class Formulario extends Component{
                 Nombre: presentacion.Nombre,
                 Estado: presentacion.Estado,
                 Tipo: presentacion.Tipo,
-                FechaHoraGeneracion: presentacion.FechaHoraGeneracion
+                FechaHoraGeneracion: presentacion.FechaHoraGeneracion,
+                CantidadEstablecimientos: presentacion.CantidadEstablecimientos,
 
             }
             this.setState(prevState => ({

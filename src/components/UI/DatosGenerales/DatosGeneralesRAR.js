@@ -52,7 +52,8 @@ class DatosGeneralesRAR extends Component{
 
         const param = {
             CUIT: this.state.cuit,
-            BuscarEnAFIP: false
+            BuscarEnAFIP: false,
+            Tipo: 'RGRL'
         }
 
         const respuesta = await BuscarPersona(param);

@@ -375,7 +375,8 @@ export class CargarFormularioRAR extends Component{
                 console.log('undefined')
                 const param = {
                     CUIT: cuil,
-                    BuscarEnAFIP: true
+                    BuscarEnAFIP: true,
+                    Tipo: 'RAR',
                 }
         
                 BuscarPersona(param)
@@ -390,7 +391,7 @@ export class CargarFormularioRAR extends Component{
                         default:
                             this.setState({ 
                                 cuilValido: true,
-                                nombre: resp[0].razonSocial
+                                nombre: resp[0].razonSocial,
                              })
                     }
                 })

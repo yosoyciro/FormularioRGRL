@@ -101,17 +101,34 @@ export class FormulariosRAR extends Component{
         })
     }
 
-    handleSeleccionaPresentacion = (internoPresentacion, estadoPresentacion, nuevaPresentacion) => {
-        this.setState({
-            internoPresentacion,
-            estadoPresentacion
-        })
-
+    handleSeleccionaPresentacion = (presentacion, nuevaPresentacion) => {
         if (nuevaPresentacion === true)
         {
-            PresentacionesListar(this.state.cuit)
-            .then(presentaciones => {
-                this.setState({presentaciones})
+            const nuevaPresentacion = {
+                $id: this.state.presentaciones.length + 1,
+                Interno: presentacion.Interno,
+                CUIT: this.state.cuit,
+                Nombre: presentacion.Nombre,
+                Estado: presentacion.Estado,
+                Tipo: presentacion.Tipo,
+                FechaHoraGeneracion: presentacion.FechaHoraGeneracion,
+                CantidadEstablecimientos: presentacion.CantidadEstablecimientos,
+
+            }
+            this.setState(prevState => ({
+                presentaciones: [...prevState.presentaciones, nuevaPresentacion]
+              }))
+            
+            this.setState({
+                internoPresentacion: presentacion.Interno,
+                estadoPresentacion: presentacion.Estado
+            })
+        }
+        else
+        {
+            this.setState({
+                internoPresentacion: presentacion.value,
+                estadoPresentacion: presentacion.estado
             })
         }
     }

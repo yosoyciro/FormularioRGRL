@@ -46,7 +46,8 @@ class Contratista extends Component{
         this.setState({ loading: !this.state.loading })      
         const param = {
             CUIT: this.state.cuit,
-            BuscarEnAFIP: true
+            BuscarEnAFIP: true,
+            Tipo: 'RGRL',
         }
 
         const respuesta = await BuscarPersona(param);               

@@ -128,7 +128,8 @@ render() {
             estado: presentacion.Estado,
             tipo: presentacion.Tipo,
             cuit: presentacion.CUIT,
-            fechaHoraGeneracion: presentacion.FechaHoraGeneracion
+            fechaHoraGeneracion: presentacion.FechaHoraGeneracion,
+            cantidadEstablecimientos: presentacion.CantidadEstablecimientos
         }
     })
 
@@ -172,7 +173,7 @@ render() {
 
       const pdfStyle = {
         content : {
-            height: '57%',
+            height: '70%',
             width: '47%',
             top: '60%',
             left: '50%',
@@ -276,7 +277,7 @@ render() {
                 style={pdfStyle}
                 contentLabel="Presentaciones"
             >
-                <PDFViewer style={{display: "inline", height: "300px", width: "600px"}}>
+                <PDFViewer style={{display: "inline", height: "450px", width: "600px"}}>
                     <ComprobantePresentacion 
                         presentacion={this.state.presentacion}
                         cuit={this.props.cuit}
