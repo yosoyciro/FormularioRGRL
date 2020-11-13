@@ -19,13 +19,14 @@ class Responsable extends Component{
 
     handleChange = (event) => {
         //console.log('event.target.value: ' + event.target.value)
-        //#region oldcode   
-        /*switch(event) {                     
+        //#region oldcode 
+        switch(event.target.name) {                              
             case 'cuit':
-                //this.setState({cuit: event.target.value})
-                //this.props.actualizarResponsable(this.props.responsable.Interno, event.target.value, this.props.responsable.Responsable, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo)                                
+                console.log('cuit: ' + event.target.value);
                 const cuit = event.target.value === '' ? 0 : event.target.value
-                this.props.cambioResponsable(this.props.responsable.Interno, cuit, '', 'R', 1, 0, '', '', '')                                
+                this.setState({ cuit })
+
+                this.props.cambioResponsable(this.props.responsable.Interno, cuit === 0 ? '' : cuit, '', 'R', 1, 0, '', '', '')                                
                 break;
 
             case 'responsable':
@@ -69,15 +70,15 @@ class Responsable extends Component{
                 break;
             
             
-        }    */
+        }
         //#endregion 
-        const cuit = event.target.value === '' ? 0 : event.target.value
+        /*const cuit = event.target.value === '' ? 0 : event.target.value
         this.setState({ cuit })  
         
         if (cuit === 0)
         {
             this.props.cambioResponsable(this.props.responsable.Interno, cuit, '')
-        }   
+        }   */
     }
     
     BuscarPersona = async event => {
@@ -94,9 +95,9 @@ class Responsable extends Component{
     }
 
     handleBuscarPersona = async event => {    
-        console.log('responsables: ' + JSON.stringify(this.props.responsables))
-        const cuitRepetido = this.props.responsables.find(responsable => parseInt(responsable.CUIT) === parseInt(this.state.cuit))
-        console.log('cuitRepetido: ' + JSON.stringify(cuitRepetido))
+        //console.log('responsables: ' + JSON.stringify(this.props.responsables))
+        const cuitRepetido = this.props.responsables.find(responsable => parseInt(responsable.CUIT) === parseInt(this.state.cuit) && parseInt(responsable.Interno) !== parseInt(this.props.responsable.Interno))
+        //console.log('cuitRepetido: ' + JSON.stringify(cuitRepetido))
         switch (cuitRepetido) {
             case undefined:
                 await this.BuscarPersona()
@@ -114,7 +115,7 @@ class Responsable extends Component{
         const isDisable = this.state.cuit === 0 ? true : false
 
         const cuit = this.state.cuit === 0 ? '' : this.state.cuit
-        const disableVerificar = cuit === '' ? true : false
+        const disableVerificar = cuit === '' || this.state.loading ? true : false
         const responsable = this.props.responsable.Responsable
         const cargo = this.props.responsable.Cargo
         const representacion = this.props.responsable.Representacion

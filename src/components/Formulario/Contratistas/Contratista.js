@@ -20,26 +20,29 @@ class Contratista extends Component{
     handleChange = (event) => {
         //#region oldcode
         //console.log('event.target.value: ' + event.target.value)
-        /*const cuit = event.target.value === '' ? 0 : event.target.value
+        //const cuit = event.target.value === '' ? 0 : event.target.value
         if (event.target.name === 'cuit')        
         {
-            //this.setState({cuit: event.target.value}) 
-            this.props.cambioContratista(this.props.contratista.Interno, cuit, '')                                   
+            //this.setState({cuit: event.target.value})
+            const cuit = event.target.value === '' ? 0 : event.target.value
+            this.setState({ cuit })  
+
+            this.props.cambioContratista(this.props.contratista.Interno, cuit === 0 ? '' : cuit, '')                                   
         }
 
         if (event.target.name === 'contratista')
         {
             //this.setState({ contratista: event.target.value });
             this.props.cambioContratista(this.props.contratista.Interno, this.props.contratista.CUIT, event.target.value)
-        }   */
+        } 
         //#endregion
-        const cuit = event.target.value === '' ? 0 : event.target.value
+        /*const cuit = event.target.value === '' ? 0 : event.target.value
         this.setState({ cuit })  
         
         if (cuit === 0)
         {
             this.props.cambioContratista(this.props.contratista.Interno, cuit, '')
-        }
+        }*/
     }
 
     BuscarPersona = async event => {
@@ -59,7 +62,7 @@ class Contratista extends Component{
     handleAFIP = async event => {
         //console.log('cuit: ' + this.state.cuit)
         //console.log('[Contratista] this.props.contratistas: ' + JSON.stringify(this.props.contratistas))  
-        const cuitRepetido = this.props.contratistas.find(contratista => parseInt(contratista.CUIT) === parseInt(this.state.cuit))
+        const cuitRepetido = this.props.contratistas.find(contratista => parseInt(contratista.CUIT) === parseInt(this.state.cuit) && parseInt(contratista.Interno) !== parseInt(this.props.contratista.Interno))
         //console.log('cuitRepetido: ' + JSON.stringify(cuitRepetido))
         switch (cuitRepetido) {
             case undefined:
@@ -81,13 +84,10 @@ render() {
     const isDisable = true
     
     const cuit = this.state.cuit === 0 ? '' : this.state.cuit      
-    const disableVerificar = cuit === '' ? true : false
+    const disableVerificar = cuit === '' || this.state.loading ? true : false
     const contratista = cuit === '' ? '' : this.props.contratista.Contratista
 
     return <Fragment>
-        {this.state.loading === true ?
-            <Spinner />
-        :
         <tr>
             <td className="td-contratista-cuit">
                 <input 
@@ -117,7 +117,6 @@ render() {
                     value={contratista}></input> 
             </td>
         </tr>
-        }
     </Fragment>
     }
 }
