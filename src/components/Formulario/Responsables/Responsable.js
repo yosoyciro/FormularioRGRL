@@ -18,31 +18,24 @@ class Responsable extends Component{
     
 
     handleChange = (event) => {
-        //console.log('event.target.value: ' + event.target.value)
-        //#region oldcode 
         switch(event.target.name) {                              
             case 'cuit':
                 console.log('cuit: ' + event.target.value);
                 const cuit = event.target.value === '' ? 0 : event.target.value
                 this.setState({ cuit })
 
-                this.props.cambioResponsable(this.props.responsable.Interno, cuit === 0 ? '' : cuit, '', 'R', 1, 0, '', '', '')                                
+                this.props.cambioResponsable(this.props.responsable.Interno, cuit === 0 ? '' : cuit, '', this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo)
                 break;
 
             case 'responsable':
-                //this.setState({ responsable: event.target.value });
-                //this.props.actualizarResponsable(this.props.responsable.Interno, this.props.cuit, event.target.value, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
                 this.props.cambioResponsable(this.props.responsable.Interno, this.props.responsable.CUIT, event.target.value, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
                 break;
 
             case 'cargo':
-                //console.log('event.target.value: ' + event.target.value)
-                //this.setState({ cargo: event.target.value });
                 this.props.cambioResponsable(this.props.responsable.Interno, this.props.responsable.CUIT, this.props.responsable.Responsable, event.target.value, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo);
                 break;
 
             case 'representacion':
-                //this.setState({ representacion: event.target.value });
                 this.props.cambioResponsable(this.props.responsable.Interno, this.props.responsable.CUIT, this.props.responsable.Responsable, this.props.responsable.Cargo, event.target.value, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo)
                 break;
                 
@@ -71,14 +64,6 @@ class Responsable extends Component{
             
             
         }
-        //#endregion 
-        /*const cuit = event.target.value === '' ? 0 : event.target.value
-        this.setState({ cuit })  
-        
-        if (cuit === 0)
-        {
-            this.props.cambioResponsable(this.props.responsable.Interno, cuit, '')
-        }   */
     }
     
     BuscarPersona = async event => {
@@ -90,7 +75,7 @@ class Responsable extends Component{
         }
 
         const respuesta = await BuscarPersona(param);               
-        this.props.cambioResponsable(this.props.responsable.Interno, this.state.cuit, respuesta[0].razonSocial)
+        this.props.cambioResponsable(this.props.responsable.Interno, this.state.cuit, respuesta[0].razonSocial, this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo)
         this.setState({ loading: !this.state.loading })
     }
 
@@ -106,7 +91,7 @@ class Responsable extends Component{
             default:
                 alert('CUIT repetido ' + cuitRepetido.CUIT)
                 this.setState({ cuit: 0 })
-                this.props.cambioResponsable(this.props.responsable.Interno, 0, '')
+                this.props.cambioResponsable(this.props.responsable.Interno, 0, '', this.props.responsable.Cargo, this.props.responsable.Representacion, this.props.responsable.EsContratado, this.props.responsable.TituloHabilitante, this.props.responsable.Matricula, this.props.responsable.EntidadOtorganteTitulo)
                 break;
         }      
     }
