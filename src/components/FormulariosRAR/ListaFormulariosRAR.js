@@ -7,6 +7,8 @@ import FormatearFechaCelda from '../Utiles/FormatearFechaCelda'
 import './ListarFormulariosRAR.css'
 import CargarConsultaFormulariosRAR from '../../Api/FormulariosRAR/CargarConsultaFormulariosRAR';
 import Spinner from '../UI/Spinner';
+import ConsultaFormularioRAR from './ConsultaFormularioRAR';
+import CargarFormulariosRARDetalle from '../../Api/FormulariosRAR/CargarFormulariosRARDetalle';
 
 export class ListaFormulariosRAR extends Component{
     constructor(props) {
@@ -78,17 +80,23 @@ export class ListaFormulariosRAR extends Component{
     }
 
     handleClick (e, row, rowIndex) {
-        console.log(`Interno: ${row.Interno}`);
+        console.log(`Interno: ${row.Interno}`);        
         this.setState({
             internoFormulariosRAR: row.InternoFormulariosRAR,
             internoEstablecimiento: row.internoEstablecimiento,
         })
         //this.cargarDatos(row.Interno)
         this.props.seleccionaRegistro(row.Interno, row.InternoEstablecimiento, row.Estado)
+        this.cargarDatos(row.Interno)
     }
 
-    cargarDatos = async (internoFormulario, internoEstablecimiento) => {
+    cargarDatos (internoFormulario) {
         //Aqui traigo los detalles del formulario
+        CargarFormulariosRARDetalle(internoFormulario)
+            .then(detalle => {
+                //console.log('detalle: ' + detalle)            
+                this.setState({ formulariosRARDetalle: detalle })
+            })
     }
 
     handleCambioPagina = (pagina) => {
@@ -303,7 +311,7 @@ export class ListaFormulariosRAR extends Component{
             </div>
         );
         //#endregion
-        
+        console.log("this.state.formulariosRARDetalle", this.state.formulariosRARDetalle)
         return <div>
             {this.state.loading === true ?
                 <Spinner />
@@ -317,9 +325,11 @@ export class ListaFormulariosRAR extends Component{
                     >
                         { contentTable }
                     </PaginationProvider>
-                    {this.state.internoFormulario !== 0 && this.state.internoEstablecimiento !== 0 ?
+                    {this.state.internoFormulariosRAR !== 0 ?
                         <>
-                            
+                            <ConsultaFormularioRAR
+                                formulariosRARDetalle={this.state.formulariosRARDetalle} 
+                            />
                         </>
                     :
                         null                    

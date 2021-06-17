@@ -8,14 +8,15 @@ switch (process.env.NODE_ENV) {
     break;
 
   case 'production':
-    url = `http://www.artmutualrural.com.ar:8181/api/`
-    //url = `http://binarianet.com:8181/api/`
+    //url = `http://www.artmutualrural.org.ar:8181/api/`
+    url = `http://www.intersistemas.net:8181/api/`
     break;
 
   default:
     break;
 }
 
+console.log('URL API: ' + url)
 export default axios.create({
     baseURL: url  
 });

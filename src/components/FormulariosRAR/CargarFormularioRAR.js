@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { Type } from 'react-bootstrap-table2-editor';
 import Button from 'react-bootstrap/Button';
