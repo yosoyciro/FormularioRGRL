@@ -1,7 +1,7 @@
 {
   "name": "rgrl-app",
   "version": "0.1.0",
-  "homepage": "http://www.artmutualrural.org.ar:9090/",
+  "homepage": "http://www.intersistemas.net:9090/",
   "private": true,
   "dependencies": {
     "@babel/core": "7.7.4",
@@ -171,5 +171,5 @@
       "react-app"
     ]
   },
-  "buildDate": 1611859710647
+  "buildDate": 1623959070199
 }

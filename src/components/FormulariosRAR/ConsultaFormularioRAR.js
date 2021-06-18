@@ -61,7 +61,7 @@ export class ConsultaFormularioRAR extends Component{
             }  
         ];
         //#endregion    
-        console.log("Detalle", this.props.formulariosRARDetalle)
+        //console.log("Detalle", this.props.formulariosRARDetalle)
         return ( 
             <div>                              
                 <>
