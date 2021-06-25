@@ -8,8 +8,8 @@ switch (process.env.NODE_ENV) {
     break;
 
   case 'production':
-    //url = `http://www.artmutualrural.org.ar:8181/api/`
-    url = `http://www.intersistemas.net:8181/api/`
+    url = `http://www.artmutualrural.org.ar:8181/api/`
+    //url = `http://www.intersistemas.net:8181/api/`
     break;
 
   default:
