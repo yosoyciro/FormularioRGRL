@@ -56,7 +56,7 @@ export class ConsultaFormularioRAR extends Component{
                 text: 'Codigo Agente',
             },
             {
-                dataField: 'AgenteCausante.Descripcion',
+                dataField: 'DescripcionAgente',
                 text: 'Descripcion Agente',
             }  
         ];

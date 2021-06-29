@@ -186,6 +186,10 @@ export class ListaFormulariosRAR extends Component{
                 dataField: 'Direccion',
                 text: 'Establecimiento',
                 sort: true,
+                filter: textFilter({
+                    placeholder: 'Ingrese Establecimiento...',
+                    className: 'test1'
+                })
             },
             {
                 dataField: 'CantTrabajadoresExpuestos',
