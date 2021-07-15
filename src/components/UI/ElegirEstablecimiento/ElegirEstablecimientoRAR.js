@@ -79,7 +79,7 @@ class ElegirEstablecimientoRAR extends Component{
                 console.log('opcion2')
                 try {
                     const refEstablecimientos = await Api.get(`RefEstablecimiento/ListarPorInterno?pInternoEstablecimiento=${this.props.internoEstablecimiento}`) 
-                    //console.log('Nombre estabelcimiento: ' + JSON.stringify(refEstablecimientos.data))
+                    console.log('estabelcimiento ', refEstablecimientos.data)
 
                     // Create a new array based on current state:
                     let establecimientos = [...this.state.establecimientos];
@@ -153,24 +153,27 @@ render() {
                     </tr>
                 </thead>
                 <tbody className="elegirestablecimiento-tbody">
-                    <td className="elegirestablecimiento-td">
-                        <label>Establecimiento: </label>
-                    </td>
-                    <td className="selecestablecimiento-td">
-                        <Select 
-                            //defaultValue={currentSelection[0]}
-                            value={currentSelection}
-                            name="form-field-name"
-                            onChange={this.handleChange}                     
-                            options={opciones}
-                            isSearchable={false}
-                            isDisabled={disable}
-                            placeholder='Seleccione establecimiento...'
-                            menuIsOpen={menuIsOpen}
-                            formatCreateLabel={userInput => `Search for ${userInput}`}
-                            isLoading={this.state.isLoading}
-                        />
-                    </td>
+                    <tr>
+                        <td className="elegirestablecimiento-td">
+                            <label>Establecimiento: </label>
+                        </td>                    
+                    
+                        <td className="selecestablecimiento-td">
+                            <Select 
+                                //defaultValue={currentSelection[0]}
+                                value={currentSelection}
+                                name="form-field-name"
+                                onChange={this.handleChange}                     
+                                options={opciones}
+                                isSearchable={false}
+                                isDisabled={disable}
+                                placeholder='Seleccione establecimiento...'
+                                menuIsOpen={menuIsOpen}
+                                formatCreateLabel={userInput => `Search for ${userInput}`}
+                                isLoading={this.state.isLoading}
+                            />
+                        </td>
+                    </tr>
                 </tbody>
             </table>  
             {this.props.mostrarDatosEstablecimiento === false || this.props.mostrarDatosEstablecimiento == null ?
@@ -178,26 +181,28 @@ render() {
             :
                 <table className="table-datosEstablecimiento">
                     <tbody>
-                        <td className="td-canttrabajadores">
-                            <label>Cant trabajadores:</label>
-                            <input 
-                                type="number"
-                                name="cantTrabajadores"
-                                disabled={!disable}
-                                onChange={this.handleChangeCantTrabajadores}
-                                value={cantTrabajadores}
-                            />
-                        </td>
-                        <td className="td-canttrabajadores">
-                            <label>Superficie:</label>
-                            <input 
-                                type="number"
-                                name="superficie"
-                                disabled={!disable}
-                                onChange={this.handleChangeSuperficie}
-                                value={superficie}
-                            />
-                        </td>
+                        <tr>
+                            <td className="td-canttrabajadores">
+                                <label>Cant trabajadores:</label>
+                                <input 
+                                    type="number"
+                                    name="cantTrabajadores"
+                                    disabled={!disable}
+                                    onChange={this.handleChangeCantTrabajadores}
+                                    value={cantTrabajadores}
+                                />
+                            </td>
+                            <td className="td-canttrabajadores">
+                                <label>Superficie:</label>
+                                <input 
+                                    type="number"
+                                    name="superficie"
+                                    disabled={!disable}
+                                    onChange={this.handleChangeSuperficie}
+                                    value={superficie}
+                                />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>           
             }

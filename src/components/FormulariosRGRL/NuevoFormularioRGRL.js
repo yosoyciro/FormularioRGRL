@@ -51,11 +51,11 @@ class NuevoFormularioRGRL extends Component{
             superficie,
             loading
         })
-        //console.log('[NuevoFormularioRGRL]-establecimiento: ' + this.state.internoEstablecimiento)
+        console.log('[NuevoFormularioRGRL]-establecimiento: ' + this.state.internoEstablecimiento)
     }
 
     handleSeleccionFormulario(formularioRGRL, internoFormulario) {
-        //console.log('[NuevoFormularioRGRL] internoFormulario ' + internoFormulario)
+        console.log('[NuevoFormularioRGRL] formularioRGRL ', formularioRGRL)
         this.setState({
             formularioRGRL,
             internoFormulario
@@ -88,9 +88,9 @@ class NuevoFormularioRGRL extends Component{
     }
     
     render() {  
-        //console.log('[NuevoFormularioRGRL] internoEstablecimiento: ' + this.state.internoEstablecimiento) 
-        //console.log('[NuevoFormularioRGRL] referenteDatos: ' + this.props.referenteDatos)     
-        //console.log('[NuevoFormularioRGRL] this.state.referenteDatos: ' + JSON.stringify(this.props.referenteDatos))   
+        console.log('[NuevoFormularioRGRL] internoEstablecimiento ', this.state.internoEstablecimiento)   
+        console.log('[NuevoFormularioRGRL] this.state.referenteDatos ', this.props.referenteDatos)  
+        console.log('[formularioRGRL]', this.state.formularioRGRL) 
         return <Fragment> 
             <h2>Formulario RGRL</h2>        
             <DatosGenerales

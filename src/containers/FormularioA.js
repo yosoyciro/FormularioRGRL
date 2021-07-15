@@ -65,19 +65,21 @@ export default class FormularioA extends Component{
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.setState({saving: true}) 
-        this.cargarDatos() 
-        .then(res => {
+        await this.cargarDatos();
+        /*.then(res => {
             this.setState({saving: false}) 
-        })       
+        })*/       
+        this.setState({saving: false});
     }
 
     //#region CargaDatos
-    cargarDatos = async event => {        
-        console.log('[FormularioA] - cargarDatos - formularioRGRL: ' + JSON.stringify(this.props.formularioRGRL) + ' - internoRespuestaFormulario: ' + this.props.internoRespuestasFormulario)
+    async cargarDatos () {        
+        console.log('[FormularioA] - cargarDatos - formularioRGRL ',this.props.formularioRGRL)
+        //console.log('internoRespuestaFormulario ', this.props.internoRespuestasFormulario)
         try {                                 
-            const secc = await Api.get(`Secciones/ListarSeccionesFormulario?pInternoFormulario=${this.props.formularioRGRL.value}`)
+            const secc = await Api.get(`Secciones/ListarSeccionesFormulario?pInternoFormulario=${this.props.formularioRGRL.InternoFormulario}`)
             //cargar un array de paginas para pasarlo a BotonesPaginas
             const paginasSecciones = secc.data.map(seccion => {
                 return seccion.Pagina
@@ -89,11 +91,14 @@ export default class FormularioA extends Component{
                 paginas
             });
 
-            const preg = await Api.get(`Cuestionarios/ListarPorFormulario?pInternoFormulario=${this.props.formularioRGRL.value}`)
+            //console.log('[FormularioA] - this.props.formularioRGRL.InternoFormulario ', this.props.formularioRGRL.InternoFormulario)
+            const preg = await Api.get(`Cuestionarios/ListarPorFormulario?pInternoFormulario=${this.props.formularioRGRL.InternoFormulario}`)
+            //console.log('[FormularioA] - CargarRespuestas - preg.data', preg)
             this.setState({ preguntas: preg.data });      
 
-            //console.log('(this.props.estado: ' + (this.props.formularioRGRL.estado))
-            if (this.props.formularioRGRL.estado === '(En proceso de carga)')
+            //console.log('this.props.formularioRGRL.CompletadoFechaHora', this.props.formularioRGRL.CompletadoFechaHora)
+            //if (this.props.formularioRGRL.Estado === '(En proceso de carga)')
+            if (this.props.formularioRGRL.CompletadoFechaHora === null && this.props.internoRespuestasFormulario !== 0)
             {
                 this.setState({ loading: !this.state.saving })
                 /*this.cargarRespuestas(this.props.internoRespuestasFormulario)
@@ -102,7 +107,7 @@ export default class FormularioA extends Component{
                 )) */
                 CargarRespuestas({ internoRespuestasFormulario: this.props.internoRespuestasFormulario })  
                 .then(response => {   
-                    //console.log('[FormularioA] - response: ' + JSON.stringify(response))                 
+                    //console.log('[FormularioA] - CargarRespuestas', response)
                     this.setState({ respuestasFormulario: response, 
                         respuestasCuestionario: response.RespuestasCuestionario,
                         respuestasGremio: response.RespuestasGremio,

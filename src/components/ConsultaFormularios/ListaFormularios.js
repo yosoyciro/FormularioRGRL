@@ -17,6 +17,9 @@ export class ListaFormularios extends Component{
     constructor(props) {
         super(props)
         this.handleLoadingRespuestas = this.handleLoadingRespuestas.bind(this)
+        this.AccionFormat= this.AccionFormat.bind(this);
+        this.handleEdita = this.handleEdita.bind(this);
+        this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
         this.state = {
             pagina: 1,
             formulariosCargados: [],
@@ -32,12 +35,23 @@ export class ListaFormularios extends Component{
             paginas: [],
             loadingRespuestas: false,
             loadingFormularios: true,
-            internoPresentacion: 0
+            internoPresentacion: 0,
+            cargarFormulario: false,
+            finalizaCarga: false,
+            /*referenteDatos: [],
+            formularioRGRL: {
+                internoRespuestaFormulario: 0,
+                cuit: 0,
+                internoEstablecimiento: 0,
+                internoFormulario: 0,                
+                estado: '',                
+            }*/
         }
     }
 
     async componentDidMount() {  
         //console.log('[ListaFormularios] cuit: ' + this.props.cuit)
+        //console.log('props', this.props)
         this.setState({internoPresentacion: this.props.internoPresentacion}) 
         const props = {
             CUIT: this.props.cuit,
@@ -58,7 +72,7 @@ export class ListaFormularios extends Component{
                 loadingFormularios: !this.state.loadingFormularios
             }) 
 
-            console.log('[ListaFormularios] componentDidUpdate')
+            //console.log('[ListaFormularios] componentDidUpdate')
             const props = {
                 CUIT: this.props.cuit,
                 InternoPresentacion: this.props.internoPresentacion
@@ -77,18 +91,73 @@ export class ListaFormularios extends Component{
 
     handleClick (e, row, rowIndex) {
         //console.log(`Interno: ${row.Interno}`);
+        /*ReferenteDatos(row.CUIT)
+        .then(res => {
+            this.setState({
+                referenteDatos: res,
+                internoFormulario: row.InternoFormulario,
+                internoEstablecimiento: row.InternoEstablecimiento,
+                internoRespuestasFormulario: row.Interno,
+                pagina: 1,
+                loadingRespuestas: !this.state.loadingRespuestas,
+                formularioRGRL: {
+                    internoRespuestaFormulario: row.InternoFormulario,
+                    cuit: row.CUIT,
+                    internoEstablecimiento: row.InternoEstablecimiento,
+                    internoFormulario: row.Interno,                    
+                    estado: row.Estado
+                }
+            })
+
+            this.cargarDatos(row.InternoFormulario, row.InternoEstablecimiento, row.Interno)
+            .then(resp => {
+                this.props.seleccionaRegistro(row.Interno, row.CUIT, row.InternoFormulario, row.InternoEstablecimiento, row.Estado, row.RazonSocial, row.Direccion, row.Descripcion)
+                this.setState({ loadingRespuestas: !this.state.loadingRespuestas })
+            }) 
+        })*/
         this.setState({
             internoFormulario: row.InternoFormulario,
             internoEstablecimiento: row.InternoEstablecimiento,
             internoRespuestasFormulario: row.Interno,
             pagina: 1,
-            loadingRespuestas: !this.state.loadingRespuestas
+            loadingRespuestas: !this.state.loadingRespuestas,
+            /*formularioRGRL: {
+                internoRespuestaFormulario: row.InternoFormulario,
+                cuit: row.CUIT,
+                internoEstablecimiento: row.InternoEstablecimiento,
+                internoFormulario: row.Interno,
+                referenteDatos: [],
+                estado: row.Estado
+            }*/
         })
         this.cargarDatos(row.InternoFormulario, row.InternoEstablecimiento, row.Interno)
         .then(resp => {
             this.props.seleccionaRegistro(row.Interno, row.CUIT, row.InternoFormulario, row.InternoEstablecimiento, row.Estado, row.RazonSocial, row.Direccion, row.Descripcion)
             this.setState({ loadingRespuestas: !this.state.loadingRespuestas })
-        })        
+        })
+    }
+
+    handleEdita = () => {
+        //this.props.history.push('/NuevoFormularioRAR/' + this.state.cuit);
+        this.setState({ 
+            cargarFormulario: true,
+        })
+    }
+
+    editarFormularioRGRL = (interno) => {
+        this.props.history.push('/EditarFormularioRGRL/'+interno)
+    }
+
+    handleFinalizaCarga() {
+        this.setState({ 
+            cargarFormulario: false,
+            formularioRGRL: {
+                internoRespuestaFormulario: 0,
+                internoFormulario: 0,
+                internoEstablecimiento: 0,
+                estado: '',
+            }
+        })
     }
 
     cargarDatos = async (internoFormulario, internoEstablecimiento, internoRespuestasFormulario) => {
@@ -167,9 +236,30 @@ export class ListaFormularios extends Component{
         }     
         this.setState({ loadingRespuestas: estado })        
     }
-    
+
+    AccionFormat = (cell, row) => {                     
+        return (
+            <div>
+                <button type="button" className="btn btn-outline-primary btn-sm ts-buttom" size="sm" onClick={() => this.editarFormularioRGRL(this.state.internoRespuestasFormulario)} >
+                    Editar
+                </button>
+                <button type="button" className="btn btn-outline-danger btn-sm ml-2 ts-buttom" size="sm">
+                    Borrar
+                </button>
+                <button type="button" className="btn btn-outline-danger btn-sm ml-2 ts-buttom" size="sm" >
+                    Imprimir
+                </button>
+            </div>
+        );
+    }    
 
     render(){
+        //console.log('this.state.InternoFormulario', this.state.internoFormulario)
+        
+        //console.log('diable', disable)
+        
+        //console.log('formularioRGRL', this.state.formularioRGRL)
+        //console.log('referenteDatos', this.state.referenteDatos)
         const { SearchBar } = Search;
 
         const selectOptions = {
@@ -204,14 +294,14 @@ export class ListaFormularios extends Component{
 
         //#region  Columnas
         console.log('[ListaFormularios] cuit: ' + this.props.cuit)
-        const columns = 
+        let columns = 
         this.props.cuit === 99999999999 ?
         [
             {
                 dataField: 'Interno',
                 text: '#',
                 hidden: true
-            }, 
+            },             
             {
                 dataField: 'CUIT',
                 text: 'CUIT',
@@ -274,7 +364,12 @@ export class ListaFormularios extends Component{
                 dataField: 'InternoEstablecimiento',
                 text: 'InternoEstablecimiento',
                 hidden: true
-            }
+            },
+            {
+                text: "",
+                dataField: "",
+                formatter: this.AccionFormat,
+            },
         ]
         :
         [
@@ -333,7 +428,12 @@ export class ListaFormularios extends Component{
                 dataField: 'InternoEstablecimiento',
                 text: 'InternoEstablecimiento',
                 hidden: true
-            }
+            },
+            {
+                text: "",
+                dataField: "",
+                formatter: this.AccionFormat,
+            },
         ];
         //#endregion
 
@@ -380,11 +480,12 @@ export class ListaFormularios extends Component{
         //#endregion
         
         //#region Return
+        //console.log('this.state.loadingRespuestas', this.state.loadingRespuestas)
         return <div>
                 {this.state.loadingFormularios === true ?
                     <Spinner />
                 :
-                <>                    
+                <>                
                     <PaginationProvider
                         className="paginacion"
                         pagination={

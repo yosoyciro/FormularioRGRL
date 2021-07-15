@@ -1,12 +1,13 @@
 import React from 'react';
 import Formularios from '../containers/Formularios';
 import {BrowserRouter, Route, Switch, Router } from 'react-router-dom';
-import { history } from '../components/Utiles/history';
+import history from '../components/Utiles/history';
 import './App.css';
 import FormulariosRAR from '../containers/FormulariosRAR';
 import packageJson from "../../package.json";
 import { getBuildDate } from "../components/Utiles/getBuildDate";
 import withClearCache from "../ClearCache";
+import FormularioRGRLEditar from '../components/FormulariosRGRL/FormularioRGRLEditar';
 
 const ClearCacheComponent = withClearCache(MainApp);
 
@@ -22,6 +23,7 @@ function MainApp()  {
               <Switch>
                 <Route path='/ConsultaFormulariosRGRL/:Param' component={Formularios}/>
                 <Route path='/ConsultaFormulariosRAR/:Param' component={FormulariosRAR}/>
+                <Route path='/EditarFormularioRGRL/:Interno' component={FormularioRGRLEditar}/>
               </Switch> 
               <footer className="App-footer">
                 <p>Versión: {getBuildDate(packageJson.buildDate)}</p>

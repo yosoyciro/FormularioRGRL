@@ -23,6 +23,7 @@ class DatosGenerales extends Component{
     } 
     
     componentDidMount() {
+        console.log('DatosGenerales - CUIT', this.props.cuit)
         this.setState({
             cuit: parseInt(this.props.cuit),            
         })
@@ -49,6 +50,7 @@ class DatosGenerales extends Component{
     }
 
     handleChangeNotificacionFecha (date){
+        console.log('date', date)
         const fecha = moment(date).format('YYYY-MM-DD')
         this.props.changeNotificacionFecha(fecha)
     }

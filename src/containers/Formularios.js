@@ -277,6 +277,7 @@ class Formulario extends Component{
                                 internoPresentacion={this.state.internoPresentacion}
                                 seleccionaRegistro={this.seleccionaRegistro}
                                 loadingFormularios={this.handleLoadingFormularios}
+                                history={this.props.history}
                             />
                         :
                             <Spinner />

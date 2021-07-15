@@ -9,7 +9,16 @@ async function CargarFormularios(props) {
         response.data.map(formulario => {
             //console.log('response.data: ' + formulario.Descripcion) 
             const isDisabled = false //formulario.Estado === '(Confirmado)' ? true : false
-            respuestaFormularios.push({value: formulario.Interno, label: formulario.Descripcion + ' ' + formulario.Estado, isDisabled: isDisabled, gremios: formulario.CantidadGremios, contratistas: formulario.CantidadContratistas, responsables: formulario.CantidadResponsables, estado: formulario.Estado })
+            respuestaFormularios.push({
+                value: formulario.Interno, 
+                label: formulario.Descripcion, 
+                isDisabled: isDisabled, 
+                gremios: formulario.CantidadGremios,
+                contratistas: formulario.CantidadContratistas, 
+                responsables: formulario.CantidadResponsables,
+                InternoFormulario: formulario.Interno,
+                CompletadoFechaHora: null,
+            })
 
             //return formulario            
         })

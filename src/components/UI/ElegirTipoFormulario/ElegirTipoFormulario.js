@@ -7,7 +7,8 @@ class ElegirTipoFormulario extends Component{
     state = {
         selectedOption: 0,
         formularios: [],
-        formSeleccionado: []
+        formSeleccionado: [],
+        loading: true
     }
 
     componentDidMount() {     
@@ -16,7 +17,8 @@ class ElegirTipoFormulario extends Component{
         CargarFormularios(this.props.internoEstablecimiento) 
         .then(formularios => {
             this.setState({ 
-                formularios 
+                formularios,
+                loading: !this.state.loading
             })
 
             switch (this.props.internoFormulario) {
@@ -59,6 +61,7 @@ render() {
 
     //Cuando elijo, armo el label nuevo
     var currentSelection = []    
+    const estado = this.props.internoFormulario === 0 ? ' (Nueva Presentación)' : ' (En Proceso de Carga)'
     if (internoFormulario !== 0 && this.state.formularios.length !== 0)        
     {
         const formSel = this.state.formularios.filter(form => form.value === internoFormulario)
@@ -66,7 +69,7 @@ render() {
         if (formSel.length !== 0)
             currentSelection = [
                 {
-                    label: formSel[0].label,
+                    label: formSel[0].label + estado,
                     value: parseInt(this.props.internoEstablecimiento)
                 }
             ];   
@@ -86,6 +89,7 @@ render() {
                 placeholder={'Formularios disponibles'}
                 menuIsOpen={menuIsOpen}
                 value={currentSelection}
+                isLoading={this.state.loading}
             />                              
         </table>                                                                                                             
     }
