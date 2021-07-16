@@ -12,6 +12,9 @@ import FormatearFechaCelda from '../Utiles/FormatearFechaCelda'
 import './ListarFormularios.css'
 import BotonesPaginaDinamicos from '../BotonesFormulario/BotonesPaginasDinamico';
 import Spinner from '../UI/Spinner'
+import VentaImpresionFormulario from '../FormulariosRGRL/VentanaImpresionFormulario';
+import { CargarEstablecimientos } from '../../Api/CargarEstablecimientos';
+import ReferenteDatos from '../../Api/ReferenteDatos/ReferenteDatos';
 
 export class ListaFormularios extends Component{
     constructor(props) {
@@ -20,6 +23,8 @@ export class ListaFormularios extends Component{
         this.AccionFormat= this.AccionFormat.bind(this);
         this.handleEdita = this.handleEdita.bind(this);
         this.handleFinalizaCarga = this.handleFinalizaCarga.bind(this);
+        this.handleAbrirVentanaImpresion = this.handleAbrirVentanaImpresion.bind(this);
+        this.handleCerrarVentanaImpresion = this.handleCerrarVentanaImpresion.bind(this);
         this.state = {
             pagina: 1,
             formulariosCargados: [],
@@ -38,14 +43,16 @@ export class ListaFormularios extends Component{
             internoPresentacion: 0,
             cargarFormulario: false,
             finalizaCarga: false,
-            /*referenteDatos: [],
+            modalPDFIsOpen: false,
             formularioRGRL: {
                 internoRespuestaFormulario: 0,
                 cuit: 0,
                 internoEstablecimiento: 0,
                 internoFormulario: 0,                
                 estado: '',                
-            }*/
+            },
+            establecimiento: null,
+            referenteDatos: []
         }
     }
 
@@ -121,16 +128,15 @@ export class ListaFormularios extends Component{
             internoRespuestasFormulario: row.Interno,
             pagina: 1,
             loadingRespuestas: !this.state.loadingRespuestas,
-            /*formularioRGRL: {
+            formularioRGRL: {
                 internoRespuestaFormulario: row.InternoFormulario,
                 cuit: row.CUIT,
                 internoEstablecimiento: row.InternoEstablecimiento,
                 internoFormulario: row.Interno,
-                referenteDatos: [],
                 estado: row.Estado
-            }*/
+            }
         })
-        this.cargarDatos(row.InternoFormulario, row.InternoEstablecimiento, row.Interno)
+        this.cargarDatos(row.InternoFormulario, row.InternoEstablecimiento, row.Interno, row.CUIT)
         .then(resp => {
             this.props.seleccionaRegistro(row.Interno, row.CUIT, row.InternoFormulario, row.InternoEstablecimiento, row.Estado, row.RazonSocial, row.Direccion, row.Descripcion)
             this.setState({ loadingRespuestas: !this.state.loadingRespuestas })
@@ -160,10 +166,12 @@ export class ListaFormularios extends Component{
         })
     }
 
-    cargarDatos = async (internoFormulario, internoEstablecimiento, internoRespuestasFormulario) => {
+    cargarDatos = async (internoFormulario, internoEstablecimiento, internoRespuestasFormulario, cuit) => {
         const secciones = await CargarSeccionesFormulario(internoFormulario)
         const preguntas = await CargarPreguntas(internoFormulario)
-        const respuestasCuestionario = await CargarRespuestasConsulta({internoRespuestasFormulario})        
+        const respuestasCuestionario = await CargarRespuestasConsulta({internoRespuestasFormulario})    
+        const establecimiento = await CargarEstablecimientos({ opcion: 1, internoEstablecimiento: internoEstablecimiento })  
+        const referenteDatos = await ReferenteDatos(cuit)  
 
         //cargar un array de paginas para pasarlo a BotonesPaginas
         const paginasSecciones = secciones.map(seccion => {
@@ -180,7 +188,9 @@ export class ListaFormularios extends Component{
             respuestasGremio: respuestasCuestionario.RespuestasGremio,
             respuestasContratista: respuestasCuestionario.RespuestasContratista,
             respuestasResponsable: respuestasCuestionario.RespuestasResponsable,
-            paginas
+            paginas,
+            establecimiento,
+            referenteDatos
             //loading: !this.state.loading
         })
         //console.log('respuestasGremio: ' + JSON.stringify(this.state.respuestasGremio))        
@@ -237,6 +247,14 @@ export class ListaFormularios extends Component{
         this.setState({ loadingRespuestas: estado })        
     }
 
+    handleAbrirVentanaImpresion() {
+        this.setState({ modalPDFIsOpen: true })
+    }
+
+    handleCerrarVentanaImpresion() {
+        this.setState({ modalPDFIsOpen: false })
+    }
+
     AccionFormat = (cell, row) => {                     
         return (
             <div>
@@ -246,7 +264,7 @@ export class ListaFormularios extends Component{
                 <button type="button" className="btn btn-outline-danger btn-sm ml-2 ts-buttom" size="sm">
                     Borrar
                 </button>
-                <button type="button" className="btn btn-outline-danger btn-sm ml-2 ts-buttom" size="sm" >
+                <button type="button" className="btn btn-outline-danger btn-sm ml-2 ts-buttom" size="sm" onClick={() => this.handleAbrirVentanaImpresion()} >
                     Imprimir
                 </button>
             </div>
@@ -293,7 +311,7 @@ export class ListaFormularios extends Component{
           };
 
         //#region  Columnas
-        console.log('[ListaFormularios] cuit: ' + this.props.cuit)
+        //console.log('[ListaFormularios] cuit: ' + this.props.cuit)
         let columns = 
         this.props.cuit === 99999999999 ?
         [
@@ -480,7 +498,7 @@ export class ListaFormularios extends Component{
         //#endregion
         
         //#region Return
-        //console.log('this.state.loadingRespuestas', this.state.loadingRespuestas)
+        console.log('this.state.modalPDFIsOpen', this.state.modalPDFIsOpen)
         return <div>
                 {this.state.loadingFormularios === true ?
                     <Spinner />
@@ -517,6 +535,24 @@ export class ListaFormularios extends Component{
                                     pagina={this.state.pagina}     
                                     handleLoadingRespuestas={this.handleLoadingRespuestas}                           
                                 />
+
+                                {this.state.modalPDFIsOpen ?
+                                    <VentaImpresionFormulario 
+                                        modalPDFIsOpen={this.state.modalPDFIsOpen}
+                                        secciones={this.state.secciones}
+                                        preguntas={this.state.preguntas}
+                                        respuestasCuestionario={this.state.respuestasCuestionario}
+                                        gremios={this.state.respuestasGremio}
+                                        contratistas={this.state.respuestasContratista}
+                                        responsables={this.state.respuestasResponsable}
+                                        formularioRGRL={this.state.formularioRGRL}
+                                        establecimiento={this.state.establecimiento}
+                                        referenteDatos={this.state.referenteDatos}
+                                        handleCerrarVentanaImpresion={this.handleCerrarVentanaImpresion}
+                                    />
+                                :
+                                    null
+                                }
                             </>
                             }
                         </>
